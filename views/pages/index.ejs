@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Dubbatransitek</title>
+        <% include ../partials/head %>
+        <style>
+            body {
+                padding-top: 80px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+
+            <div class="jumbotron text-center">
+                <h1>
+                    <span class="fa fa-lock"></span>
+                    Connexion</h1>
+
+                <p>Choisir son mode de connexion/inscription:</p>
+
+                <a href="/login" class="btn btn-default">
+                    <span class="fa fa-user"></span>
+                    Connexion</a>
+                <a href="/signup" class="btn btn-default">
+                    <span class="fa fa-user"></span>
+                    Inscription</a>
+                <a href="/auth/spotify" class="btn btn-success">
+                    <span class="fa fa-spotify"></span>
+                    Spotify</a>
+                <a href="/auth/youtube" class="btn btn-danger">
+                    <span class="fa fa-youtube"></span>
+                    Youtube</a>
+                <a href="/auth/deezer" class="btn btn-primary">
+                    <span class="fa fa-align-left fa-fw fa-rotate-270"></span>
+                    Deezer</a>
+            </div>
+
+        </div>
+    </body>
+</html>

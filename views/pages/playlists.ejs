@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Dubbatransitek</title>
+        <% include ../partials/head %>
+        <style>
+            body {
+                padding-top: 80px;
+                word-wrap: break-word;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <% include ../partials/header %>
+            </header>
+
+            <!-- DISPLAY PLAYLIST -->
+            <div class="row">
+                <h1>Acceder à une playlist</h1>
+                <form action="/music" method="post">
+                    <div id="playlists" class="input-group">
+                        <input class="typeahead form-control" id="playlist_search" type="text" data-provide="typeahead" placeholder="Nom de la playlist">
+                        <span class="input-group-btn">
+                            <button id='select' class="btn btn-secondary" type="submit">Go!</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <!-- ADD PLAYLIST FORM -->
+            <div class="row">
+                <h1>Créer une playlist</h1>
+                <div id='error' class="alert alert-danger fade in">
+                    <strong>Erreur!</strong>
+                    Impossible de créer la playlist
+                </div>
+                <div id='success' class="alert alert-success fade in">
+                    <strong>Cool!</strong>
+                    Playlist créée
+                </div>
+                <div class="form-group">
+                    <label>Nom:</label>
+                    <input type="text" class="form-control" id="name" placeholder="Best PL ever"/>
+                </div>
+                <div class="form-group">
+                    <label>Tag (séparés par une virgule):</label>
+                    <input type="text" class="form-control" id="tags" placeholder="techno, dark, amelie, pute"/>
+                </div>
+                <div class="form-group">
+                    <label>Première musique de la playlist:</label>
+                    <input type="text" class="form-control" id="url" placeholder="lien deezer, spotify, youtube ou soundcloud"/>
+                </div>
+                <div class='form-group'>
+                    <button clas='btn btn-primary' id="add">Valider</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <script>
+            var socket = io();
+
+            $('#error').hide();
+            $('#success').hide();
+
+            socket.on('getPlaylistsNames', function(playlistsNames) {
+                $('#playlist_search').typeahead({source: playlistsNames});
+            });
+
+            socket.on('error', function() {
+                setTimeout(function() {
+                    $('#error').hide();
+                }, 5000);
+                $('#error').show();
+            });
+
+            socket.on('success', function() {
+                setTimeout(function() {
+                    $('#success').hide();
+                }, 5000);
+                $('#success').show();
+            });
+
+            $('#add').click(function() {
+                socket.emit('add', $('#name').val(), $('#tags').val().split(','), $('#url').val());
+                $('#name').val('');
+                $('#tags').val('');
+                $('#url').val('');
+            });
+        </script>
+
+    </footer>
+</html>

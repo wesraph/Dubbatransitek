@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Dubbatransitek</title>
+        <% include ../partials/head %>
+        <style>
+            body {
+                padding-top: 80px;
+                word-wrap: break-word;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+
+            <header>
+                <% include ../partials/header %>
+            </header>
+
+            <div class="page-header text-center">
+                <h1>
+                    <span class="fa fa-anchor"></span>
+                    Mon profil</h1>
+                <a href="/logout" class="btn btn-default btn-sm">Se deconnecter</a>
+            </div>
+
+            <div class="row">
+
+                <!-- LOCAL INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3>
+                            <span class="fa fa-user"></span>
+                            Compte dubbatransitek
+                        </h3>
+
+                        <% if (user.local.username) { %>
+                            <p>
+                                <strong>Id</strong>:
+                                <%= user._id %><br>
+                                <strong>Nom d utilisateur</strong>:
+                                <%= user.local.username %><br>
+                                <strong>Mot de passe</strong>:
+                                <%= user.local.password %>
+                            </p>
+
+                            <a href="/unlink/local" class="btn btn-default">Délier</a>
+                        <% } else { %>
+                            <a href="/connect/local" class="btn btn-default">Lier un compte</a>
+                        <% } %>
+
+                    </div>
+                </div>
+
+                <!-- SPOTIFY INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3 class="text-success">
+                            <span class="fa fa-spotify"></span>
+                            Spotify</h3>
+
+                        <!-- check if the user has this token (is the user authenticated with this social account) -->
+                        <% if (user.spotify.token) { %>
+                            <p>
+                                <strong>Id</strong>:
+                                <%= user.spotify.id %><br>
+                                <strong>Jeton</strong>:
+                                <%= user.spotify.token %><br>
+                                <strong>Utilisateur</strong>:
+                                <%= user.spotify.username %><br>
+                                <strong>Email</strong>:
+                                <%= user.spotify.email %><br>
+                                <strong>Profile Spotify</strong>:
+                                <%= user.spotify.profileUrl %>
+                            </p>
+
+                            <a href="/unlink/spotify" class="btn btn-success">Délier</a>
+                        <% } else { %>
+                            <a href="/connect/spotify" class="btn btn-success">Lier Spotify</a>
+                        <% } %>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <!-- deezer INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3 class="text-default">
+                            <span class="fa fa-align-left fa-fw fa-rotate-270"></span>
+                            Deezer</h3>
+
+                        <% if (user.deezer.token) { %>
+                            <p>
+                                <strong>Id</strong>:
+                                <%= user.deezer.id %><br>
+                                <strong>Jeton</strong>:
+                                <%= user.deezer.token %><br>
+                                <strong>Utilisateur</strong>:
+                                <%= user.deezer.username %><br>
+                                <strong>Email</strong>:
+                                <%= user.deezer.email %><br>
+                                <strong>Profile Deezer</strong>:
+                                <%= user.deezer.profileUrl %>
+                            </p>
+
+                            <a href="/unlink/deezer" class="btn btn-default">Délier</a>
+                        <% } else { %>
+                            <a href="/connect/deezer" class="btn btn-default">Lier Deezer</a>
+                        <% } %>
+
+                    </div>
+                </div>
+
+                <!-- youtube INFORMATION -->
+                <div class="col-sm-6">
+                    <div class="well">
+                        <h3 class="text-danger">
+                            <span class="fa fa-youtube"></span>
+                            Youtube</h3>
+
+                        <% if (user.youtube.token) { %>
+                            <p>
+                                <strong>Id</strong>:
+                                <%= user.youtube.id %><br>
+                                <strong>Jeton</strong>:
+                                <%= user.youtube.token %><br>
+                                <strong>Nom</strong>:
+                                <%= user.youtube.displayName %>
+                            </p>
+
+                            <a href="/unlink/youtube" class="btn btn-danger">Délier</a>
+                        <% } else { %>
+                            <a href="/connect/youtube" class="btn btn-danger">Lier Youtube</a>
+                        <% } %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
