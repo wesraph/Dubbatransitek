@@ -3,13 +3,6 @@
     <head>
         <title>Dubbatransitek</title>
         <% include ../partials/head %>
-        <style>
-            body {
-                padding-top: 80px;
-                word-wrap: break-word;
-            }
-
-        </style>
     </head>
     <body>
         <div class="container">
@@ -17,16 +10,33 @@
                 <% include ../partials/header %>
             </header>
 
+            <div class="row">
+                <h1 class="text-center"><%= name %></h1>
+            </div>
             <!-- DISPLAY MUSICS -->
             <div class="row">
-                YT:<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Wz4So_ifXr0?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+                <div class="col-md-4 text-center">
+                    <button id="backward" class="btn btn-primary">
+                        <i class="fa fa-backward" aria-hidden="true"></i>
+                        Reculer</button>
+                </div>
+                <div class="col-md-4 text-center">
+                    <button id="playpause" class="btn btn-primary">
+                        <i class="fa fa-play" aria-hidden="true"></i>
+                        Lecture/Pause</button>
+                </div>
+                <div class="col-md-4 text-center">
+                    <button id="forward" class="btn btn-primary">
+                        <i class="fa fa-forward" aria-hidden="true"></i>
+                        Avancer</button>
+                </div>
 
-                DEEZER:<iframe scrolling="no" frameborder="0" allowTransparency="true" src="https://www.deezer.com/plugins/player?format=classic&autoplay=false&playlist=false&width=700&height=350&color=007FEB&layout=dark&size=medium&type=tracks&id=3333333&app_id=249902" width="700" height="350"></iframe>
-
-                <iframe src="https://open.spotify.com/embed?uri=spotify:track:6pGs4VS6BV0WnooovrrxRj" width="640" height="80" frameborder="0" allowtransparency="true"></iframe>
-
-                <iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/34019569&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
-                
+            </div>
+            <div class="row">
+                <div id="waveform"></div>
+            </div>
+            <div class="row">
+                <div class="list-group" id="songs"></div>
             </div>
 
             <!-- ADD MUSIC -->
@@ -34,32 +44,121 @@
                 <h1>Ajouter une musique</h1>
                 <div class="form-group">
                     <label>URL:</label>
-                    <input type="text" class="form-control" name="name" placeholder="Best PL ever"/>
+                    <input type="url" class="form-control" name="url" id="url" placeholder="Lien deezer, spotify, youtube ou soundcloud" required/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="add">Ajouter</button>
                 </div>
             </div>
 
-            <!-- DOWNLOAD MUSICS -->
             <div class="row">
-                <h1>Télécharger la playlist</h1>
-                <div class="form-group">
+                <!-- DOWNLOAD MUSICS -->
+                <div class="col-md-6">
+                    <h1>Télécharger la playlist</h1>
+                    <div class="form-group">
+                        <h2>WIP</h2>
+                        <button class="btn btn-primary" disabled>Télécharger</button>
+                    </div>
+                </div>
 
-                    <button>Télécharger</button>
+                <!-- REMOVE PLAYLIST -->
+                <div class="col-md-6">
+                    <h1>Supprimer la playlist</h1>
+                    <div class="form-group">
+                        <button id="del" class="btn btn-primary">Supprimer</button>
+                    </div>
                 </div>
             </div>
         </div>
     </body>
     <footer>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <% include ../partials/notifJS %>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
         <script>
-            var socket = io();
+            // TODO: C vrmt pa bo, faudrait trouver un autre moyen plus stylé de le faire
+            var songsList = [];
+            var wavesurfer;
+            var currentSong;
 
-            socket.emit('askPlaylist', <%= name %>);
+            socket.emit('getSongs', '<%= name %>');
 
-            socket.on('getPlaylist', function(){
+            socket.on('songs', function(infos) {
+                songsList = infos;
 
+                for (var i = 0; i < infos.length; i++) {
+                    if ($('#song' + i.toString()).length == 0) {
+                        var html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP" onClick="loadWave(' + i.toString() + ')">';
+                        if (songsList[i].infos.cover)
+                            html += '<img class="miniature" src="' + songsList[i].infos.cover + '">';
+                        html += infos[i].infos.title + ' - ' + infos[i].infos.artistName;
+                        html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+                        html += '<a class="link btn btn-primary" href="' + infos[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
+                        html += '<a class="link btn btn-default" href="' + infos[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>'
+                        html += '</div>'
+                        $("#songs").append(html);
+
+                        if (i == 0) {
+                            $(document).ready(function() {
+                                loadWave(0);
+                            });
+                        }
+                    }
+                }
+            });
+
+            function loadWave(id) {
+                if (currentSong == id)
+                    return;
+
+                if (currentSong != null)
+                    $('#song' + currentSong.toString()).removeClass('active');
+                $('#song' + id.toString()).addClass('active');
+                currentSong = id;
+                wavesurfer.load(songsList[id].file);
+            }
+
+            function deleteSong(id) {
+                $('#song' + id.toString()).remove();
+                socket.emit('removeSong', '<%= name %>', songsList[id]);
+            }
+
+            $(document).ready(function() {
+                wavesurfer = WaveSurfer.create({container: '#waveform', waveColor: 'black', progressColor: 'grey', barWidth: 3});
+
+                wavesurfer.on('finish', function() {
+                    if (currentSong != songsList.length) {
+                        loadWave(currentSong + 1);
+                    }
+                });
+
+                wavesurfer.on('ready', function() {
+                    wavesurfer.play();
+                });
+
+                $('#add').click(function() {
+                    socket.emit('addSong', '<%= name %>', $('#url').val());
+                    $('#url').val('');
+                });
+
+                $('#playpause').click(function() {
+                    wavesurfer.playPause();
+                });
+
+                $('#backward').click(function() {
+                    wavesurfer.skipBackward();
+                });
+
+                $('#forward').click(function() {
+                    wavesurfer.skipForward();
+                });
+
+                $('#del').click(function() {
+                    socket.emit('removePlaylist', '<%= name %>');
+                    setTimeout(function() {
+                        window.location.replace("./playlists");
+                    }, 5000);
+                });
             });
         </script>
-
     </footer>
 </html>

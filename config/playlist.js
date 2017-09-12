@@ -1,11 +1,19 @@
 //load all the thing we need
 var io = require('socket.io');
+var alltomp3 = require('alltomp3');
 
 // load up the playlist model
 var Playlist = require('../app/models/playlist');
 
 module.exports = function(server) {
-    io(server).on('connection', function(socket) {
+
+    // -------------------------------------------------------------------------
+    // Function
+    // -------------------------------------------------------------------------
+
+    // Get
+
+    function getPlaylistsNames(callback) {
         Playlist.find({}, {
             name: 1
         }, function(err, result) {
@@ -17,36 +25,399 @@ module.exports = function(server) {
                 names.push(result[i].name);
             }
 
-            socket.emit('getPlaylistsNames', names);
+            return callback(names);
+        });
+    }
+
+    function getUrlType(url) {
+        var site;
+
+        if (url.indexOf('youtu') !== -1) {
+            if (url.indexOf('?list=') !== -1)
+                site = 'youtube playlist';
+            else if (url.indexOf('watch') !== -1)
+                site = 'youtube';
+            else
+                site = 'unknown';
+        } else if (url.indexOf('soundcloud.com') !== -1) {
+            if (url.indexOf('/sets/') !== -1)
+                site = 'soundcloud playlist';
+            else
+                site = 'soundcloud';
+        } else if (url.indexOf('spotify.com') !== -1 && url.indexOf('playlist') !== -1)
+            site = 'spotify playlist';
+        else if (url.indexOf('deezer.com') !== -1 && url.indexOf('playlist') !== -1)
+            site = 'deezer playlist';
+        else
+            site = 'unknown';
+
+        return site;
+    }
+
+    function getSongs(name, callback) {
+        Playlist.find({
+            name: name
+        }, function(err, result) {
+            if (err)
+                return;
+
+            if (!result[0].musics)
+                return callback();
+
+            return callback(result[0].musics);
+        });
+    }
+
+    // Add
+
+    function addSong(playlistName, url, callback, progress) {
+        downloadSong(url, function(file, infos) {
+            if (!infos)
+                return callback(false);
+
+            Playlist.update({
+                name: playlistName
+            }, {
+                $push: {
+                    musics: {
+                        url: url,
+                        file: file,
+                        infos: infos
+                    }
+                }
+            }, function(err) {
+                if (err) {
+                    console.log(err);
+                    return callback(false);
+                }
+
+                return callback(true);
+            });
+        }, function(dl) {
+            progress(dl);
+        });
+    }
+
+    function addSongs(playlistName, url, callback, progress) {
+        downloadSongs(url, function(array) {
+            if (!array)
+                return callback(false);
+
+            for (var elem in array) {
+                Playlist.update({
+                    name: playlistName
+                }, {
+                    $push: {
+                        musics: {
+                            url: url,
+                            file: elem.file,
+                            infos: elem.infos
+                        }
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.log(err);
+                        return callback(false);
+                    }
+                });
+            }
+
+            return callback(true);
+        }, function(dl) {
+            progress(dl);
+        });
+    }
+
+    function addPlaylist(name, tag, url, callback, progress) {
+        var newPlaylist = new Playlist();
+        newPlaylist.name = name;
+        newPlaylist.tag = tag.replace(/ ,|, /g, ',').split(',');
+
+        if (url) {
+            switch (getUrlType(url)) {
+                case 'youtube':
+                case 'soundcloud':
+                    downloadSong(url, function(file, infos) {
+                        if (!infos)
+                            return callback(false);
+
+                        newPlaylist.musics = [{
+                            url: url,
+                            file: file,
+                            infos: infos
+                        }];
+
+                        newPlaylist.save(function(err) {
+                            if (err) {
+                                console.log(err);
+                                return callback(false);
+                            }
+
+                            return callback(true);
+                        });
+                    }, function(dl) {
+                        progress(dl);
+                    });
+                    break;
+
+                case 'soundcloud playlist':
+                case 'youtube playlist':
+                case 'spotify playlist':
+                case 'deezer playlist':
+                    downloadSongs(url, function(arrays) {
+                        if (!arrays)
+                            return callback(false);
+
+                        newPlaylist.musics = [];
+                        for (var i = 0; i < arrays.length; i++) {
+                            newPlaylist.musics.push({
+                                url: url,
+                                file: arrays[i].file,
+                                infos: arrays[i].infos
+                            });
+                        }
+
+                        newPlaylist.save(function(err) {
+                            if (err) {
+                                console.log(err);
+                                return callback(false);
+                            }
+
+                            return callback(true);
+                        });
+
+                    }, function(dl) {
+                        progress(dl);
+                    });
+                    break;
+                default:
+                    return callback(false);
+            }
+
+        } else {
+            newPlaylist.save(function(err) {
+                if (err) {
+                    console.log(err);
+                    return callback(false);
+                }
+
+                return callback(true);
+            });
+        }
+    }
+
+    // Remove
+
+    function removePlaylist(name, callback) {
+        Playlist.remove({
+            name: name
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return callback(false);
+            }
+
+            return callback(true);
+        });
+    }
+
+    function removeSong(playlistName, info, callback) {
+        Playlist.update({
+            name: playlistName
+        }, {
+            $pull: {
+                musics: info
+            }
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return callback(false);
+            }
+
+            return callback(true);
+        });
+    }
+
+    // Download
+
+    function downloadSong(url, callback, progress) {
+        var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
+            if (!infos)
+                return callback();
+
+            return callback(infos.file, infos.infos);
         });
 
-        socket.on('add', function(name, tag, url) {
-            var newPlaylist = new Playlist();
-            newPlaylist.name = name;
-            newPlaylist.tag = tag;
-            newPlaylist.musics = [url];
+        progress(dl);
+    }
 
-            newPlaylist.save(function(err) {
-                if (err)
-                    return socket.emit('error');
+    function downloadSongs(url, callback, progress) {
+        var dl = alltomp3.downloadPlaylist(url, './public/musics', function(infos) {
+            if (!infos)
+                return callback();
 
-                Playlist.find({}, {
-                    name: 1
-                }, function(err, result) {
-                    if (err)
-                        return;
+            return callback(infos);
+        }, 1, '/');
 
-                    var names = [];
-                    for (var i = 0; i < result.length; i++) {
-                        names.push(result[i].name);
-                    }
+        progress(dl);
+    }
 
-                    socket.emit('getPlaylistsNames', names);
-                });
+    // UI
 
-                socket.emit('loaded', 'test');
-                return socket.emit('success');
+    function progressMessages(dl, socket) {
+        var urls;
+
+        dl.on('search-end', function() {
+            socket.emit('wait', 'Fin de la recherche');
+        });
+        dl.on('download', function(infos) {
+            if (infos.progress)
+                socket.emit('wait', 'Téléchargement en cours: ' + Math.round(infos.progress) + '%');
+            else
+                socket.emit('wait', 'Téléchargement n°' + (infos + 1).toString() + ': ' + Math.round(urls.items[infos].progress.download.progress) + '%');
+        });
+        dl.on('download-end', function() {
+            socket.emit('wait', 'Fin du téléchargement');
+        });
+        dl.on('convert', function(infos) {
+            if (infos.progress)
+                socket.emit('wait', 'Conversion en cours: ' + Math.round(infos.progress) + '%');
+            else
+                socket.emit('wait', 'Conversion n°' + (infos + 1).toString() + ': ' + Math.round(urls.items[infos].progress.convert.progress) + '%');
+        });
+        dl.on('convert-end', function() {
+            socket.emit('wait', 'Fin de la conversion');
+        });
+        dl.on('begin-url', function(index) {
+            socket.emit('wait', 'Lancement de la musique n°' + (index + 1).toString());
+        });
+        dl.on('end-url', function(index) {
+            socket.emit('wait', 'Fin de la musique n°' + (index + 1).toString());
+        });
+        dl.on('end', function() {
+            socket.emit('wait', 'C\'est fini !', true);
+        });
+        dl.on('playlist-infos', function(urlss) {
+            urls = urlss;
+        });
+    }
+
+    function playlistCreationChecker(name, callback) {
+        if (name == null) {
+            return callback(false, 'Un nom est obligatoire pour créer une playlist');
+        }
+
+        Playlist.find({
+            name: name
+        }, function(err, pl) {
+            if (err) {
+                return callback(false, 'Erreur lors de la vérification (pour voir si la playlist existe déjà)');
+            }
+
+            if (pl.length) {
+                return callback(false, 'Erreur, une playlist avec ce nom existe déjà');
+            } else {
+                callback(true);
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Not function
+    // -------------------------------------------------------------------------
+    io(server).on('connection', function(socket) {
+        socket.on('getPlaylistsNames', function() {
+            getPlaylistsNames(function(names) {
+                socket.emit('playlistsNames', names);
             });
         });
+
+        socket.on('getSongs', function(name) {
+            getSongs(name, function(infos) {
+                if (infos)
+                    socket.emit('songs', infos);
+            })
+        });
+
+        socket.on('addPlaylist', function(name, tag, url) {
+            playlistCreationChecker(name, function(canCreate, msg) {
+                if (!canCreate) {
+                    socket.emit('fail', msg);
+                    return false;
+                }
+
+                addPlaylist(name, tag, url, function(success) {
+                    if (!success)
+                        return socket.emit('fail', 'Impossible de créer la playlist');
+
+                    getPlaylistsNames(function(names) {
+                        socket.emit('playlistsNames', names);
+                    });
+                    return socket.emit('success', 'Playlist créée !');
+                }, function(dl) {
+                    progressMessages(dl, socket);
+                });
+            });
+        });
+
+        socket.on('addSong', function(playlistName, url) {
+            switch (getUrlType(url)) {
+                case 'youtube':
+                case 'soundcloud':
+                    addSong(playlistName, url, function(success) {
+                        if (!success)
+                            return socket.emit('fail', 'Impossible d\'ajouter la musique');
+
+                        getSongs(playlistName, function(infos) {
+                            socket.emit('songs', infos);
+                        });
+
+                        return socket.emit('success', 'Musique ajouté !');
+
+                    }, function(dl) {
+                        progressMessages(dl, socket);
+                    });
+                    break;
+                case 'soundcloud playlist':
+                case 'youtube playlist':
+                case 'spotify playlist':
+                case 'deezer playlist':
+                    addSongs(playlistName, url, function(success) {
+                        if (!success)
+                            return socket.emit('fail', 'Impossible d\'importer la playlist');
+
+                        getSongs(playlistName, function(infos) {
+                            socket.emit('songs', infos);
+                        });
+
+                        return socket.emit('success', 'Playlist importé !');
+
+                    }, function(dl) {
+                        progressMessages(dl, socket);
+                    });
+                    break;
+                default:
+                    socket.emit('fail', 'Impossible d\'importer la playlist !');
+                    return;
+            }
+        });
+
+        socket.on('removePlaylist', function(name, tag, url) {
+            removePlaylist(name, function(success) {
+                if (success)
+                    socket.emit('success', 'Playlist supprimée !');
+                else
+                    socket.emit('fail', 'Impossible de supprimer la playlist');
+            });
+        });
+
+        socket.on('removeSong', function(info) {
+            removeSong(info, function(success) {
+                if (success)
+                    socket.emit('success', 'Musique supprimée !');
+                else
+                    socket.emit('fail', 'Impossible de supprimer la musique');
+            })
+        })
     });
 };

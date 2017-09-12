@@ -1,0 +1,23 @@
+.container {
+  padding-top: 80px;
+  word-wrap: break-word;
+}
+
+#waveform {
+  margin: 20px;
+}
+
+.miniature {
+  width: 50px!important;
+  height: 50px!important;
+  margin-right: 10px;
+}
+
+.link {
+  margin-left: 10px;
+  float: right;
+}
+
+.cursorP {
+  cursor: pointer;
+}

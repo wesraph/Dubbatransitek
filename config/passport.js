@@ -295,7 +295,6 @@ module.exports = function(passport) {
     // =========================================================================
     passport.use(new YoutubeV3Strategy(configAuth.youtubeAuth,
         function(req, token, refreshToken, profile, done) {
-            console.log(profile);
             // asynchronous
             process.nextTick(function() {
 

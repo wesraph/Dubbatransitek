@@ -7,7 +7,7 @@ module.exports = function(app, passport) {
         if (!req.isAuthenticated())
             return next();
 
-        res.redirect('/profile');
+        res.redirect('/playlists');
     }, function(req, res) {
         res.render('pages/index.ejs');
     });
@@ -17,12 +17,13 @@ module.exports = function(app, passport) {
         res.render('pages/playlists.ejs');
     });
 
-    app.get('/musics', isLoggedIn, function(req, res) {
-        res.render('pages/playlists.ejs');
-    });
-
-    app.post('/musics', isLoggedIn, function(req, res) {
-        res.render('pages/musics.ejs', {name: req.body.name});
+    app.get('/musics/', isLoggedIn, function(req, res) {
+        if (req.query.name)
+            res.render('pages/musics.ejs', {
+                name: req.query.name
+            });
+        else
+            res.redirect('/playlists');
     });
 
     // PROFILE SECTION =========================

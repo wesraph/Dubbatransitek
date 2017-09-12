@@ -1,0 +1,45 @@
+<!-- views/partials/notifyJS.ejs -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="/public/js/bootstrap-notify.min.js"></script>
+
+<script>
+    var socket = io();
+    var notify;
+
+    socket.on('fail', function(msg) {
+        $('#add').prop('disabled', false);
+        $.notify({
+            icon: 'fa fa-exclamation-triangle',
+            message: msg
+        }, {type: 'danger'});
+    });
+
+    socket.on('success', function(msg) {
+        $.notify({
+            icon: 'fa fa-check',
+            message: msg
+        }, {type: 'success'});
+    });
+
+    socket.on('wait', function(msg, last) {
+        if (!notify) {
+            notify = $.notify({
+                icon: 'fa fa-circle-o-notch fa-spin',
+                message: msg
+            }, {
+                type: 'info',
+                delay: 0
+            });
+        } else if (last) {
+            setTimeout(function() {
+                notify.close();
+                notify = null;
+                $('#add').prop('disabled', false);
+            }, 3000);
+        } else {
+            notify.update('message', msg);
+        }
+    });
+</script>

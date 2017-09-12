@@ -7,7 +7,11 @@ var playlistSchema = mongoose.Schema({
     author_id: String,
     contributor_id: [String],
     tag: [String],
-    musics: [String]
+    musics: [{
+        url: String,
+        file: String,
+        infos: Object
+    }]
 });
 
 // create the model for playlist and expose it to our app
