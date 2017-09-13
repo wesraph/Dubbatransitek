@@ -42,7 +42,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
 ### Versioning
  - **0.0.1:** first working version
 
-###TODO
+### TODO
  - permission
  - spotify and deezer track
  - advanced playlist research
