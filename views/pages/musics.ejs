@@ -18,17 +18,17 @@
                 <div class="col-md-4 text-center">
                     <button id="backward" class="btn btn-primary">
                         <i class="fa fa-backward" aria-hidden="true"></i>
-                        Reculer</button>
+                        <%= lang.pages.backward %></button>
                 </div>
                 <div class="col-md-4 text-center">
                     <button id="playpause" class="btn btn-primary">
                         <i class="fa fa-play" aria-hidden="true"></i>
-                        Lecture/Pause</button>
+                        <%= lang.pages.playPause %></button>
                 </div>
                 <div class="col-md-4 text-center">
                     <button id="forward" class="btn btn-primary">
                         <i class="fa fa-forward" aria-hidden="true"></i>
-                        Avancer</button>
+                        <%= lang.pages.forward %></button>
                 </div>
 
             </div>
@@ -41,31 +41,31 @@
 
             <!-- ADD MUSIC -->
             <div class="row">
-                <h1>Ajouter une musique</h1>
+                <h1><%= lang.pages.addMusic %></h1>
                 <div class="form-group">
-                    <label>URL:</label>
-                    <input type="url" class="form-control" name="url" id="url" placeholder="Lien deezer, spotify, youtube ou soundcloud" required/>
+                    <label><%= lang.pages.URL %></label>
+                    <input type="url" class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLPlaceholder %>" required/>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-primary" id="add">Ajouter</button>
+                    <button class="btn btn-primary" id="add"><%= lang.pages.add %></button>
                 </div>
             </div>
 
             <div class="row">
                 <!-- DOWNLOAD MUSICS -->
                 <div class="col-md-6">
-                    <h1>Télécharger la playlist</h1>
+                    <h1><%= lang.pages.downloadPlaylist %></h1>
                     <div class="form-group">
                         <h2>WIP</h2>
-                        <button class="btn btn-primary" disabled>Télécharger</button>
+                        <button class="btn btn-primary" disabled><%= lang.pages.download %></button>
                     </div>
                 </div>
 
                 <!-- REMOVE PLAYLIST -->
                 <div class="col-md-6">
-                    <h1>Supprimer la playlist</h1>
+                    <h1><%= lang.pages.deletePlaylist %></h1>
                     <div class="form-group">
-                        <button id="del" class="btn btn-primary">Supprimer</button>
+                        <button id="del" class="btn btn-primary"><%= lang.pages.delete %></button>
                     </div>
                 </div>
             </div>

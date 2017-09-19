@@ -14,7 +14,7 @@
 
                 <h1>
                     <span class="fa fa-user"></span>
-                    Créer un compte
+                    <%= lang.pages.createAccount %>
                 </h1>
 
                 <% if (message.length > 0) { %>
@@ -26,25 +26,24 @@
                 <!-- LOGIN FORM -->
                 <form action="/connect/local" method="post">
                     <div class="form-group">
-                        <label>Nom d'utilisateur</label>
+                        <label><%= lang.pages.username %></label>
                         <input type="text" class="form-control" name="username">
                     </div>
                     <div class="form-group">
-                        <label>Mot de passe</label>
+                        <label><%= lang.pages.password %></label>
                         <input type="password" class="form-control" name="password">
                     </div>
 
-                    <button type="submit" class="btn btn-warning btn-lg">Créer le compte</button>
+                    <button type="submit" class="btn btn-warning btn-lg"><%= lang.pages.createAccount %></button>
                 </form>
 
                 <hr>
 
                 <p>
-                    <a href="/profile">Retourner au profil</a>
+                    <a href="/profile"><%= lang.pages.backToProfile %></a>
                 </p>
 
             </div>
         </div>
     </body>
-
 </html>

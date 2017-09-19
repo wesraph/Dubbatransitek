@@ -1,11 +1,10 @@
 //load all the thing we need
-var io = require('socket.io');
 var alltomp3 = require('alltomp3');
 
 // load up the playlist model
 var Playlist = require('../app/models/playlist');
 
-module.exports = function(server) {
+module.exports = function(io, lang) {
 
     // -------------------------------------------------------------------------
     // Function
@@ -70,7 +69,7 @@ module.exports = function(server) {
 
     // Add
 
-    function addSong(playlistName, url, callback, progress) {
+    function addSong(playlistName, url, userId, callback, progress) {
         downloadSong(url, function(file, infos) {
             if (!infos)
                 return callback(false);
@@ -78,12 +77,13 @@ module.exports = function(server) {
             Playlist.update({
                 name: playlistName
             }, {
-                $push: {
+                $addToSet: {
                     musics: {
                         url: url,
                         file: file,
                         infos: infos
-                    }
+                    },
+                    contributor_id: userId
                 }
             }, function(err) {
                 if (err) {
@@ -98,16 +98,26 @@ module.exports = function(server) {
         });
     }
 
-    function addSongs(playlistName, url, callback, progress) {
+    function addSongs(playlistName, url, userId, callback, progress) {
         downloadSongs(url, function(array) {
             if (!array)
                 return callback(false);
+
+            Playlist.update({
+                name: playlistName
+            }, {
+                $addToSet: {
+                    contributor_id: userId
+                }
+            }, function(err) {
+
+            });
 
             for (var elem in array) {
                 Playlist.update({
                     name: playlistName
                 }, {
-                    $push: {
+                    $addToSet: {
                         musics: {
                             url: url,
                             file: elem.file,
@@ -116,7 +126,6 @@ module.exports = function(server) {
                     }
                 }, function(err) {
                     if (err) {
-                        console.log(err);
                         return callback(false);
                     }
                 });
@@ -128,10 +137,11 @@ module.exports = function(server) {
         });
     }
 
-    function addPlaylist(name, tag, url, callback, progress) {
+    function addPlaylist(name, tag, url, userId, callback, progress) {
         var newPlaylist = new Playlist();
         newPlaylist.name = name;
         newPlaylist.tag = tag.replace(/ ,|, /g, ',').split(',');
+        newPlaylist.author_id = userId;
 
         if (url) {
             switch (getUrlType(url)) {
@@ -208,33 +218,52 @@ module.exports = function(server) {
 
     // Remove
 
-    function removePlaylist(name, callback) {
-        Playlist.remove({
-            name: name
-        }, function(err) {
-            if (err) {
-                console.log(err);
-                return callback(false);
-            }
+    function removePlaylist(playlistName, userId, callback) {
+        Playlist.find({
+            name: playlistName
+        }, function(err, result) {
+            if (err)
+                return callback(false, lang.playlist.errorDeletingPlaylist);
 
-            return callback(true);
+            if (result[0].author_id != userId)
+                return callback(false, lang.playlist.notOwner);
+
+            Playlist.remove({
+                name: playlistName
+            }, function(err) {
+                if (err) {
+                    console.log(err);
+                    return callback(false, lang.playlist.errorDeletingPlaylist);
+                }
+
+                return callback(true);
+            });
         });
     }
 
-    function removeSong(playlistName, info, callback) {
-        Playlist.update({
+    function removeSong(playlistName, info, userId, callback) {
+        Playlist.find({
             name: playlistName
-        }, {
-            $pull: {
-                musics: info
-            }
-        }, function(err) {
-            if (err) {
-                console.log(err);
-                return callback(false);
-            }
+        }, function(err, result) {
+            if (err)
+                return callback(false, lang.playlist.errorDeletingPlaylist);
 
-            return callback(true);
+            if (result[0].author_id != userId)
+                return callback(false, lang.playlist.notOwner);
+
+            Playlist.update({
+                name: playlistName
+            }, {
+                $pull: {
+                    musics: info
+                }
+            }, function(err) {
+                if (err) {
+                    return callback(false, lang.playlist.errorDeletingMusic);
+                }
+
+                return callback(true);
+            });
         });
     }
 
@@ -268,54 +297,58 @@ module.exports = function(server) {
         var urls;
 
         dl.on('search-end', function() {
-            socket.emit('wait', 'Fin de la recherche');
+            socket.emit('wait', lang.playlist.searchEnd);
         });
         dl.on('download', function(infos) {
             if (infos.progress)
-                socket.emit('wait', 'Téléchargement en cours: ' + Math.round(infos.progress) + '%');
+                socket.emit('wait', lang.playlist.download.replace('%d', Math.round(infos.progress)));
             else
-                socket.emit('wait', 'Téléchargement n°' + (infos + 1).toString() + ': ' + Math.round(urls.items[infos].progress.download.progress) + '%');
+                socket.emit('wait', lang.playlist.downloads.replace('%d', (infos + 1)).replace('%d', Math.round(urls.items[infos].progress.download.progress)));
         });
         dl.on('download-end', function() {
-            socket.emit('wait', 'Fin du téléchargement');
+            socket.emit('wait', lang.playlist.downloadEnd);
         });
         dl.on('convert', function(infos) {
             if (infos.progress)
-                socket.emit('wait', 'Conversion en cours: ' + Math.round(infos.progress) + '%');
+                socket.emit('wait', lang.playlist.convert.replace('%d', Math.round(infos.progress)));
             else
-                socket.emit('wait', 'Conversion n°' + (infos + 1).toString() + ': ' + Math.round(urls.items[infos].progress.convert.progress) + '%');
+                socket.emit('wait', lang.playlist.converts.replace('%d', (infos + 1)).replace('%d', Math.round(urls.items[infos].progress.convert.progress)));
         });
         dl.on('convert-end', function() {
-            socket.emit('wait', 'Fin de la conversion');
+            socket.emit('wait', lang.playlist.convertEnd);
         });
         dl.on('begin-url', function(index) {
-            socket.emit('wait', 'Lancement de la musique n°' + (index + 1).toString());
+            socket.emit('wait', lang.playlist.beginUrl.replace('%d', index + 1));
         });
         dl.on('end-url', function(index) {
-            socket.emit('wait', 'Fin de la musique n°' + (index + 1).toString());
+            socket.emit('wait', lang.playlist.beginUrl.replace('%d', index + 1));
         });
         dl.on('end', function() {
-            socket.emit('wait', 'C\'est fini !', true);
+            socket.emit('wait', lang.playlist.end, true);
         });
         dl.on('playlist-infos', function(urlss) {
             urls = urlss;
         });
     }
 
-    function playlistCreationChecker(name, callback) {
+    function playlistCreationChecker(name, userID, callback) {
         if (name == null) {
-            return callback(false, 'Un nom est obligatoire pour créer une playlist');
+            return callback(false, lang.playlist.noPlaylistName);
+        }
+
+        if (userID == null) {
+            return callback(false, lang.playlist.sessionExpired);
         }
 
         Playlist.find({
             name: name
         }, function(err, pl) {
             if (err) {
-                return callback(false, 'Erreur lors de la vérification (pour voir si la playlist existe déjà)');
+                return callback(false, lang.playlist.errorDB);
             }
 
             if (pl.length) {
-                return callback(false, 'Erreur, une playlist avec ce nom existe déjà');
+                return callback(false, lang.playlist.playlistNameAlreadyTaken);
             } else {
                 callback(true);
             }
@@ -325,7 +358,7 @@ module.exports = function(server) {
     // -------------------------------------------------------------------------
     // Not function
     // -------------------------------------------------------------------------
-    io(server).on('connection', function(socket) {
+    io.on('connection', function(socket) {
         socket.on('getPlaylistsNames', function() {
             getPlaylistsNames(function(names) {
                 socket.emit('playlistsNames', names);
@@ -340,20 +373,19 @@ module.exports = function(server) {
         });
 
         socket.on('addPlaylist', function(name, tag, url) {
-            playlistCreationChecker(name, function(canCreate, msg) {
+            playlistCreationChecker(name, socket.request.session.passport.user, function(canCreate, msg) {
                 if (!canCreate) {
-                    socket.emit('fail', msg);
-                    return false;
+                    return socket.emit('fail', msg);
                 }
 
-                addPlaylist(name, tag, url, function(success) {
+                addPlaylist(name, tag, url, socket.request.session.passport.user, function(success) {
                     if (!success)
-                        return socket.emit('fail', 'Impossible de créer la playlist');
+                        return socket.emit('fail', lang.playlist.errorCreatingPlaylist);
 
                     getPlaylistsNames(function(names) {
                         socket.emit('playlistsNames', names);
                     });
-                    return socket.emit('success', 'Playlist créée !');
+                    return socket.emit('success', lang.playlist.successfullyCreatedPlaylist);
                 }, function(dl) {
                     progressMessages(dl, socket);
                 });
@@ -361,18 +393,22 @@ module.exports = function(server) {
         });
 
         socket.on('addSong', function(playlistName, url) {
+            if (!socket.request.session.passport.user) {
+                return socket.emit('fail', lang.playlist.sessionExpired);
+            }
+
             switch (getUrlType(url)) {
                 case 'youtube':
                 case 'soundcloud':
-                    addSong(playlistName, url, function(success) {
+                    addSong(playlistName, url, socket.request.session.passport.user, function(success) {
                         if (!success)
-                            return socket.emit('fail', 'Impossible d\'ajouter la musique');
+                            return socket.emit('fail', lang.playlist.errorAddingMusic);
 
                         getSongs(playlistName, function(infos) {
                             socket.emit('songs', infos);
                         });
 
-                        return socket.emit('success', 'Musique ajouté !');
+                        return socket.emit('success', lang.playlist.successfullyAddedMusic);
 
                     }, function(dl) {
                         progressMessages(dl, socket);
@@ -382,41 +418,47 @@ module.exports = function(server) {
                 case 'youtube playlist':
                 case 'spotify playlist':
                 case 'deezer playlist':
-                    addSongs(playlistName, url, function(success) {
+                    addSongs(playlistName, url, socket.request.session.passport.user, function(success) {
                         if (!success)
-                            return socket.emit('fail', 'Impossible d\'importer la playlist');
+                            return socket.emit('fail', lang.playlist.errorImportingPlaylist);
 
                         getSongs(playlistName, function(infos) {
                             socket.emit('songs', infos);
                         });
 
-                        return socket.emit('success', 'Playlist importé !');
+                        return socket.emit('success', lang.playlist.successfullyImportedPlaylist);
 
                     }, function(dl) {
                         progressMessages(dl, socket);
                     });
                     break;
                 default:
-                    socket.emit('fail', 'Impossible d\'importer la playlist !');
+                    socket.emit('fail', lang.playlist.errorAddingMusic);
                     return;
             }
         });
 
         socket.on('removePlaylist', function(name, tag, url) {
-            removePlaylist(name, function(success) {
+            if (!socket.request.session.passport.user)
+                return socket.emit('fail', lang.playlist.sessionExpired);
+
+            removePlaylist(name, socket.request.session.passport.user, function(success, msg) {
                 if (success)
-                    socket.emit('success', 'Playlist supprimée !');
+                    socket.emit('success', lang.playlist.successfullyDeletedPlaylist);
                 else
-                    socket.emit('fail', 'Impossible de supprimer la playlist');
+                    socket.emit('fail', msg);
             });
         });
 
         socket.on('removeSong', function(info) {
-            removeSong(info, function(success) {
+            if (!socket.request.session.passport.user)
+                return socket.emit('fail', lang.playlist.sessionExpired);
+
+            removeSong(info, socket.request.session.passport.user, function(success, msg) {
                 if (success)
-                    socket.emit('success', 'Musique supprimée !');
+                    socket.emit('success', lang.playlist.successfullyDeletedMusic);
                 else
-                    socket.emit('fail', 'Impossible de supprimer la musique');
+                    socket.emit('fail', msg);
             })
         })
     });

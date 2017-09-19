@@ -9,10 +9,31 @@ Dubbatransitek is a collaborative musical platform. It allow you to import playl
 To run dubbatransitek, you need node and npm ([nvm](https://github.com/creationix/nvm) use is recommended). It is tested on npm 5.3.0 and node 8.4.0.
 You'll also need python to run eyeD3.
 
- - ffmpeg >= 2.8 with lamemp3
- - eyeD3 >= 0.7.10
+ - ffmpeg >= 2.8 with lamemp3, best way: remove ffmpeg and build it from source
+```
+apt-get remove ffmpeg    
+apt-get update
+apt-get install libx264-106 libx264-dev x264 subversion
+su -
+svn checkout svn://svn.ffmpeg.org/ffmpeg/trunk ffmpeg
+cd ffmpeg
+./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxvid --enable-x11grab
+make
+make install
+```
+ - eyeD3 >= 0.7.10 (https://eyed3.readthedocs.io/en/latest/installation.html)
+```
+apt-get install python
+wget http://eyed3.nicfit.net/releases/eyeD3-0.8.1.tar.gz
+tar xzf eyeD3-0.8.1.tar.gz
+cd eyeD3-0.8.1
+python setup.py install
+```
  - node-acoutstid requirements (https://github.com/parshap/node-acoustid#installation - https://acoustid.org/chromaprint)
- - mongodb
+```
+apt-get install libchromaprint-tools
+```
+ - mongodb (https://docs.mongodb.com/manual/installation/)
 
 If you would like to use Youtube, Soundcloud, Spotify or Deezer authentification, you will also need to register a new app on website, and edit the auth-default.js file
 
@@ -41,13 +62,12 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
 
 ### Versioning
  - **0.0.1:** first working version
+ - **0.0.2:** added permission (user not able to remove playlist or songs from another user playlists), lang file is also added (./lang/fr_FR.json) feel free to translate ! :)
 
-###TODO
- - permission
+### TODO
  - spotify and deezer track
  - advanced playlist research
  - playlist zip download
- - lang file
  - ...
 
 ### Tip

@@ -10,7 +10,7 @@
 
                 <h1>
                     <span class="fa fa-sign-in"></span>
-                    Inscription
+                    <%= lang.pages.signUp %>
                 </h1>
 
                 <% if (message.length > 0) { %>
@@ -20,24 +20,24 @@
                 <!-- LOGIN FORM -->
                 <form action="/signup" method="post">
                     <div class="form-group">
-                        <label>Nom d'utilisateur</label>
+                        <label><%= lang.pages.username %></label>
                         <input type="text" class="form-control" name="username">
                     </div>
                     <div class="form-group">
-                        <label>Mot de passe</label>
+                        <label><%= lang.pages.password %></label>
                         <input type="password" class="form-control" name="password">
                     </div>
 
-                    <button type="submit" class="btn btn-warning btn-lg">S'inscrire</button>
+                    <button type="submit" class="btn btn-warning btn-lg"><%= lang.pages.signUp %></button>
                 </form>
 
                 <hr>
 
-                <p>Déjà inscrit ?
-                    <a href="/login">Se connecter</a>
+                <p><%= lang.pages.alreadySignUp %>
+                    <a href="/login"><%= lang.pages.logIn %></a>
                 </p>
-                <p>Ou allez à
-                    <a href="/">l'accueil</a>.
+                <p><%= lang.pages.orGoTo %>
+                    <a href="/"><%= lang.pages.home %></a>.
                 </p>
 
             </div>

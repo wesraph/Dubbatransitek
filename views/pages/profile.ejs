@@ -14,8 +14,8 @@
             <div class="page-header text-center">
                 <h1>
                     <span class="fa fa-anchor"></span>
-                    Mon profil</h1>
-                <a href="/logout" class="btn btn-default btn-sm">Se deconnecter</a>
+                    <%= lang.pages.myProfile %></h1>
+                <a href="/logout" class="btn btn-default btn-sm"><%= lang.pages.logOff %></a>
             </div>
 
             <div class="row">
@@ -25,22 +25,22 @@
                     <div class="well">
                         <h3>
                             <span class="fa fa-user"></span>
-                            Compte dubbatransitek
+                            <%= lang.pages.account %> dubbatransitek
                         </h3>
 
                         <% if (user.local.username) { %>
                             <p>
-                                <strong>Id</strong>:
+                                <strong><%= lang.pages.ID %></strong>:
                                 <%= user._id %><br>
-                                <strong>Nom d utilisateur</strong>:
+                                <strong><%= lang.pages.username %></strong>:
                                 <%= user.local.username %><br>
-                                <strong>Mot de passe</strong>:
+                                <strong><%= lang.pages.password %></strong>:
                                 <%= user.local.password %>
                             </p>
 
-                            <a href="/unlink/local" class="btn btn-default">Délier</a>
+                            <a href="/unlink/local" class="btn btn-default"><%= lang.pages.unlink %></a>
                         <% } else { %>
-                            <a href="/connect/local" class="btn btn-default">Lier un compte</a>
+                            <a href="/connect/local" class="btn btn-default"><%= lang.pages.link %></a>
                         <% } %>
 
                     </div>
@@ -56,21 +56,21 @@
                         <!-- check if the user has this token (is the user authenticated with this social account) -->
                         <% if (user.spotify.token) { %>
                             <p>
-                                <strong>Id</strong>:
+                                <strong><%= lang.pages.ID %></strong>:
                                 <%= user.spotify.id %><br>
-                                <strong>Jeton</strong>:
+                                <strong><%= lang.pages.token %></strong>:
                                 <%= user.spotify.token %><br>
-                                <strong>Utilisateur</strong>:
+                                <strong><%= lang.pages.username %></strong>:
                                 <%= user.spotify.username %><br>
-                                <strong>Email</strong>:
+                                <strong><%= lang.pages.email %></strong>:
                                 <%= user.spotify.email %><br>
-                                <strong>Profile Spotify</strong>:
+                                <strong><%= lang.pages.myProfile %> Spotify</strong>:
                                 <%= user.spotify.profileUrl %>
                             </p>
 
-                            <a href="/unlink/spotify" class="btn btn-success">Délier</a>
+                            <a href="/unlink/spotify" class="btn btn-success"><%= lang.pages.unlink %></a>
                         <% } else { %>
-                            <a href="/connect/spotify" class="btn btn-success">Lier Spotify</a>
+                            <a href="/connect/spotify" class="btn btn-success"><%= lang.pages.link %> Spotify</a>
                         <% } %>
 
                     </div>
@@ -87,21 +87,21 @@
 
                         <% if (user.deezer.token) { %>
                             <p>
-                                <strong>Id</strong>:
+                                <strong><%= lang.pages.ID %></strong>:
                                 <%= user.deezer.id %><br>
-                                <strong>Jeton</strong>:
+                                <strong><%= lang.pages.token %></strong>:
                                 <%= user.deezer.token %><br>
-                                <strong>Utilisateur</strong>:
+                                <strong><%= lang.pages.username %></strong>:
                                 <%= user.deezer.username %><br>
-                                <strong>Email</strong>:
+                                <strong><%= lang.pages.email %></strong>:
                                 <%= user.deezer.email %><br>
-                                <strong>Profile Deezer</strong>:
+                                <strong><%= lang.pages.myProfile %> Deezer</strong>:
                                 <%= user.deezer.profileUrl %>
                             </p>
 
-                            <a href="/unlink/deezer" class="btn btn-default">Délier</a>
+                            <a href="/unlink/deezer" class="btn btn-default"><%= lang.pages.unlink %></a>
                         <% } else { %>
-                            <a href="/connect/deezer" class="btn btn-default">Lier Deezer</a>
+                            <a href="/connect/deezer" class="btn btn-default"><%= lang.pages.link %> Deezer</a>
                         <% } %>
 
                     </div>
@@ -116,17 +116,17 @@
 
                         <% if (user.youtube.token) { %>
                             <p>
-                                <strong>Id</strong>:
+                                <strong><%= lang.pages.ID %></strong>:
                                 <%= user.youtube.id %><br>
-                                <strong>Jeton</strong>:
+                                <strong><%= lang.pages.token %></strong>:
                                 <%= user.youtube.token %><br>
-                                <strong>Nom</strong>:
+                                <strong><%= lang.pages.nom %></strong>:
                                 <%= user.youtube.displayName %>
                             </p>
 
-                            <a href="/unlink/youtube" class="btn btn-danger">Délier</a>
+                            <a href="/unlink/youtube" class="btn btn-danger"><%= lang.pages.unlink %></a>
                         <% } else { %>
-                            <a href="/connect/youtube" class="btn btn-danger">Lier Youtube</a>
+                            <a href="/connect/youtube" class="btn btn-danger"><%= lang.pages.link %> Youtube</a>
                         <% } %>
 
                     </div>

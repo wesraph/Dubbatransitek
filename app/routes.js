@@ -1,4 +1,4 @@
-module.exports = function(app, passport) {
+module.exports = function(app, passport, lang) {
 
     // normal routes ===============================================================
 
@@ -9,18 +9,23 @@ module.exports = function(app, passport) {
 
         res.redirect('/playlists');
     }, function(req, res) {
-        res.render('pages/index.ejs');
+        res.render('pages/index.ejs', {
+            lang: lang
+        });
     });
 
     // PLAYLIST SECTION ========================
     app.get('/playlists', isLoggedIn, function(req, res) {
-        res.render('pages/playlists.ejs');
+        res.render('pages/playlists.ejs', {
+          lang: lang
+        });
     });
 
     app.get('/musics/', isLoggedIn, function(req, res) {
         if (req.query.name)
             res.render('pages/musics.ejs', {
-                name: req.query.name
+                name: req.query.name,
+                lang: lang
             });
         else
             res.redirect('/playlists');
@@ -29,7 +34,8 @@ module.exports = function(app, passport) {
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
         res.render('pages/profile.ejs', {
-            user: req.user
+            user: req.user,
+            lang: lang
         });
     });
 
@@ -48,7 +54,8 @@ module.exports = function(app, passport) {
     // show the login form
     app.get('/login', function(req, res) {
         res.render('pages/login.ejs', {
-            message: req.flash('loginMessage')
+            message: req.flash('loginMessage'),
+            lang: lang
         });
     });
 
@@ -63,7 +70,8 @@ module.exports = function(app, passport) {
     // show the signup form
     app.get('/signup', function(req, res) {
         res.render('pages/signup.ejs', {
-            message: req.flash('signupMessage')
+            message: req.flash('signupMessage'),
+            lang: lang
         });
     });
 
@@ -118,7 +126,8 @@ module.exports = function(app, passport) {
     // locally --------------------------------
     app.get('/connect/local', function(req, res) {
         res.render('pages/connect-local.ejs', {
-            message: req.flash('loginMessage')
+            message: req.flash('loginMessage'),
+            lang: lang
         });
     });
 

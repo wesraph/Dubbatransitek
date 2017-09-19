@@ -15,13 +15,23 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
+var lang = require('./lang/fr_FR');
+
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
-require('./config/passport')(passport); // pass passport for configuration
-require('./config/playlist')(server); //
+require('./config/passport')(passport, lang); // pass passport for configuration
+
+// Set up the Session middleware using a MongoDB session store
+var sessionMiddleware = session({
+    name: "dubbatransitek",
+    secret: "uhhhmdonuts",
+    store: require('mongoose-session')(mongoose),
+    resave: true,
+    saveUninitialized: true
+})
 
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
@@ -34,19 +44,19 @@ app.use(bodyParser.urlencoded({
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
-app.use(session({
-    secret: 'uhhhmdonuts', // session secret
-    resave: true,
-    saveUninitialized: true
-}));
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 app.use('/public', express.static('public'));
-
+var io = require('socket.io')(server).use(function(socket, next) {
+    // Wrap the express middleware
+    sessionMiddleware(socket.request, {}, next);
+})
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport, lang); // load our routes and pass in our app and fully configured passport
+require('./config/playlist')(io, lang); // playlist things
 
 // launch ======================================================================
 server.listen(port);

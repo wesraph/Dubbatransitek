@@ -11,7 +11,7 @@ var User = require('../app/models/user');
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
 
-module.exports = function(passport) {
+module.exports = function(passport, lang) {
 
     // =========================================================================
     // passport session setup ==================================================
@@ -55,10 +55,10 @@ module.exports = function(passport) {
 
                     // if no user is found, return the message
                     if (!user)
-                        return done(null, false, req.flash('loginMessage', 'Aucun utilisateur trouvé.'));
+                        return done(null, false, req.flash('loginMessage', lang.passport.noUserFound));
 
                     if (!user.validPassword(password))
-                        return done(null, false, req.flash('loginMessage', 'OOops mauvais mot de passe. Je te conseille Keeweb pour gérer tes mots de passes'));
+                        return done(null, false, req.flash('loginMessage', lang.passport.wrongPassword));
 
                     // all is well, return user
                     else
@@ -94,7 +94,7 @@ module.exports = function(passport) {
 
                         // check to see if theres already a user with that username
                         if (user) {
-                            return done(null, false, req.flash('signupMessage', 'Ce nom d\'utilisateur est déjà pris.'));
+                            return done(null, false, req.flash('signupMessage', lang.passport.usernameAlreadyTaken));
                         } else {
 
                             // create the user
@@ -123,7 +123,7 @@ module.exports = function(passport) {
                             return done(err);
 
                         if (user) {
-                            return done(null, false, req.flash('loginMessage', 'Cette adresse mail est déjà prise.'));
+                            return done(null, false, req.flash('loginMessage', lang.passport.usernameAlreadyTaken));
                             // Using 'loginMessage instead of signupMessage because it's used by /connect/local'
                         } else {
                             var user = req.user;
