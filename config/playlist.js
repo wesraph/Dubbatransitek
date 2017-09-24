@@ -4,6 +4,12 @@ var alltomp3 = require('alltomp3');
 // load up the playlist model
 var Playlist = require('../app/models/playlist');
 
+var fs = require('fs');
+var path = require('path');
+
+// The zip library needs to be instantiated:
+var nzip = require('node-zip');
+
 module.exports = function(io, lang) {
 
     // -------------------------------------------------------------------------
@@ -12,19 +18,23 @@ module.exports = function(io, lang) {
 
     // Get
 
-    function getPlaylistsNames(callback) {
-        Playlist.find({}, {
-            name: 1
+    function getAllPlaylists(callback) {
+        Playlist.find({}, function(err, result) {
+            if (err)
+                return;
+
+            return callback(result);
+        });
+    }
+
+    function getMyPlaylists(userId, callback) {
+        Playlist.find({
+            author_id: userId
         }, function(err, result) {
             if (err)
                 return;
 
-            var names = [];
-            for (var i = 0; i < result.length; i++) {
-                names.push(result[i].name);
-            }
-
-            return callback(names);
+            return callback(result);
         });
     }
 
@@ -255,8 +265,12 @@ module.exports = function(io, lang) {
                 name: playlistName
             }, {
                 $pull: {
-                    musics: info
+                    musics: {
+                        _id: info._id
+                    }
                 }
+            }, {
+                safe: true
             }, function(err) {
                 if (err) {
                     return callback(false, lang.playlist.errorDeletingMusic);
@@ -291,6 +305,26 @@ module.exports = function(io, lang) {
         progress(dl);
     }
 
+    function downloadPlaylist(name, callback) {
+        getSongs(name, function(res) {
+            if (!res)
+                callback(false);
+
+            zip = new nzip();
+            for (var i = 0; i < res.length; i++) {
+                zip.file(res[i].file.split('/').pop(), fs.readFileSync(res[i].file));
+            }
+
+            var data = zip.generate({
+                base64: false,
+                compression: 'DEFLATE'
+            });
+
+            // it's important to use *binary* encode
+            fs.writeFileSync('./public/playlists/' + name + '.zip', data, 'binary');
+            callback(true);
+        });
+    }
     // UI
 
     function progressMessages(dl, socket) {
@@ -359,17 +393,39 @@ module.exports = function(io, lang) {
     // Not function
     // -------------------------------------------------------------------------
     io.on('connection', function(socket) {
-        socket.on('getPlaylistsNames', function() {
-            getPlaylistsNames(function(names) {
-                socket.emit('playlistsNames', names);
+        socket.on('getAllPlaylists', function() {
+            getAllPlaylists(function(pl) {
+                socket.emit('allPlaylists', pl);
+            });
+        });
+
+        socket.on('getMyPlaylists', function() {
+            if (!socket.request.session.passport.user) {
+                return socket.emit('fail', lang.playlist.sessionExpired);
+            }
+
+            getMyPlaylists(socket.request.session.passport.user, function(pl) {
+                socket.emit('myPlaylists', pl);
             });
         });
 
         socket.on('getSongs', function(name) {
             getSongs(name, function(infos) {
                 if (infos)
-                    socket.emit('songs', infos);
-            })
+                    socket.emit('songs(' + name + ')', infos);
+            });
+        });
+
+        socket.on('downloadPlaylist', function(name) {
+            socket.emit('wait', lang.playlist.waitUntilDownloadReady);
+            downloadPlaylist(name, function(success) {
+                socket.emit('wait', lang.playlist.waitUntilDownloadReady, true);
+                if (success) {
+                    socket.emit('success', lang.playlist.downloadReady);
+                    socket.emit('downloadReady');
+                } else
+                    socket.emit('fail', lang.playlist.downloadFail);
+            });
         });
 
         socket.on('addPlaylist', function(name, tag, url) {
@@ -382,8 +438,8 @@ module.exports = function(io, lang) {
                     if (!success)
                         return socket.emit('fail', lang.playlist.errorCreatingPlaylist);
 
-                    getPlaylistsNames(function(names) {
-                        socket.emit('playlistsNames', names);
+                    getMyPlaylists(socket.request.session.passport.user, function(pl) {
+                        socket.emit('myPlaylists', pl);
                     });
                     return socket.emit('success', lang.playlist.successfullyCreatedPlaylist);
                 }, function(dl) {
@@ -405,7 +461,8 @@ module.exports = function(io, lang) {
                             return socket.emit('fail', lang.playlist.errorAddingMusic);
 
                         getSongs(playlistName, function(infos) {
-                            socket.emit('songs', infos);
+                            socket.emit('songs(' + playlistName + ')', infos);
+                            socket.broadcast.emit('songs(' + playlistName + ')', infos);
                         });
 
                         return socket.emit('success', lang.playlist.successfullyAddedMusic);
@@ -423,7 +480,8 @@ module.exports = function(io, lang) {
                             return socket.emit('fail', lang.playlist.errorImportingPlaylist);
 
                         getSongs(playlistName, function(infos) {
-                            socket.emit('songs', infos);
+                            socket.emit('songs(' + playlistName + ')', infos);
+                            socket.broadcast.emit('songs(' + playlistName + ')', infos);
                         });
 
                         return socket.emit('success', lang.playlist.successfullyImportedPlaylist);
@@ -450,16 +508,22 @@ module.exports = function(io, lang) {
             });
         });
 
-        socket.on('removeSong', function(info) {
+        socket.on('removeSong', function(playlistName, info) {
             if (!socket.request.session.passport.user)
                 return socket.emit('fail', lang.playlist.sessionExpired);
 
-            removeSong(info, socket.request.session.passport.user, function(success, msg) {
-                if (success)
+            removeSong(playlistName, info, socket.request.session.passport.user, function(success, msg) {
+                if (success) {
                     socket.emit('success', lang.playlist.successfullyDeletedMusic);
-                else
+                    getSongs(playlistName, function(infos) {
+                        if (infos) {
+                            socket.emit('songs(' + playlistName + ')', infos);
+                            socket.broadcast.emit('songs(' + playlistName + ')', infos);
+                        }
+                    });
+                } else
                     socket.emit('fail', msg);
             })
-        })
+        });
     });
 };

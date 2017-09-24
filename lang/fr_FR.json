@@ -12,7 +12,7 @@
     "convert": "Conversion en cours: %d%",
     "converts": "Conversion n°%d: %d%",
     "convertEnd": "Fin de la conversion",
-    "benginUrl": "Lancement de la musique n°%d",
+    "beginUrl": "Lancement de la musique n°%d",
     "endUrl": "Fin de la musique n°%d",
     "end": "C'est fini !",
     "noPlaylistName": "Un nom est obligatoire pour créer une playlist",
@@ -29,7 +29,10 @@
     "successfullyDeletedMusic": "Musique supprimée !",
     "errorDeletingMusic": "Impossible de supprimer la musique",
     "sessionExpired": "Votre session a expiré",
-    "notOwner": "Vous n'êtes pas le propriétaire de la playlist"
+    "notOwner": "Vous n'êtes pas le propriétaire de la playlist",
+    "downloadReady": "Le téléchargement est pret !",
+    "downloadFail": "Impossible de télécharger la playlist",
+    "waitUntilDownloadReady": "Création de l'archive en cours"
   },
   "pages": {
     "createAccount": "Créer un compte",
@@ -73,7 +76,15 @@
     "email": "Email",
     "name": "Nom",
     "alreadySignUp": "Déjà inscrit ?",
-    "playlist": "Playlist",
-    "chooseYouConnectionMode": "Choisir son mode de connexion/inscription:"
+    "allPlaylists": "Toutes les Playlists",
+    "myPlaylists": "Mes Playlists",
+    "chooseYouConnectionMode": "Choisir son mode de connexion/inscription:",
+    "tagTitle": "Tags",
+    "author": "Auteurs",
+    "contributor": "Contributeur",
+    "musicNb": "# de musique",
+    "advancedSearch": "Recherche avancée",
+    "next": "Suivant",
+    "previous": "Précédent"
   }
 }

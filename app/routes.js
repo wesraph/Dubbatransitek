@@ -7,7 +7,7 @@ module.exports = function(app, passport, lang) {
         if (!req.isAuthenticated())
             return next();
 
-        res.redirect('/playlists');
+        res.redirect('/myPlaylists');
     }, function(req, res) {
         res.render('pages/index.ejs', {
             lang: lang
@@ -15,9 +15,15 @@ module.exports = function(app, passport, lang) {
     });
 
     // PLAYLIST SECTION ========================
-    app.get('/playlists', isLoggedIn, function(req, res) {
-        res.render('pages/playlists.ejs', {
-          lang: lang
+    app.get('/myPlaylists', isLoggedIn, function(req, res) {
+        res.render('pages/myPlaylists.ejs', {
+            lang: lang
+        });
+    });
+
+    app.get('/allPlaylists', isLoggedIn, function(req, res) {
+        res.render('pages/allPlaylists.ejs', {
+            lang: lang
         });
     });
 

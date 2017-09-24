@@ -63,11 +63,11 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
 ### Versioning
  - **0.0.1:** first working version
  - **0.0.2:** added permission (user not able to remove playlist or songs from another user playlists), lang file is also added (./lang/fr_FR.json) feel free to translate ! :)
+ - **0.0.3:** switch from 'playlists' page to 'myPlaylists' and 'allPlaylists' pages (with a spotify style display on myPlaylists, allPlaylists design need to be redesign), add 10s fade transition while playback music, fix remove song buttons, add download Playlist, add next and previous button, minor fix, add sync when adding or removing song from a playlist (if you add/remove a song on a playlist, the playlist will update automaticaly on every open pages for all user, no need to refresh the page, can be usefull in party for example)
 
 ### TODO
  - spotify and deezer track
- - advanced playlist research
- - playlist zip download
+ - advanced playlist research (partially done)
  - ...
 
 ### Tip

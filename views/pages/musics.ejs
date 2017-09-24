@@ -1,164 +1,312 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Dubbatransitek</title>
-        <% include ../partials/head %>
-    </head>
-    <body>
-        <div class="container">
-            <header>
-                <% include ../partials/header %>
-            </header>
 
-            <div class="row">
-                <h1 class="text-center"><%= name %></h1>
-            </div>
-            <!-- DISPLAY MUSICS -->
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <button id="backward" class="btn btn-primary">
+<head>
+  <title>Dubbatransitek</title>
+  <% include ../partials/head %>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <% include ../partials/header %>
+    </header>
+
+    <div class="row">
+      <h1 class="text-center"><%= name %></h1>
+    </div>
+    <!-- DISPLAY MUSICS -->
+    <div class="row">
+      <div class="col-md-2 text-center">
+        <button id="previous" class="btn btn-primary">
+                        <i class="fa fa-step-backward" aria-hidden="true"></i>
+                        <%= lang.pages.previous %></button>
+      </div>
+      <div class="col-md-2 text-center">
+        <button id="backward" class="btn btn-primary">
                         <i class="fa fa-backward" aria-hidden="true"></i>
                         <%= lang.pages.backward %></button>
-                </div>
-                <div class="col-md-4 text-center">
-                    <button id="playpause" class="btn btn-primary">
+      </div>
+      <div class="col-md-4 text-center">
+        <button id="playpause" class="btn btn-primary">
                         <i class="fa fa-play" aria-hidden="true"></i>
                         <%= lang.pages.playPause %></button>
-                </div>
-                <div class="col-md-4 text-center">
-                    <button id="forward" class="btn btn-primary">
+      </div>
+      <div class="col-md-2 text-center">
+        <button id="forward" class="btn btn-primary">
                         <i class="fa fa-forward" aria-hidden="true"></i>
                         <%= lang.pages.forward %></button>
-                </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <button id="next" class="btn btn-primary">
+                        <i class="fa fa-step-forward" aria-hidden="true"></i>
+                        <%= lang.pages.next %></button>
+      </div>
 
-            </div>
-            <div class="row">
-                <div id="waveform"></div>
-            </div>
-            <div class="row">
-                <div class="list-group" id="songs"></div>
-            </div>
+    </div>
+    <div class="row col-md-12">
+      <div id="waveform1"></div>
+      <div id="waveform2"></div>
+    </div>
 
-            <!-- ADD MUSIC -->
-            <div class="row">
-                <h1><%= lang.pages.addMusic %></h1>
-                <div class="form-group">
-                    <label><%= lang.pages.URL %></label>
-                    <input type="url" class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLPlaceholder %>" required/>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-primary" id="add"><%= lang.pages.add %></button>
-                </div>
-            </div>
+    <div class="row col-md-12">
+      <div class="list-group" id="songs"></div>
+    </div>
 
-            <div class="row">
-                <!-- DOWNLOAD MUSICS -->
-                <div class="col-md-6">
-                    <h1><%= lang.pages.downloadPlaylist %></h1>
-                    <div class="form-group">
-                        <h2>WIP</h2>
-                        <button class="btn btn-primary" disabled><%= lang.pages.download %></button>
-                    </div>
-                </div>
+    <!-- ADD MUSIC -->
+    <div class="row col-md-12">
+      <h1><%= lang.pages.addMusic %></h1>
+      <div class="form-group">
+        <label><%= lang.pages.URL %></label>
+        <input type="url" class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLPlaceholder %>" required/>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" id="add"><%= lang.pages.add %></button>
+      </div>
+    </div>
 
-                <!-- REMOVE PLAYLIST -->
-                <div class="col-md-6">
-                    <h1><%= lang.pages.deletePlaylist %></h1>
-                    <div class="form-group">
-                        <button id="del" class="btn btn-primary"><%= lang.pages.delete %></button>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+      <!-- DOWNLOAD MUSICS -->
+      <div class="col-md-6">
+        <h1><%= lang.pages.downloadPlaylist %></h1>
+        <div class="form-group">
+          <button id="download" class="btn btn-primary"><%= lang.pages.download %></button>
         </div>
-    </body>
-    <footer>
-        <% include ../partials/notifJS %>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
-        <script>
-            // TODO: C vrmt pa bo, faudrait trouver un autre moyen plus stylé de le faire
-            var songsList = [];
-            var wavesurfer;
-            var currentSong;
+      </div>
 
-            socket.emit('getSongs', '<%= name %>');
+      <!-- REMOVE PLAYLIST -->
+      <div class="col-md-6">
+        <h1><%= lang.pages.deletePlaylist %></h1>
+        <div class="form-group">
+          <button id="del" class="btn btn-primary"><%= lang.pages.delete %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<footer>
+  <% include ../partials/notifJS %>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
+    <script>
+      // TODO: C vrmt pa bo, faudrait trouver un autre moyen plus stylé de le faire
+      var songsList = [];
+      var wavesurfer1;
+      var wavesurfer2;
+      var currentSong;
+      var fadeTime = 10;
+      var fc1 = true;
+      var fc2 = true;
 
-            socket.on('songs', function(infos) {
-                songsList = infos;
 
-                for (var i = 0; i < infos.length; i++) {
-                    if ($('#song' + i.toString()).length == 0) {
-                        var html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP" onClick="loadWave(' + i.toString() + ')">';
-                        if (songsList[i].infos.cover)
-                            html += '<img class="miniature" src="' + songsList[i].infos.cover + '">';
-                        html += infos[i].infos.title + ' - ' + infos[i].infos.artistName;
-                        html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
-                        html += '<a class="link btn btn-primary" href="' + infos[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
-                        html += '<a class="link btn btn-default" href="' + infos[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>'
-                        html += '</div>'
-                        $("#songs").append(html);
+      socket.emit('getSongs', '<%= name %>');
 
-                        if (i == 0) {
-                            $(document).ready(function() {
-                                loadWave(0);
-                            });
-                        }
-                    }
-                }
-            });
+      socket.on('songs(<%= name %>)', function(infos) {
+        songsList = infos;
+        $("#songs").empty();
 
-            function loadWave(id) {
-                if (currentSong == id)
-                    return;
+        for (var i = 0; i < infos.length; i++) {
+          var html;
 
-                if (currentSong != null)
-                    $('#song' + currentSong.toString()).removeClass('active');
-                $('#song' + id.toString()).addClass('active');
-                currentSong = id;
-                wavesurfer.load(songsList[id].file);
+          if (currentSong == i)
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP active" onClick="loadWave(' + i.toString() + ')">';
+          else
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP" onClick="loadWave(' + i.toString() + ')">';
+
+          if (songsList[i].infos.cover)
+            html += '<img class="miniature" src="' + songsList[i].infos.cover + '">';
+          html += infos[i].infos.title + ' - ' + infos[i].infos.artistName;
+          html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+          html += '<a class="link btn btn-primary" href="' + infos[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
+          html += '<a class="link btn btn-default" href="' + infos[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>'
+          html += '</div>'
+          $("#songs").append(html);
+        }
+      });
+
+      socket.on('downloadReady', function() {
+        window.location.replace('./public/playlists/<%= name %>.zip');
+      });
+
+      function deleteSong(id) {
+        //$('#song' + id.toString()).remove();
+        if (currentSong == id)
+          loadWave(id + 1);
+        socket.emit('removeSong', '<%= name %>', songsList[id]);
+      }
+
+      function loadWave(index) {
+        var id = index % songsList.length;
+        if (id < 0)
+          id = songsList.length + id;
+        if (currentSong == id)
+          return;
+
+        if (wavesurfer1.isPlaying())
+          wavesurfer1.pause();
+        if (wavesurfer2.isPlaying())
+          wavesurfer2.pause();
+
+        wavesurfer1.setVolume(1);
+        wavesurfer2.setVolume(1);
+        if (currentSong != null)
+          $('#song' + currentSong.toString()).removeClass('active');
+
+        $('#song' + id.toString()).addClass('active');
+        currentSong = id;
+        wavesurfer1.load(songsList[id].file);
+        //wavesurfer1.play();
+        wavesurfer1.on('ready', function() {
+          wavesurfer1.play();
+          wavesurfer1.un('ready');
+
+          var id = (currentSong + 1) % songsList.length;
+          wavesurfer2.load(songsList[id].file);
+        });
+        $('#waveform1').css('opacity', 1);
+        $('#waveform2').css('opacity', 0);
+      }
+
+      $(document).ready(function() {
+        wavesurfer1 = WaveSurfer.create({
+          container: '#waveform1',
+          waveColor: 'black',
+          progressColor: 'grey',
+          barWidth: 3
+        });
+
+        wavesurfer2 = WaveSurfer.create({
+          container: '#waveform2',
+          waveColor: 'black',
+          progressColor: 'grey',
+          barWidth: 3
+        });
+
+        //$('#waveform2').css('visibility', 'hidden');
+        $('#waveform2').css('opacity', 0);
+
+        wavesurfer1.on('audioprocess', function() {
+          if (wavesurfer1.getDuration() - wavesurfer1.getCurrentTime() <= fadeTime) {
+            if (fc1) {
+              wavesurfer2.play(0);
+              fc1 = false;
             }
+            wavesurfer1.setVolume((wavesurfer1.getDuration() - wavesurfer1.getCurrentTime()) / fadeTime);
+            $('#waveform1').css('opacity', (wavesurfer1.getDuration() - wavesurfer1.getCurrentTime()) / fadeTime);
+            wavesurfer2.setVolume(wavesurfer2.getCurrentTime() / fadeTime);
+            $('#waveform2').css('opacity', wavesurfer2.getCurrentTime() / fadeTime);
+          }
+        });
 
-            function deleteSong(id) {
-                $('#song' + id.toString()).remove();
-                socket.emit('removeSong', '<%= name %>', songsList[id]);
+        wavesurfer1.on('finish', function() {
+          fc1 = true;
+          wavesurfer1.setVolume(1);
+          wavesurfer2.setVolume(1);
+          $('#waveform1').css('opacity', 0);
+          $('#waveform2').css('opacity', 1);
+          if (currentSong != null)
+            $('#song' + currentSong.toString()).removeClass('active');
+
+          currentSong = (currentSong + 1) % songsList.length;
+          $('#song' + currentSong.toString()).addClass('active');
+          //$('#waveform1').css('visibility', 'hidden');
+          //$('#waveform2').css('visibility', 'visible');
+
+          var id = (currentSong + 1) % songsList.length;
+          wavesurfer1.load(songsList[id].file);
+        });
+
+        wavesurfer1.on('seek', function() {
+          $('#waveform1').css('opacity', 1);
+          $('#waveform2').css('opacity', 0);
+          wavesurfer2.pause();
+          wavesurfer1.setVolume(1);
+        });
+
+        wavesurfer2.on('audioprocess', function() {
+          if (wavesurfer2.getDuration() - wavesurfer2.getCurrentTime() <= fadeTime) {
+            if (fc2) {
+              wavesurfer1.play(0);
+              fc2 = false;
             }
+            wavesurfer2.setVolume((wavesurfer2.getDuration() - wavesurfer2.getCurrentTime()) / fadeTime);
+            $('#waveform2').css('opacity', (wavesurfer2.getDuration() - wavesurfer2.getCurrentTime()) / fadeTime);
+            wavesurfer1.setVolume(wavesurfer1.getCurrentTime() / fadeTime);
+            $('#waveform1').css('opacity', wavesurfer1.getCurrentTime() / fadeTime);
+          }
+        });
 
-            $(document).ready(function() {
-                wavesurfer = WaveSurfer.create({container: '#waveform', waveColor: 'black', progressColor: 'grey', barWidth: 3});
+        wavesurfer2.on('finish', function() {
+          fc2 = true;
+          wavesurfer1.setVolume(1);
+          wavesurfer2.setVolume(1);
+          $('#waveform2').css('opacity', 0);
+          $('#waveform1').css('opacity', 1);
+          if (currentSong != null)
+            $('#song' + currentSong.toString()).removeClass('active');
 
-                wavesurfer.on('finish', function() {
-                    if (currentSong != songsList.length) {
-                        loadWave(currentSong + 1);
-                    }
-                });
+          currentSong = (currentSong + 1) % songsList.length;
+          $('#song' + currentSong.toString()).addClass('active');
+          //$('#waveform2').css('visibility', 'hidden');
+          //$('#waveform1').css('visibility', 'visible');
 
-                wavesurfer.on('ready', function() {
-                    wavesurfer.play();
-                });
+          var id = (currentSong + 1) % songsList.length;
+          wavesurfer2.load(songsList[id].file);
+        });
 
-                $('#add').click(function() {
-                    socket.emit('addSong', '<%= name %>', $('#url').val());
-                    $('#url').val('');
-                });
+        wavesurfer2.on('seek', function() {
+          $('#waveform2').css('opacity', 1);
+          $('#waveform1').css('opacity', 0);
+          wavesurfer1.pause();
+          wavesurfer2.setVolume(1);
+        });
 
-                $('#playpause').click(function() {
-                    wavesurfer.playPause();
-                });
+        $('#del').click(function() {
+          socket.emit('removePlaylist', '<%= name %>');
+          setTimeout(function() {
+            window.location.replace("./allPlaylists");
+          }, 5000);
+        });
 
-                $('#backward').click(function() {
-                    wavesurfer.skipBackward();
-                });
+        $('#download').click(function() {
+          socket.emit('downloadPlaylist', '<%= name %>');
+        });
 
-                $('#forward').click(function() {
-                    wavesurfer.skipForward();
-                });
+        $('#playpause').click(function() {
+          if ($('#waveform1').css('opacity') != 0) {
+            wavesurfer1.playPause();
+          }
+          if ($('#waveform2').css('opacity') != 0) {
+            wavesurfer2.playPause();
+          }
+        });
 
-                $('#del').click(function() {
-                    socket.emit('removePlaylist', '<%= name %>');
-                    setTimeout(function() {
-                        window.location.replace("./playlists");
-                    }, 5000);
-                });
-            });
-        </script>
-    </footer>
+        $('#backward').click(function() {
+          if ($('#waveform1').css('opacity') != 0) {
+            wavesurfer1.skipBackward();
+          }
+          if ($('#waveform2').css('opacity') != 0) {
+            wavesurfer2.skipBackward();
+          }
+        });
+
+        $('#forward').click(function() {
+          if ($('#waveform1').css('opacity') != 0) {
+            wavesurfer1.skipForward();
+          }
+          if ($('#waveform2').css('opacity') != 0) {
+            wavesurfer2.skipForward();
+          }
+        });
+
+        $('#previous').click(function() {
+          loadWave(currentSong-1);
+        });
+
+        $('#next').click(function() {
+          loadWave(currentSong+1);
+        });
+      });
+    </script>
+</footer>
+
 </html>
