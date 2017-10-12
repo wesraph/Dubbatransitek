@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Dubbatransitek</title>
+  <% include ../partials/head %>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <% include ../partials/header %>
+    </header>
+
+    <div class="row">
+      <h1 class="text-center"><%= name %></h1>
+    </div>
+    <!-- DISPLAY MUSICS -->
+    <div class="row">
+      <div class="col-md-4 text-center">
+        <button id="backward" class="btn btn-primary">
+                        <i class="fa fa-backward" aria-hidden="true"></i>
+                        <%= lang.pages.backward %></button>
+      </div>
+      <div class="col-md-4 text-center">
+        <button id="playpause" class="btn btn-primary">
+                        <i class="fa fa-play" aria-hidden="true"></i>
+                        <%= lang.pages.playPause %></button>
+      </div>
+      <div class="col-md-4 text-center">
+        <button id="forward" class="btn btn-primary">
+                        <i class="fa fa-forward" aria-hidden="true"></i>
+                        <%= lang.pages.forward %></button>
+      </div>
+
+    </div>
+    <div class="row col-md-12">
+      <div id="waveform"></div>
+    </div>
+    <div class="row col-md-12">
+      <div class="list-group" id="songs"></div>
+    </div>
+
+    <!-- ADD MUSIC -->
+    <div class="row col-md-12">
+      <h1><%= lang.pages.addMusic %></h1>
+      <div class="form-group">
+        <label><%= lang.pages.URL %></label>
+        <input type="url" class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLPlaceholder %>" required/>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" id="add"><%= lang.pages.add %></button>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- DOWNLOAD MUSICS -->
+      <div class="col-md-6">
+        <h1><%= lang.pages.downloadPlaylist %></h1>
+        <div class="form-group">
+          <button id="download" class="btn btn-primary"><%= lang.pages.download %></button>
+        </div>
+      </div>
+
+      <!-- REMOVE PLAYLIST -->
+      <div class="col-md-6">
+        <h1><%= lang.pages.deletePlaylist %></h1>
+        <div class="form-group">
+          <button id="del" class="btn btn-primary"><%= lang.pages.delete %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<footer>
+  <% include ../partials/notifJS %>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
+    <script>
+      // TODO: C vrmt pa bo, faudrait trouver un autre moyen plus stylé de le faire
+      var songsList = [];
+      var wavesurfer;
+      var currentSong;
+
+      socket.emit('getSongs', '<%= name %>');
+
+      socket.on('songs(<%= name %>)', function(infos) {
+        songsList = infos;
+        $("#songs").empty();
+
+        for (var i = 0; i < infos.length; i++) {
+          var html;
+
+          if (currentSong == i)
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP active" onClick="loadWave(' + i.toString() + ')">';
+          else
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP" onClick="loadWave(' + i.toString() + ')">';
+
+          if (songsList[i].infos.cover)
+            html += '<img class="miniature" src="' + songsList[i].infos.cover + '">';
+          html += infos[i].infos.title + ' - ' + infos[i].infos.artistName;
+          html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+          html += '<a class="link btn btn-primary" href="' + infos[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
+          html += '<a class="link btn btn-default" href="' + infos[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>'
+          html += '</div>'
+          $("#songs").append(html);
+        }
+      });
+
+      socket.on('downloadReady', function() {
+        window.location.replace('./public/playlists/<%= name %>.zip');
+      });
+
+      function loadWave(index) {
+        var id = index % songsList.length;
+        if (currentSong == id)
+          return;
+
+        if (currentSong != null)
+          $('#song' + currentSong.toString()).removeClass('active');
+        $('#song' + id.toString()).addClass('active');
+        currentSong = id;
+        wavesurfer.load(songsList[id].file);
+      }
+
+      function deleteSong(id) {
+        //$('#song' + id.toString()).remove();
+        if (currentSong == id)
+          loadWave(id + 1);
+        socket.emit('removeSong', '<%= name %>', songsList[id]);
+      }
+
+      $(document).ready(function() {
+        wavesurfer = WaveSurfer.create({
+          container: '#waveform',
+          waveColor: 'black',
+          progressColor: 'grey',
+          barWidth: 3
+        });
+
+        wavesurfer.on('finish', function() {
+          if (currentSong != songsList.length) {
+            loadWave(currentSong + 1);
+          }
+        });
+
+        wavesurfer.on('ready', function() {
+          wavesurfer.play();
+        });
+
+        $('#add').click(function() {
+          socket.emit('addSong', '<%= name %>', $('#url').val());
+          $('#url').val('');
+        });
+
+        $('#playpause').click(function() {
+          wavesurfer.playPause();
+        });
+
+        $('#backward').click(function() {
+          wavesurfer.skipBackward();
+        });
+
+        $('#forward').click(function() {
+          wavesurfer.skipForward();
+        });
+
+        $('#del').click(function() {
+          socket.emit('removePlaylist', '<%= name %>');
+          setTimeout(function() {
+            window.location.replace("./allPlaylists");
+          }, 5000);
+        });
+
+        $('#download').click(function() {
+          socket.emit('downloadPlaylist', '<%= name %>');
+        })
+      });
+    </script>
+</footer>
+
+</html>
