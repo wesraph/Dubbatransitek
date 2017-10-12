@@ -31,7 +31,8 @@ module.exports = function(app, passport, lang) {
         if (req.query.name)
             res.render('pages/musics.ejs', {
                 name: req.query.name,
-                lang: lang
+                lang: lang,
+                masterVol: req.session.masterVol
             });
         else
             res.redirect('/playlists');

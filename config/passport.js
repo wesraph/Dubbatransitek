@@ -8,10 +8,7 @@ var SpotifyStrategy = require('passport-spotify').Strategy;
 // load up the user model
 var User = require('../app/models/user');
 
-// load the auth variables
-var configAuth = require('./auth'); // use this one for testing
-
-module.exports = function(passport, lang) {
+module.exports = function(passport, lang, configAuth) {
 
     // =========================================================================
     // passport session setup ==================================================

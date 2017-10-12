@@ -1,5 +1,6 @@
 .container {
   padding-top: 80px;
+  padding-bottom: 80px;
   word-wrap: break-word;
 }
 
@@ -33,4 +34,13 @@
 
 .btn {
   margin-bottom: 2px;
+}
+
+#volSlider .slider-selection {
+  background: #BABABA;
+}
+
+.slider.slider-horizontal {
+  width: 100%!important;
+  margin-top: 7px;
 }

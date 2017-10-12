@@ -38,4 +38,13 @@ module.exports = {
         'passReqToCallback': true
     }
 
+    'lastFM': {
+        'lastfmAPIKey': 'XXX',
+        'lastfmAPISecret': 'XXX'
+    },
+
+    'youtube': {
+        'youtubeAPIKey': 'XXX'
+    }
+
 };

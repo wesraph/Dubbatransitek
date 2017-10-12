@@ -14,21 +14,29 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 var lang = require('./lang/fr_FR');
 
 var configDB = require('./config/database.js');
 
+// load the auth variables
+var configAuth = require('./config/auth');
+
+process.setMaxListeners(0);
+
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
-require('./config/passport')(passport, lang); // pass passport for configuration
+require('./config/passport')(passport, lang, configAuth); // pass passport for configuration
 
 // Set up the Session middleware using a MongoDB session store
 var sessionMiddleware = session({
     name: "dubbatransitek",
     secret: "uhhhmdonuts",
-    store: require('mongoose-session')(mongoose),
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    }),
     resave: true,
     saveUninitialized: true
 })
@@ -56,7 +64,7 @@ var io = require('socket.io')(server).use(function(socket, next) {
 
 // routes ======================================================================
 require('./app/routes.js')(app, passport, lang); // load our routes and pass in our app and fully configured passport
-require('./config/playlist')(io, lang); // playlist things
+require('./config/playlist')(io, lang, configAuth); // playlist things
 
 // launch ======================================================================
 server.listen(port);

@@ -61,9 +61,36 @@ npm start
 By default, it will use the environment variable PORT, or 8880 if there's nothing there.
 
 ### Versioning
- - **0.0.1:** first working version
- - **0.0.2:** added permission (user not able to remove playlist or songs from another user playlists), lang file is also added (./lang/fr_FR.json) feel free to translate ! :)
- - **0.0.3:** switch from 'playlists' page to 'myPlaylists' and 'allPlaylists' pages (with a spotify style display on myPlaylists, allPlaylists design need to be redesign), add 10s fade transition while playback music, fix remove song buttons, add download Playlist, add next and previous button, minor fix, add sync when adding or removing song from a playlist (if you add/remove a song on a playlist, the playlist will update automaticaly on every open pages for all user, no need to refresh the page, can be usefull in party for example)
+
+ **0.0.4:**
+ - Remove the opacity fade transition (it was causing bug when seeking during the musics transition)
+ - You can now add music directly with just a title
+ - The song is no longer re-downloaded if it already was before
+ - Delete playlist and song now delete file
+ - You can also now add a music similar to the listened music of your playlist based from last.fm suggestion. In addition, you can now enable the option to automaticaly add similar songs when you finish listen you playlist (in order to not listen your songs again)
+ - fix next and previous button
+ - fix pause when 2 songs is playing (when fade effect)
+ - Update README
+ - You have now the abality to enable automatic imported playlist syncing (if you import a youtube playlist for example, and add song on the same playlist on youtube several day later, the server will automaticaly download the added song to add it to Dubbatransitek playlist, run every day at midnight)
+ - Add queue system: As transcoding video to mp3 use some CPU ressources, I created a queue. The queue is global for all user
+ - Add volume bar (logarythm scale and mute at 0)
+
+
+
+**0.0.3:**
+ - switch from 'playlists' page to 'myPlaylists' and 'allPlaylists' pages (with a spotify style display on myPlaylists, allPlaylists design need to be redesign)
+ - add 10s fade transition while playback music
+ - fix remove song buttons
+ - add download Playlist
+ - add next and previous button
+ - minor fix
+ - add sync when adding or removing song from a playlist (if you add/remove a song on a playlist, the playlist will update automaticaly on every open pages for all user, no need to refresh the page, can be usefull in party for example)
+
+**0.0.2:**
+ - Added permission (user not able to remove playlist or songs from another user playlists)
+ - lang file is also added (./lang/fr_FR.json) feel free to translate ! :)
+**0.0.1:**
+ - first working version
 
 ### TODO
  - spotify and deezer track

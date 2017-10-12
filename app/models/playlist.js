@@ -7,11 +7,24 @@ var playlistSchema = mongoose.Schema({
     author_id: String,
     contributor_id: [String],
     tag: [String],
+    importedPl: [String],
     musics: [{
         url: String,
         file: String,
         infos: Object
-    }]
+    }],
+    syncImportedPlaylist: {
+        type: Boolean,
+        default: false
+    },
+    autoAddSimilarSong: {
+        type: Boolean,
+        default: false
+    },
+    creationDate: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 // create the model for playlist and expose it to our app
