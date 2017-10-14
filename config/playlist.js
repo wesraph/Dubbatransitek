@@ -704,7 +704,7 @@ module.exports = function(io, lang, similarSongsOption) {
                 addPlaylist(name, tag, url, socket.request.session.passport.user, function(success, msg2) {
                     if (!success)
                         return socket.emit('fail', msg2);
-                    addPlaylists(socket.request.session.passport.user, function(pl) {
+                    addPlaylist(socket.request.session.passport.user, function(pl) {
                         socket.emit('myPlaylists', pl);
                     });
                     return socket.emit('success', msg2);
