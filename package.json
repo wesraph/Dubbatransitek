@@ -2,7 +2,7 @@
   "name": "Dubbatransitek",
   "main": "server.js",
   "dependencies": {
-    "alltomp3": "git+https://github.com/AllToMP3/alltomp3.git",
+    "alltomp3": "git+https://github.com/Guisch/alltomp3",
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.15.2",
     "connect-flash": "~0.1.1",
