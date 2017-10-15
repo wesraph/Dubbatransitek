@@ -286,12 +286,12 @@ module.exports = function(io, lang, similarSongsOption) {
             if (!infos)
                 return forSimilar(foundedSongs, index + 1, songs, callback);
 
-            songs.forEach(function(song, index) {
+            songs.forEach(function(song, i) {
                 if ((song.infos.deezerId && infos.deezerId && song.infos.deezerId == infos.deezerId) || (song.url == 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId)) {
                     return forSimilar(foundedSongs, index + 1, songs, callback);
                 }
 
-                if (index == songs.length - 1) {
+                if (i == songs.length - 1) {
                     return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
                 }
             });
