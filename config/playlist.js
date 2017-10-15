@@ -481,7 +481,7 @@ module.exports = function(io, lang, similarSongsOption) {
             }, function(err, res) {
                 if (res) {
                     for (var i = 0; i < res.musics.length; i++) {
-                        if (res.musics[i].infos.deezerId && infos.deezerId && res.musics[i].infos.deezerId == infos.deezerId) {
+                        if ((res.musics[i].infos.deezerId && infos.deezerId && res.musics[i].infos.deezerId == infos.deezerId) || (res.musics[i].url == url)) {
                             return callback(res.musics[i].file, res.musics[i].infos, url);
                         }
                     }
