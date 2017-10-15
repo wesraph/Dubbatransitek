@@ -286,17 +286,15 @@ module.exports = function(io, lang, similarSongsOption) {
             if (!infos)
                 return forSimilar(foundedSongs, index + 1, songs, callback);
 
-            for (var i = 0; i < songs.length; i++) {
-                if (songs[i].infos.deezerId && infos.deezerId && songs[i].infos.deezerId == infos.deezerId) {
+            songs.forEach(function(song, index) {
+                if ((song.infos.deezerId && infos.deezerId && song.infos.deezerId == infos.deezerId) || (song.url == 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId)) {
                     return forSimilar(foundedSongs, index + 1, songs, callback);
                 }
 
-                if (songs[i].infos.spotifyId && infos.spotifyId && songs[i].infos.spotifyId == infos.spotifyId) {
-                    return forSimilar(foundedSongs, index + 1, songs, callback);
+                if (index == songs.length - 1) {
+                    return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
                 }
-            }
-
-            return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
+            });
         }).catch(function(err) {
             console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
         });
@@ -329,7 +327,6 @@ module.exports = function(io, lang, similarSongsOption) {
                         addSongFromUrl(playlistName, url, userId, callback, progress);
                     });
                 });
-                //addSongFromUrl(playlistName, 'https://www.youtube.com/watch?v=' + foundedSongs[0].youtubeId, userId, callback, progress);
             });
         });
     }
@@ -485,10 +482,6 @@ module.exports = function(io, lang, similarSongsOption) {
                 if (res) {
                     for (var i = 0; i < res.musics.length; i++) {
                         if (res.musics[i].infos.deezerId && infos.deezerId && res.musics[i].infos.deezerId == infos.deezerId) {
-                            return callback(res.musics[i].file, res.musics[i].infos, url);
-                        }
-
-                        if (res.musics[i].infos.spotifyId && infos.spotifyId && res.musics[i].infos.spotifyId == infos.spotifyId) {
                             return callback(res.musics[i].file, res.musics[i].infos, url);
                         }
                     }
