@@ -289,7 +289,7 @@
           wavesurfer1.load(songsList[id].file);
 
           if (currentSong == songsList.length -1 && autoAddSimilarSong) {
-              socket.emit('addSimilar', '<%= name %>', currentSong);
+              socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
           }
         });
 
@@ -331,7 +331,7 @@
           wavesurfer2.load(songsList[id].file);
 
           if (currentSong == songsList.length -1 && autoAddSimilarSong) {
-              socket.emit('addSimilar', '<%= name %>', currentSong);
+              socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
           }
         });
 
