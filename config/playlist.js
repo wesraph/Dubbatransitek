@@ -286,15 +286,15 @@ module.exports = function(io, lang, similarSongsOption) {
             if (!infos)
                 return forSimilar(foundedSongs, index + 1, songs, callback);
 
-            songs.forEach(function(song, i) {
-                if ((song.infos.deezerId && infos.deezerId && song.infos.deezerId == infos.deezerId) || (song.url == 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId)) {
+            for (var i = 0; i < songs.length; i++) {
+                if ((songs[i].infos.deezerId && infos.deezerId && songs[i].infos.deezerId == infos.deezerId) || (songs[i].url == 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId)) {
                     return forSimilar(foundedSongs, index + 1, songs, callback);
                 }
 
                 if (i == songs.length - 1) {
                     return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
                 }
-            });
+            }
         }).catch(function(err) {
             console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
         });
