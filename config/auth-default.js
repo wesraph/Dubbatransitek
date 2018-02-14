@@ -36,7 +36,7 @@ module.exports = {
         'callbackURL': 'http://XXX/auth/deezer/callback',
         'scope': ['basic_access', 'email', 'offline_access', 'manage_library'],
         'passReqToCallback': true
-    }
+    },
 
     'lastFM': {
         'lastfmAPIKey': 'XXX',
