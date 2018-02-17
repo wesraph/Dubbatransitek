@@ -1,5 +1,4 @@
 module.exports = function(app, passport, lang) {
-
     // normal routes ===============================================================
 
     // show the home page (will also have our login links)

@@ -129,7 +129,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/bootstrap-slider.min.js"></script>
     <script>
-      // TODO: C vrmt pa bo, faudrait trouver un autre moyen plus stylé de le faire
       var songsList = [];
       var wavesurfer1;
       var isWS1Ready = false;
@@ -150,25 +149,44 @@
 
       socket.emit('getPlaylistInfo', '<%= name %>');
 
-      socket.on('songs(<%= name %>)', function(infos) {
+      socket.on('songs(<%= name %>)', function(infos, songRemoved) {
         songsList = infos;
         $("#songs").empty();
 
-        for (var i = 0; i < infos.length; i++) {
+        if (songRemoved !== undefined && songsList.length != 0) {
+          if (songRemoved == currentSong) {
+            currentSong=-1;
+            loadWave(songRemoved);
+          }
+          if (songRemoved == currentSong + 1) {
+            if ($('#waveform1').css('opacity') != 0) {
+              wavesurfer2.load(songsList[currentSong + 1].file);
+            }
+            if ($('#waveform2').css('opacity') != 0) {
+              wavesurfer1.load(songsList[currentSong + 1].file);
+            }
+          }
+          if (songRemoved < currentSong)
+            currentSong--;
+        }
+
+        for (var i = 0; i < songsList.length; i++) {
           var html;
-
           if (currentSong == i)
-            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP active" onClick="loadWave(' + i.toString() + ')">';
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP active row">';
           else
-            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP" onClick="loadWave(' + i.toString() + ')">';
+            html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP row">';
 
-          if (songsList[i].infos.cover)
-            html += '<img class="miniature" src="' + songsList[i].infos.cover + '">';
-          html += infos[i].infos.title + ' - ' + infos[i].infos.artistName;
+          html += '<div class="col-md-10" onClick="loadWave(' + i.toString() + ')">';
+
+          if (songsList[i].cover)
+            html += '<img class="miniature" src="' + songsList[i].cover + '">';
+          html += songsList[i].title + ' - ' + songsList[i].artistName;
+          html += '</div><div class="col-md-2">'
           html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
-          html += '<a class="link btn btn-primary" href="' + infos[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
-          html += '<a class="link btn btn-default" href="' + infos[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>'
-          html += '</div>'
+          html += '<a class="link btn btn-primary" href="' + songsList[i].file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
+          html += '<a class="link btn btn-default" href="' + songsList[i].url + '"><i class="fa fa-link" aria-hidden="true"></i></a>';
+          html += '</div></div>';
           $("#songs").append(html);
         }
 
@@ -200,9 +218,7 @@
       });
 
       function deleteSong(id) {
-        if (currentSong == id)
-          loadWave(id + 1);
-        socket.emit('removeSong', '<%= name %>', songsList[id]);
+        socket.emit('removeSong', '<%= name %>', songsList[id]._id, id);
       }
 
       function loadWave(index) {
@@ -223,7 +239,7 @@
           $('#song' + currentSong.toString()).removeClass('active');
 
         $('#song' + id.toString()).addClass('active');
-        $('#currentTitle').text(songsList[id].infos.title + ' - ' + songsList[id].infos.artistName);
+        $('#currentTitle').text(songsList[id].title + ' - ' + songsList[id].artistName);
         currentSong = id;
         wavesurfer1.load(songsList[id].file);
         //wavesurfer1.play();
@@ -283,13 +299,13 @@
 
           currentSong = (currentSong + 1) % songsList.length;
           $('#song' + currentSong.toString()).addClass('active');
-          $('#currentTitle').text(songsList[currentSong].infos.title + ' - ' + songsList[currentSong].infos.artistName);
+          $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
 
           var id = (currentSong + 1) % songsList.length;
           wavesurfer1.load(songsList[id].file);
 
-          if (currentSong == songsList.length -1 && autoAddSimilarSong) {
-              socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
+          if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
+            socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
           }
         });
 
@@ -325,13 +341,13 @@
 
           currentSong = (currentSong + 1) % songsList.length;
           $('#song' + currentSong.toString()).addClass('active');
-          $('#currentTitle').text(songsList[currentSong].infos.title + ' - ' + songsList[currentSong].infos.artistName);
+          $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
 
           var id = (currentSong + 1) % songsList.length;
           wavesurfer2.load(songsList[id].file);
 
-          if (currentSong == songsList.length -1 && autoAddSimilarSong) {
-              socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
+          if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
+            socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
           }
         });
 
@@ -363,7 +379,7 @@
             type: 'info',
             delay: 0
           });
-          socket.emit('addSimilar', '<%= name %>', currentSong);
+          socket.emit('addSimilar', '<%= name %>', songsList[currentSong]._id);
         })
 
         $('#del').click(function(eve) {
@@ -381,7 +397,8 @@
           }, 5000);
         });
 
-        $('#download').click(function() {
+        $('#download').click(function(eve) {
+          eve.stopPropagation();
           notify = $.notify({
             icon: 'fa fa-circle-o-notch fa-spin',
             message: '<%= lang.pages.loading %>'

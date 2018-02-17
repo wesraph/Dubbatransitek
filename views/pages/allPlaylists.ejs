@@ -39,7 +39,6 @@
           </tr>
         </tfoot>
         <tbody id="myTableBody">
-
         </tbody>
       </table>
     </div>
@@ -49,14 +48,20 @@
   <% include ../partials/notifJS %>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
     <script>
-      socket.emit('getAllPlaylists');
       socket.on('allPlaylists', function(playlists) {
         for (var i = 0; i < playlists.length; i++) {
-          var html = "<tr><td>" + playlists[i].name + "</td>";
+          var html = "<tr><td><a href='./musics?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
-          html += "<td>" + playlists[i].author_id + "</td>";
-          html += "<td>" + playlists[i].contributor_id.join(',') + "</td>";
-          html += "<td>" + playlists[i].musics.length + "</td>";
+          html += "<td>" + playlists[i].author_id.local.username || playlists[i].author_id.spotify.username || playlists[i].author_id.deezer.username || playlists[i].author_id.youtube.displayName + "</td>";
+          html += "<td>";
+          for (var j = 0; j < playlists[i].contributor_id.length; j++) {
+            html += playlists[i].author_id.local.username || playlists[i].author_id.spotify.username || playlists[i].author_id.deezer.username || playlists[i].author_id.youtube.displayName;
+            if (j < playlists[i].contributor_id.length - 1) {
+              html += ", ";
+            }
+          }
+          html += "</td>";
+          html += "<td>" + playlists[i].musics_ids.length + "</td>";
           html += "<td><a class='btn btn-default' href='./musics?name=" + encodeURI(playlists[i].name) + "'><%= lang.pages.go %></a></td></tr>";
 
           $('#myTableBody').append(html);
@@ -64,6 +69,8 @@
 
         $('#myTable').DataTable();
       });
+
+      socket.emit('getAllPlaylists');
     </script>
 </footer>
 

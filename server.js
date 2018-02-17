@@ -64,7 +64,7 @@ var io = require('socket.io')(server).use(function(socket, next) {
 
 // routes ======================================================================
 require('./app/routes.js')(app, passport, lang); // load our routes and pass in our app and fully configured passport
-require('./config/playlist')(io, lang, configAuth); // playlist things
+require('./app/core')(io, lang, configAuth); // playlist things
 
 // launch ======================================================================
 server.listen(port);
