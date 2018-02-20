@@ -184,7 +184,7 @@ module.exports = function(io, lang, similarSongsOption) {
                 addSongToPlaylist(file, infos, res[0].url, userId, name, callback);
               }).catch(function(err) {
                 callback(false, lang.playlist.errorAddingMusic);
-                console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+                console.log('Error when finding Video:\n', err);
               });
             }, progress);
           });
@@ -214,7 +214,7 @@ module.exports = function(io, lang, similarSongsOption) {
       alltomp3.findVideo(query).then(function(res) {
         addSongToPlaylist(file, infos, res[0].url, userId, playlistName, callback);
       }).catch(function(err) {
-        console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+        console.log('Error when finding Video\n', err);
         callback(false, lang.playlist.errorAddingMusic);
       });
     }, progress);
@@ -238,7 +238,7 @@ module.exports = function(io, lang, similarSongsOption) {
         }
       }
     }).catch(function(err) {
-      console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+      console.log('Error when getting info from URL\n', err);
     });
   }
 
@@ -431,8 +431,10 @@ module.exports = function(io, lang, similarSongsOption) {
             deezerId: infos.deezerId
           },
           {
-            itunesId: infos.deezerId
-          },
+            itunesId: infos.ituneId
+          },{
+            url: url
+          }
         ]
       }, function(err, res) {
         if (err) return;
@@ -452,7 +454,7 @@ module.exports = function(io, lang, similarSongsOption) {
         });
       });
     }).catch(function(err) {
-      console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+      console.log('Error when getting info from URL\n', err);
     });
   }
 
@@ -463,7 +465,7 @@ module.exports = function(io, lang, similarSongsOption) {
         downloadSong(array.items[i].url, callback, progress);
       }
     }).catch(function(err) {
-      console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+      console.log('Error when getting infos from playlist URL\n', err);
     });
   }
 
@@ -473,7 +475,7 @@ module.exports = function(io, lang, similarSongsOption) {
         findAndDownload(array.items[i].artistName + '-' + array.items[i].title, callback, progress);
       }
     }).catch(function(err) {
-      console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+      console.log('Error when getting infos from playlist titles\n', err);
     });
   }
 
@@ -499,7 +501,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       downloadSong(res[0].url, callback, progress);
     }).catch(function(err) {
-      console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', err);
+      console.log('Error when finding video\n', err);
     });
   }
 
@@ -560,7 +562,7 @@ module.exports = function(io, lang, similarSongsOption) {
         urls = urlss;
       });
       dl.on('error', function(error) {
-        console.log('!!!!!!!!!!!!!!!!! ERREUR !!!!!!!!!!!!!!!!!!\n', error);
+        console.log('Error when downloading\n', error);
       })
     } else {
       socket.emit('wait', lang.playlist.end, true);

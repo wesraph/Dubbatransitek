@@ -65,15 +65,18 @@ cd ~/ffmpeg_sources && \
   PATH="$HOME/bin:$PATH" make && \
   make install && \
 hash -r && \
+export PATH=$PATH:/root/bin && \
 source ~/.profile && \
+source ~/.bashrc && \
 pip install --upgrade pip && \
 pip install eyeD3 && \
 cd ~ && \
-git clone https://github.com/Guisch/Dubbatransitek.git Dubbatransitek && \
+git clone https://github.com/Guisch/Dubbatransitek.git Dubbatransitek --branch dev && \
+
 cd ~/Dubbatransitek && \
 nvm install 9 && \
 npm install && \
-FFMPEG_PATH=/root/bin/ffmpeg && \
 mv ./config/auth-default.js ./config/auth.js && \
 sed -i -e 's/localhost/mongo/g' ./config/database.js && \
+mkdir public/musics && \
 npm start

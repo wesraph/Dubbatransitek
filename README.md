@@ -62,10 +62,10 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
 
 ### Versioning
 
- **0.0.5:**
+ **0.0.5 (in-dev):**
  - Totaly rethink the database structure (add music model, be careful, old database <=0.0.4 or not compatible with newer)
  - Update README
- - Add docker ! Run dubbatransitek in a command !
+ - Add docker ! Run dubbatransitek in a command ! (not finished)
  - minor design change on playlist pages
 
  **0.0.4:**
