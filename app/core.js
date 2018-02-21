@@ -72,6 +72,17 @@ module.exports = function(io, lang, similarSongsOption) {
     if (!infos)
       return callback(false, lang.playlist.errorAddingMusic);
 
+    if (infos._id) {
+      return Playlist.addMusicToPlaylist(playlistName, infos._id, userId, function(err) {
+        if (err) {
+          console.log(err);
+          return callback(false, lang.playlist.errorAddingMusic);
+        }
+
+        return callback(true, lang.playlist.successfullyAddedMusic);
+      });
+    }
+
     var music = new Music();
 
     if (infos.title)
@@ -432,7 +443,7 @@ module.exports = function(io, lang, similarSongsOption) {
           },
           {
             itunesId: infos.ituneId
-          },{
+          }, {
             url: url
           }
         ]
