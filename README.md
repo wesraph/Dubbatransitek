@@ -66,7 +66,8 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Totaly rethink the database structure (add music model, be careful, old database <=0.0.4 or not compatible with newer)
  - Update README
  - Add docker ! Run dubbatransitek in a command ! (not finished)
- - minor design change on playlist pages
+ - Design change on playlist pages (sticky player)
+ - Fix remove button (launch music when click)
 
  **0.0.4:**
  - Remove the opacity fade transition (it was causing bug when seeking during the musics transition)

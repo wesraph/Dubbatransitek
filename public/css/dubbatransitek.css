@@ -13,8 +13,8 @@
 }
 
 .miniature {
-  width: 50px!important;
-  height: 50px!important;
+  width: 50px !important;
+  height: 50px !important;
   margin-right: 10px;
 }
 
@@ -40,6 +40,21 @@
 }
 
 .slider.slider-horizontal {
-  width: 100%!important;
+  width: 100% !important;
   margin-top: 7px;
+}
+
+.musicSticky {
+  position: -webkit-sticky;
+  top: 0;
+  position: sticky;
+  z-index: 1000;
+}
+
+.whiteBg {
+  background: white;
+}
+
+.whiteGradient {
+  background: linear-gradient(white 60%, transparent);
 }

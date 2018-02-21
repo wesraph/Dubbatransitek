@@ -13,51 +13,51 @@
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/css/bootstrap-slider.min.css" integrity="sha256-pO9/5PQba+AqEbehe+LDIXgbKSXTlmwgoeayBfGRwjw=" crossorigin="anonymous" />
     </header>
 
-    <div class="row">
-      <h1 class="text-center"><%= name %></h1>
-      <h4 class="text-center" id="currentTitle"></h4>
-    </div>
-    <!-- DISPLAY MUSICS -->
-    <div class="row">
-      <div class="col-md-2 text-center">
-        <button id="previous" class="btn btn-primary">
+    <div class="musicSticky">
+      <div class="row whiteBg">
+        <h1 class="text-center"><%= name %></h1>
+        <h4 class="text-center" id="currentTitle"></h4>
+      </div>
+      <!-- DISPLAY MUSICS -->
+      <div class="row whiteBg">
+        <div class="col-md-2 text-center">
+          <button id="previous" class="btn btn-primary">
                         <i class="fa fa-step-backward" aria-hidden="true"></i>
                         <%= lang.pages.previous %></button>
-      </div>
-      <div class="col-md-2 text-center">
-        <button id="backward" class="btn btn-primary">
+        </div>
+        <div class="col-md-2 text-center">
+          <button id="backward" class="btn btn-primary">
                         <i class="fa fa-backward" aria-hidden="true"></i>
                         <%= lang.pages.backward %></button>
-      </div>
-      <div class="col-md-2 text-center">
-        <button id="playpause" class="btn btn-primary">
+        </div>
+        <div class="col-md-2 text-center">
+          <button id="playpause" class="btn btn-primary">
                         <i class="fa fa-play" aria-hidden="true"></i>
                         <%= lang.pages.playPause %></button>
-      </div>
-      <div class="col-md-2 text-center">
-        <input id="vol" data-slider-id='volSlider' type="text" />
-      </div>
-      <div class="col-md-2 text-center">
-        <button id="forward" class="btn btn-primary">
+        </div>
+        <div class="col-md-2 text-center">
+          <input id="vol" data-slider-id='volSlider' type="text" />
+        </div>
+        <div class="col-md-2 text-center">
+          <button id="forward" class="btn btn-primary">
                         <i class="fa fa-forward" aria-hidden="true"></i>
                         <%= lang.pages.forward %></button>
-      </div>
-      <div class="col-md-2 text-center">
-        <button id="next" class="btn btn-primary">
+        </div>
+        <div class="col-md-2 text-center">
+          <button id="next" class="btn btn-primary">
                         <i class="fa fa-step-forward" aria-hidden="true"></i>
                         <%= lang.pages.next %></button>
+        </div>
+
       </div>
-
+      <div class="row col-md-12 whiteGradient">
+        <div id="waveform1"></div>
+        <div id="waveform2"></div>
+      </div>
     </div>
-    <div class="row col-md-12">
-      <div id="waveform1"></div>
-      <div id="waveform2"></div>
-    </div>
-
     <div class="row col-md-12">
       <div class="list-group" id="songs"></div>
     </div>
-
     <!-- ADD MUSIC -->
     <div class="row">
       <div class="col-md-6">
@@ -155,7 +155,7 @@
 
         if (songRemoved !== undefined && songsList.length != 0) {
           if (songRemoved == currentSong) {
-            currentSong=-1;
+            currentSong = -1;
             loadWave(songRemoved);
           }
           if (songRemoved == currentSong + 1) {
