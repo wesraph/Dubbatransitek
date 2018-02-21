@@ -472,7 +472,7 @@ module.exports = function(io, lang, similarSongsOption) {
   function downloadSongsFromTitle(url, callback, progress) {
     alltomp3.getPlaylistTitlesInfos(url).then(function(array) {
       for (var i = 0; i < array.items.length; i++) {
-        findAndDownload(array.items[i].artistName + '-' + array.items[i].title, callback, progress);
+        findAndDownload(array.items[i].artistName + ' - ' + array.items[i].title, callback, progress);
       }
     }).catch(function(err) {
       console.log('Error when getting infos from playlist titles\n', err);
@@ -650,6 +650,10 @@ module.exports = function(io, lang, similarSongsOption) {
 
           Playlist.getUserPlaylists(socket.request.session.passport.user, function(res) {
             socket.emit('myPlaylists', res);
+          });
+
+          getSongs(name, function(infos) {
+            socket.broadcast.emit('songs(' + playlistName + ')', infos);
           });
 
           return socket.emit('success', msg2);

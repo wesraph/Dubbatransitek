@@ -72,7 +72,6 @@ pip install --upgrade pip && \
 pip install eyeD3 && \
 cd ~ && \
 git clone https://github.com/Guisch/Dubbatransitek.git Dubbatransitek --branch dev && \
-
 cd ~/Dubbatransitek && \
 nvm install 9 && \
 npm install && \
