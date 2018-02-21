@@ -422,50 +422,63 @@ module.exports = function(io, lang, similarSongsOption) {
   // Download
 
   function downloadSong(url, callback, progress) {
-    alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
-      if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
-        return downloadQueue.push(function(next) {
-          var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
-            next();
-            if (!infos)
-              return callback();
+    Music.findOne({
+      url: url
+    }, function(err, res) {
+      if (err) return;
 
-            return callback(infos.file, infos.infos, url);
+      if (res) return callback(res.file, res, url);
+
+      alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
+        if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
+          return downloadQueue.push(function(next) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
+              next();
+              if (!infos)
+                return callback();
+
+              return callback(infos.file, infos.infos, url);
+            });
+
+            progress(dl);
+          });
+        }
+
+        var searchParams = [{
+          url: url
+        }];
+
+        if (infos.deezerId)
+          searchParams.push({
+            deezerId: infos.deezerId
+          });
+        if (infos.ituneId)
+          searchParams.push({
+            itunesId: infos.ituneId
           });
 
-          progress(dl);
+        Music.findOne({
+          $or: searchParams
+        }, function(err, res) {
+          if (err) return;
+
+          if (res) return callback(res.file, res, url);
+
+          downloadQueue.push(function(next) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
+              next();
+              if (!infos)
+                return callback();
+
+              return callback(infos.file, infos.infos, url);
+            }, '', false, infos);
+
+            progress(dl);
+          });
         });
-      }
-
-      Music.findOne({
-        $or: [{
-            deezerId: infos.deezerId
-          },
-          {
-            itunesId: infos.ituneId
-          }, {
-            url: url
-          }
-        ]
-      }, function(err, res) {
-        if (err) return;
-
-        if (res) return callback(res.file, res, url);
-
-        downloadQueue.push(function(next) {
-          var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
-            next();
-            if (!infos)
-              return callback();
-
-            return callback(infos.file, infos.infos, url);
-          }, '', false, infos);
-
-          progress(dl);
-        });
+      }).catch(function(err) {
+        console.log('Error when getting info from URL\n', err);
       });
-    }).catch(function(err) {
-      console.log('Error when getting info from URL\n', err);
     });
   }
 
