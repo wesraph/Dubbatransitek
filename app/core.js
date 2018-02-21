@@ -653,7 +653,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
 
           getSongs(name, function(infos) {
-            socket.broadcast.emit('songs(' + playlistName + ')', infos);
+            socket.broadcast.emit('songs(' + name + ')', infos);
           });
 
           return socket.emit('success', msg2);
