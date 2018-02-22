@@ -193,11 +193,11 @@
         if (currentSong == songsList.length - 2) {
           if ($('#waveform1').css('opacity') != 0) {
             wavesurfer2.load(songsList[songsList.length - 1].file);
-            isWS2Ready=false;
+            isWS2Ready = false;
           }
           if ($('#waveform2').css('opacity') != 0) {
             wavesurfer1.load(songsList[songsList.length - 1].file);
-            isWS1Ready=false;
+            isWS1Ready = false;
           }
         }
       });
@@ -256,7 +256,7 @@
         $('#currentTitle').text(songsList[id].title + ' - ' + songsList[id].artistName);
         currentSong = id;
         wavesurfer1.load(songsList[id].file);
-        isWS1Ready=false;
+        isWS1Ready = false;
         //wavesurfer1.play();
         wavesurfer1.on('ready', function() {
           isWS1Ready = true;
@@ -268,12 +268,61 @@
           });
           var id = (currentSong + 1) % songsList.length;
           wavesurfer2.load(songsList[id].file);
-          isWS2Ready=false;
+          isWS2Ready = false;
         });
         $('#waveform1').css('opacity', 1);
         $('#waveform1').css('z-index', 10);
         $('#waveform2').css('opacity', 0);
         $('#waveform2').css('z-index', 5);
+      }
+
+      function finish1() {
+        fc1 = true;
+        wavesurfer1.setVolume(masterVol);
+        wavesurfer2.setVolume(masterVol);
+        $('#waveform1').css('opacity', 0);
+        $('#waveform1').css('z-index', 5);
+        $('#waveform2').css('opacity', 1);
+        $('#waveform2').css('z-index', 10);
+
+        if (currentSong != null)
+          $('#song' + currentSong.toString()).removeClass('active');
+
+        currentSong = (currentSong + 1) % songsList.length;
+        $('#song' + currentSong.toString()).addClass('active');
+        $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
+
+        var id = (currentSong + 1) % songsList.length;
+        wavesurfer1.load(songsList[id].file);
+        isWS1Ready = false;
+
+        if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
+          socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
+        }
+      }
+
+      function finish2() {
+        fc2 = true;
+        wavesurfer1.setVolume(masterVol);
+        wavesurfer2.setVolume(masterVol);
+        $('#waveform1').css('opacity', 1);
+        $('#waveform1').css('z-index', 10);
+        $('#waveform2').css('opacity', 0);
+        $('#waveform2').css('z-index', 5);
+        if (currentSong != null)
+          $('#song' + currentSong.toString()).removeClass('active');
+
+        currentSong = (currentSong + 1) % songsList.length;
+        $('#song' + currentSong.toString()).addClass('active');
+        $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
+
+        var id = (currentSong + 1) % songsList.length;
+        wavesurfer2.load(songsList[id].file);
+        isWS2Ready = false;
+
+        if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
+          socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
+        }
       }
 
       $(document).ready(function() {
@@ -304,30 +353,7 @@
           }
         });
 
-        wavesurfer1.on('finish', function finish1() {
-          fc1 = true;
-          wavesurfer1.setVolume(masterVol);
-          wavesurfer2.setVolume(masterVol);
-          $('#waveform1').css('opacity', 0);
-          $('#waveform1').css('z-index', 5);
-          $('#waveform2').css('opacity', 1);
-          $('#waveform2').css('z-index', 10);
-
-          if (currentSong != null)
-            $('#song' + currentSong.toString()).removeClass('active');
-
-          currentSong = (currentSong + 1) % songsList.length;
-          $('#song' + currentSong.toString()).addClass('active');
-          $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
-
-          var id = (currentSong + 1) % songsList.length;
-          wavesurfer1.load(songsList[id].file);
-          isWS1Ready=false;
-
-          if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
-            socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
-          }
-        });
+        wavesurfer1.on('finish', finish1);
 
         wavesurfer1.on('seek', function() {
           fc1 = true;
@@ -348,29 +374,7 @@
           }
         });
 
-        wavesurfer2.on('finish', function finish2() {
-          fc2 = true;
-          wavesurfer1.setVolume(masterVol);
-          wavesurfer2.setVolume(masterVol);
-          $('#waveform1').css('opacity', 1);
-          $('#waveform1').css('z-index', 10);
-          $('#waveform2').css('opacity', 0);
-          $('#waveform2').css('z-index', 5);
-          if (currentSong != null)
-            $('#song' + currentSong.toString()).removeClass('active');
-
-          currentSong = (currentSong + 1) % songsList.length;
-          $('#song' + currentSong.toString()).addClass('active');
-          $('#currentTitle').text(songsList[currentSong].title + ' - ' + songsList[currentSong].artistName);
-
-          var id = (currentSong + 1) % songsList.length;
-          wavesurfer2.load(songsList[id].file);
-          isWS2Ready=false;
-
-          if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
-            socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
-          }
-        });
+        wavesurfer2.on('finish', finish2);
 
         wavesurfer2.on('seek', function() {
           fc2 = true;
