@@ -223,10 +223,11 @@
         if (id == currentSong) {
           if (songsList.length == 1)
             currentSong = null;
+            $('#currentTitle').empty();
           if ($('#waveform1').css('opacity') != 0)
-            waveform1.empty();
+            wavesurfer1.empty();
           if ($('#waveform2').css('opacity') != 0)
-            waveform2.empty();
+            wavesurfer2.empty();
         }
         socket.emit('removeSong', '<%= name %>', songsList[id]._id, id);
       }
