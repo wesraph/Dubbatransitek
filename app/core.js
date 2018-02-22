@@ -465,7 +465,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
           if (res) return callback(res.file, res, url);
 
           downloadQueue.push(function(next) {
-            var dl = alltomp3.downloadAndTagSingleURL(url, path.musics, function(infos) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, paths.musics, function(infos) {
               next();
               if (!infos)
                 return callback();
