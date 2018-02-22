@@ -158,7 +158,7 @@
             currentSong = null;
             loadWave(songRemoved);
           }
-          if (songRemoved == currentSong + 1 && songsList.length > 1) {
+          if (songRemoved == currentSong + 1 && songsList.length != songRemoved) {
             if ($('#waveform1').css('opacity') != 0) {
               wavesurfer2.load(songsList[currentSong + 1].file);
             }
