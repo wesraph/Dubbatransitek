@@ -233,14 +233,14 @@
         if (id == (currentSong + 1) % songsList.length) {
           if (wavesurfer1.isPlaying() && isWS2Ready) {
             wavesurfer1.pause();
-            return finish1();
-            wavesurfer2.play();
+            finish1();
+            return wavesurfer2.play();
           }
 
           if (wavesurfer2.isPlaying() && isWS1Ready) {
             wavesurfer2.pause();
-            return finish2();
-            wavesurfer1.play();
+            finish2();
+            return wavesurfer1.play();
           }
         }
 
