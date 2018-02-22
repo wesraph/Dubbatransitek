@@ -234,11 +234,13 @@
           if (wavesurfer1.isPlaying() && isWS2Ready) {
             wavesurfer1.pause();
             return finish1();
+            wavesurfer2.play();
           }
 
           if (wavesurfer2.isPlaying() && isWS1Ready) {
             wavesurfer2.pause();
             return finish2();
+            wavesurfer1.play();
           }
         }
 
