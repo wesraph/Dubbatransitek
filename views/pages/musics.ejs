@@ -155,7 +155,7 @@
 
         if (songRemoved !== undefined && songsList.length != 0) {
           if (songRemoved == currentSong) {
-            currentSong = -1;
+            currentSong = null;
             loadWave(songRemoved);
           }
           if (songRemoved == currentSong + 1 && songsList.length > 1) {
@@ -220,6 +220,14 @@
       });
 
       function deleteSong(id) {
+        if (id == currentSong) {
+          if (songsList.length == 1)
+            currentSong = null;
+          if ($('#waveform1').css('opacity') != 0)
+            waveform1.empty();
+          if ($('#waveform2').css('opacity') != 0)
+            waveform2.empty();
+        }
         socket.emit('removeSong', '<%= name %>', songsList[id]._id, id);
       }
 
