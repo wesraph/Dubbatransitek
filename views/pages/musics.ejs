@@ -158,12 +158,12 @@
             currentSong = null;
             loadWave(songRemoved);
           }
-          if (songRemoved == currentSong + 1 && songsList.length != songRemoved) {
+          if (songRemoved == currentSong + 1) {
             if ($('#waveform1').css('opacity') != 0) {
-              wavesurfer2.load(songsList[currentSong + 1].file);
+              wavesurfer2.load(songsList[(currentSong + 1) % songsList.length].file);
             }
             if ($('#waveform2').css('opacity') != 0) {
-              wavesurfer1.load(songsList[currentSong + 1].file);
+              wavesurfer1.load(songsList[(currentSong + 1) % songsList.length].file);
             }
           }
           if (songRemoved < currentSong)
@@ -223,7 +223,7 @@
         if (id == currentSong) {
           if (songsList.length == 1)
             currentSong = null;
-            $('#currentTitle').empty();
+          $('#currentTitle').empty();
           if ($('#waveform1').css('opacity') != 0)
             wavesurfer1.empty();
           if ($('#waveform2').css('opacity') != 0)
