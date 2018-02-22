@@ -228,6 +228,26 @@
         if (currentSong == id)
           return;
 
+        if (id == (currentSong + 1) % songsList.length) {
+          if (wavesurfer1.isPlaying()) {
+            wavesurfer1.pause();
+            wavesurfer2.on('ready', function() {
+              wavesurfer2.un('ready');
+              finish1();
+            });
+          }
+
+          if (wavesurfer2.isPlaying()) {
+            wavesurfer2.pause();
+            wavesurfer1.on('ready', function() {
+              wavesurfer1.un('ready');
+              finish2();
+            });
+          }
+
+          return;
+        }
+
         if (wavesurfer1.isPlaying())
           wavesurfer1.pause();
         if (wavesurfer2.isPlaying())
@@ -285,7 +305,7 @@
           }
         });
 
-        wavesurfer1.on('finish', function() {
+        wavesurfer1.on('finish', function finish1() {
           fc1 = true;
           wavesurfer1.setVolume(masterVol);
           wavesurfer2.setVolume(masterVol);
@@ -305,7 +325,7 @@
           wavesurfer1.load(songsList[id].file);
 
           if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
-            socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
+            socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
           }
         });
 
@@ -328,7 +348,7 @@
           }
         });
 
-        wavesurfer2.on('finish', function() {
+        wavesurfer2.on('finish', function finish2() {
           fc2 = true;
           wavesurfer1.setVolume(masterVol);
           wavesurfer2.setVolume(masterVol);
@@ -347,7 +367,7 @@
           wavesurfer2.load(songsList[id].file);
 
           if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
-            socket.emit('addSimilar', '<%= name %>', Math.floor(Math.random() * songsList.length));
+            socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)]._id);
           }
         });
 
