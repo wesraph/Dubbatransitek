@@ -24,7 +24,7 @@ var path = require('path');
 // The zip library needs to be instantiated:
 var nzip = require('node-zip');
 
-module.exports = function(io, lang, similarSongsOption) {
+module.exports = function(io, lang, similarSongsOption, paths) {
 
   // -------------------------------------------------------------------------
   // Function
@@ -432,7 +432,7 @@ module.exports = function(io, lang, similarSongsOption) {
       alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
         if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
           return downloadQueue.push(function(next) {
-            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, paths.musics, function(infos) {
               next();
               if (!infos)
                 return callback();
@@ -465,7 +465,7 @@ module.exports = function(io, lang, similarSongsOption) {
           if (res) return callback(res.file, res, url);
 
           downloadQueue.push(function(next) {
-            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, path.musics, function(infos) {
               next();
               if (!infos)
                 return callback();
@@ -545,7 +545,7 @@ module.exports = function(io, lang, similarSongsOption) {
       });
 
       // it's important to use *binary* encode
-      fs.writeFileSync('./public/playlists/' + name + '.zip', data, 'binary');
+      fs.writeFileSync(path.join(paths.playlistZip, name + '.zip'), data, 'binary');
       callback(true, lang.playlist.downloadReady);
     });
   }

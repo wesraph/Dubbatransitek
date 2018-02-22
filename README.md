@@ -67,7 +67,8 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Update README
  - Add docker ! Run dubbatransitek in a command ! (not finished)
  - Design change on playlist pages (sticky player)
- - Fix remove button (launch music when click)
+ - Fix remove button (launch music when clicked)
+ - Improve music changing speed: no more reloading
 
  **0.0.4:**
  - Remove the opacity fade transition (it was causing bug when seeking during the musics transition)
