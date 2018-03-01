@@ -54,7 +54,7 @@
         for (var i = 0; i < playlists.length; i++) {
           var html = "<tr><td><a href='./musics?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
-          html += "<td>" + playlists[i].author_id.local.username || playlists[i].author_id.spotify.username || playlists[i].author_id.deezer.username || playlists[i].author_id.youtube.displayName + "</td>";
+          html += "<td>" + (playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id.deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false) + "</td>";
           html += "<td>";
           for (var j = 0; j < playlists[i].contributor_id.length; j++) {
             html += playlists[i].contributor_id[j].local.username || playlists[i].contributor_id[j].spotify.username || playlists[i].contributor_id[j].deezer.username || playlists[i].contributor_id[j].youtube.displayName;
