@@ -54,10 +54,10 @@
         for (var i = 0; i < playlists.length; i++) {
           var html = "<tr><td><a href='./musics?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
-          html += "<td>" + (playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id.deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false) + "</td>";
+          html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id.deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
           html += "<td>";
           for (var j = 0; j < playlists[i].contributor_id.length; j++) {
-            html += (playlists[i].contributor_id[j].local ? playlists[i].contributor_id[j].local.username : false) || (playlists[i].contributor_id[j].spotify ? playlists[i].contributor_id[j].spotify.username : false) || (playlists[i].contributor_id[j].deezer ? playlists[i].contributor_id[j].deezer.username : false) || (playlists[i].contributor_id[j].youtube ? playlists[i].contributor_id[j].youtube.displayName : false);
+            html += ((playlists[i].contributor_id[j].local ? playlists[i].contributor_id[j].local.username : false) || (playlists[i].contributor_id[j].spotify ? playlists[i].contributor_id[j].spotify.username : false) || (playlists[i].contributor_id[j].deezer ? playlists[i].contributor_id[j].deezer.username : false) || (playlists[i].contributor_id[j].youtube ? playlists[i].contributor_id[j].youtube.displayName : false));
             if (j < playlists[i].contributor_id.length - 1) {
               html += ", ";
             }
