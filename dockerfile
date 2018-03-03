@@ -77,5 +77,4 @@ nvm install 9 && \
 npm install && \
 mv ./config/auth-default.js ./config/auth.js && \
 sed -i -e 's/localhost/mongo/g' ./config/database.js && \
-sed -i -e 's/bestaudio\/best/best/g' ./node_modules/alltomp3/index.js && \
 npm start
