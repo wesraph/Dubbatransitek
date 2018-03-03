@@ -101,7 +101,11 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
 
 ### TODO
  - spotify and deezer track
- - Import playlist section
+ - Import playlist from youtube, deezer or spotify section
+ - Improve download playlist function (add field on playlist model)
+ - Page to edit music info
+ - Playlist music ordering with something like https://github.com/RubaXa/Sortable
+ - Fix souncloud playlist import
  - ...
 
 ### Tip
