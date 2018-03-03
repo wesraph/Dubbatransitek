@@ -249,6 +249,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         }
       }
     }).catch(function(err) {
+      callback(false, null);
       console.log('Error when getting info from URL\n', err);
     });
   }
@@ -425,7 +426,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
     Music.findOne({
       url: url
     }, function(err, res) {
-      if (err) return;
+      if (err) return callback();
 
       if (res) return callback(res.file, res, url);
 
@@ -460,7 +461,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         Music.findOne({
           $or: searchParams
         }, function(err, res) {
-          if (err) return;
+          if (err) return callback();
 
           if (res) return callback(res.file, res, url);
 
@@ -477,6 +478,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
           });
         });
       }).catch(function(err) {
+        calback();
         console.log('Error when getting info from URL\n', err);
       });
     });
@@ -485,10 +487,10 @@ module.exports = function(io, lang, similarSongsOption, paths) {
   function downloadSongsFromUrl(url, callback, progress) {
     alltomp3.getPlaylistURLsInfos(url).then(function(array) {
       for (var i = 0; i < array.items.length; i++) {
-        //TODO: Async
         downloadSong(array.items[i].url, callback, progress);
       }
     }).catch(function(err) {
+      callback();
       console.log('Error when getting infos from playlist URL\n', err);
     });
   }
@@ -499,6 +501,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         findAndDownload(array.items[i].artistName + ' - ' + array.items[i].title, callback, progress);
       }
     }).catch(function(err) {
+      callback();
       console.log('Error when getting infos from playlist titles\n', err);
     });
   }
@@ -514,7 +517,8 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         downloadSongsFromTitle(url, callback, progress);
         break;
       default:
-
+        callback();
+        break;
     }
   }
 
@@ -525,6 +529,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
 
       downloadSong(res[0].url, callback, progress);
     }).catch(function(err) {
+      callback();
       console.log('Error when finding video\n', err);
     });
   }
