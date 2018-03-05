@@ -147,7 +147,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
     }, progress);
   }
 
-  function addPlaylist(name, tag, url, userId, callback, progress) {
+  function addPlaylist(name, tag, url, userId, plCreated, callback, progress) {
     var newPlaylist = new Playlist();
     newPlaylist._id = mongoose.Types.ObjectId();
     newPlaylist.name = name;
@@ -163,7 +163,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
               console.log(err);
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
-
+            plCreated();
             addSongFromUrl(name, url, userId, callback, progress);
           });
           break;
@@ -176,7 +176,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
               console.log(err);
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
-
+            plCreated();
             addSongsFromUrl(name, url, userId, callback, progress);
           });
           break;
@@ -186,7 +186,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
               console.log(err);
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
-
+            plCreated();
             findAndDownload(url, function(file, infos) {
               if (!file || !infos)
                 return callback(false, lang.playlist.errorAddingMusic);
@@ -673,12 +673,20 @@ module.exports = function(io, lang, similarSongsOption, paths) {
           return socket.emit('fail', msg1);
         }
 
-        addPlaylist(name, tag, url, socket.request.session.passport.user, function(success, msg2) {
+        addPlaylist(name, tag, url, socket.request.session.passport.user, function() {
+          Playlist.getUserPlaylists(socket.request.session.passport.user, function(res) {
+            socket.emit('myPlaylists', res);
+            socket.broadcast.emit('myPlaylists', res);
+          });
+
+          return socket.emit('success', lang.playlist.successfullyCreatedPlaylistWaitForSong);
+        }, function(success, msg2) {
           if (!success)
             return socket.emit('fail', msg2);
 
           Playlist.getUserPlaylists(socket.request.session.passport.user, function(res) {
             socket.emit('myPlaylists', res);
+            socket.broadcast.emit('myPlaylists', res);
           });
 
           getSongs(name, function(infos) {

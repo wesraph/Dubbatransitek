@@ -20,6 +20,7 @@
     "playlistNameAlreadyTaken": "Erreur, une playlist avec ce nom existe déjà",
     "errorCreatingPlaylist": "Impossible de créer la playlist",
     "successfullyCreatedPlaylist": "Playlist créée !",
+    "successfullyCreatedPlaylistWaitForSong": "Playlist créée ! Les musiques sont en cours d'ajout",
     "errorAddingMusic": "Impossible d'ajouter la musique",
     "successfullyAddedMusic": "Musique ajouté !",
     "errorImportingPlaylist": "Impossible d'importer la playlist",
