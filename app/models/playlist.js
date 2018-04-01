@@ -18,9 +18,16 @@ var playlistSchema = mongoose.Schema({
   }],
   tag: [String],
   importedPl: [String],
-  musics_ids: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Music'
+  musics: [{
+    music_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Music'
+    },
+    index: Number,
+    contributor_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
   }],
   syncImportedPlaylist: {
     type: Boolean,
@@ -39,7 +46,7 @@ var playlistSchema = mongoose.Schema({
 playlistSchema.statics.getAllPlaylists = function(callback) {
   return this.model('Playlist').find({})
     .populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
-    .populate('contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
+    .populate('musics.contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
     .exec(function(err, res) {
       if (err)
         return;
@@ -51,7 +58,7 @@ playlistSchema.statics.getAllPlaylists = function(callback) {
 playlistSchema.statics.getUserPlaylists = function(userId, callback) {
   return this.model('Playlist').find({
     author_id: userId
-  }).populate('musics_ids').exec(function(err, res) {
+  }).populate('musics.music_id').exec(function(err, res) {
     if (err)
       return;
 
@@ -61,18 +68,20 @@ playlistSchema.statics.getUserPlaylists = function(userId, callback) {
 
 playlistSchema.statics.getPlaylist = function(playlistName, callback) {
   return this.model('Playlist').findOne({
-    name: playlistName
-  }).populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName').populate({
-    path: 'musics_ids',
-    populate: {
-      path: 'author_id',
-      select: 'local.username + spotify.username + deezer.username + youtube.displayName'
-    }
-  }).exec(function(err, res) {
-    if (err) return;
+      name: playlistName
+    }).populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
+    .populate('musics.contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
+    .populate({
+      path: 'musics.music_id',
+      populate: {
+        path: 'author_id',
+        select: 'local.username + spotify.username + deezer.username + youtube.displayName'
+      }
+    }).exec(function(err, res) {
+      if (err) return;
 
-    callback(res);
-  });
+      callback(res);
+    });
 }
 
 playlistSchema.statics.getPlaylistInfo = function(playlistName, callback) {
@@ -91,8 +100,13 @@ playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, user
     name: playlistName
   }, {
     $addToSet: {
-      musics_ids: musicId,
-      contributor_id: userId
+      musics: {
+        music_id: musicId,
+        contributor_id: userId,
+        index: {
+          $size: "$musics"
+        }
+      }
     }
   }, callback);
 }

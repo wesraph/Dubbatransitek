@@ -24,7 +24,7 @@ var path = require('path');
 // The zip library needs to be instantiated:
 var nzip = require('node-zip');
 
-module.exports = function(io, lang, similarSongsOption, paths) {
+module.exports = function(io, lang, similarSongsOption) {
 
   // -------------------------------------------------------------------------
   // Function
@@ -338,9 +338,9 @@ module.exports = function(io, lang, similarSongsOption, paths) {
           return callback(true, lang.playlist.successfullyDeletedPlaylist);
         });
       } else {
-        result.musics_ids.forEach(function(musicId, index) {
+        result.musics_ids.forEach(function(music, index) {
           removeQueue.push(function(next) {
-            removeSong(playlistName, musicId, userId, function() {
+            removeSong(playlistName, music.music_id, userId, function() {
               next();
             });
           });
@@ -381,7 +381,9 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         name: playlistName
       }, {
         $pull: {
-          musics_ids: musicId
+          musics: {
+            music_id: musicId
+          }
         }
       }, {
         safe: true
@@ -391,7 +393,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
 
         //Search if the song is used in another playlist
         Playlist.findOne({
-          musics_ids: musicId
+          'musics.music_id': musicId
         }, function(err, res) {
           //If not, remove the file
           if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
@@ -423,17 +425,15 @@ module.exports = function(io, lang, similarSongsOption, paths) {
   // Download
 
   function downloadSong(url, callback, progress) {
-    Music.findOne({
-      url: url
-    }, function(err, res) {
-      if (err) return callback();
+    Music.isUrlAlreadyDownloaded(url, function(itis, res) {
+      if (itis === undefined) return callback();
 
-      if (res) return callback(res.file, res, url);
+      if (itis) return callback(res.file, res, url);
 
       alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
         if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
           return downloadQueue.push(function(next) {
-            var dl = alltomp3.downloadAndTagSingleURL(url, paths.musics, function(infos) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
               next();
               if (!infos)
                 return callback();
@@ -466,7 +466,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
           if (res) return callback(res.file, res, url);
 
           downloadQueue.push(function(next) {
-            var dl = alltomp3.downloadAndTagSingleURL(url, paths.musics, function(infos) {
+            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
               next();
               if (!infos)
                 return callback();
@@ -481,7 +481,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
         calback();
         console.log('Error when getting info from URL\n', err);
       });
-    });
+    })
   }
 
   function downloadSongsFromUrl(url, callback, progress) {
@@ -550,7 +550,7 @@ module.exports = function(io, lang, similarSongsOption, paths) {
       });
 
       // it's important to use *binary* encode
-      fs.writeFileSync(path.join(paths.playlistZip, name + '.zip'), data, 'binary');
+      fs.writeFileSync(path.join('./public/playlists', name + '.zip'), data, 'binary');
       callback(true, lang.playlist.downloadReady);
     });
   }

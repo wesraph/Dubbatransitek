@@ -19,23 +19,47 @@
       <table id="myTable" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th><%= lang.pages.name %></th>
-            <th><%= lang.pages.tagTitle %></th>
-            <th><%= lang.pages.author %></th>
-            <th><%= lang.pages.contributor %></th>
-            <th><%= lang.pages.musicNb %></th>
-            <th><%= lang.pages.go %></th>
+            <th>
+              <%= lang.pages.name %>
+            </th>
+            <th>
+              <%= lang.pages.tagTitle %>
+            </th>
+            <th>
+              <%= lang.pages.author %>
+            </th>
+            <th>
+              <%= lang.pages.contributor %>
+            </th>
+            <th>
+              <%= lang.pages.musicNb %>
+            </th>
+            <th>
+              <%= lang.pages.go %>
+            </th>
           </tr>
         </thead>
 
         <tfoot>
           <tr>
-            <th><%= lang.pages.name %></th>
-            <th><%= lang.pages.tagTitle %></th>
-            <th><%= lang.pages.author %></th>
-            <th><%= lang.pages.contributor %></th>
-            <th><%= lang.pages.musicNb %></th>
-            <th><%= lang.pages.go %></th>
+            <th>
+              <%= lang.pages.name %>
+            </th>
+            <th>
+              <%= lang.pages.tagTitle %>
+            </th>
+            <th>
+              <%= lang.pages.author %>
+            </th>
+            <th>
+              <%= lang.pages.contributor %>
+            </th>
+            <th>
+              <%= lang.pages.musicNb %>
+            </th>
+            <th>
+              <%= lang.pages.go %>
+            </th>
           </tr>
         </tfoot>
         <tbody id="myTableBody">
@@ -50,15 +74,18 @@
     <script>
       var allPlaylists;
       socket.on('allPlaylists', function(playlists) {
+        $('#myTableBody').empty();
         allPlaylists = playlists;
         for (var i = 0; i < playlists.length; i++) {
           var html = "<tr><td><a href='./musics?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
-          html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id.deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
+          html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id
+            .deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
           html += "<td>";
-          for (var j = 0; j < playlists[i].contributor_id.length; j++) {
-            html += ((playlists[i].contributor_id[j].local ? playlists[i].contributor_id[j].local.username : false) || (playlists[i].contributor_id[j].spotify ? playlists[i].contributor_id[j].spotify.username : false) || (playlists[i].contributor_id[j].deezer ? playlists[i].contributor_id[j].deezer.username : false) || (playlists[i].contributor_id[j].youtube ? playlists[i].contributor_id[j].youtube.displayName : false));
-            if (j < playlists[i].contributor_id.length - 1) {
+          for (var j = 0; j < playlists[i].musics.length; j++) {
+            html += ((playlists[i].musics.contributor_id[j].local ? playlists[i].musics.contributor_id[j].local.username : false) || (playlists[i].musics.contributor_id[j].spotify ? playlists[i].musics.contributor_id[j].spotify.username : false) || (playlists[i].musics.contributor_id[
+              j].deezer ? playlists[i].musics.contributor_id[j].deezer.username : false) || (playlists[i].musics.contributor_id[j].youtube ? playlists[i].musics.contributor_id[j].youtube.displayName : false));
+            if (j < playlists[i].musics.contributor_id.length - 1) {
               html += ", ";
             }
           }

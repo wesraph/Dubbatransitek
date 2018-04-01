@@ -41,20 +41,7 @@ musicSchema.static.isUrlAlreadyDownloaded = function(url, callback) {
     if (res === undefined)
       return callback(false);
 
-    return callback(true);
-  });
-}
-
-musicSchema.static.getMusics = function(ids, callback) {
-  return this.model('Music').find({
-    _id: {
-      $in: ids
-    }
-  }, function(err, res) {
-    if (err)
-      callback();
-
-    callback(res);
+    return callback(true, res);
   });
 }
 

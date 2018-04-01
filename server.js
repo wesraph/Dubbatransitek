@@ -19,7 +19,6 @@ var MongoStore = require('connect-mongo')(session);
 var lang = require('./lang/fr_FR');
 
 var configDB = require('./config/database');
-var paths = require('./config/folderPath');
 
 // load the auth variables
 var configAuth = require('./config/auth');
@@ -28,10 +27,10 @@ process.setMaxListeners(0);
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
-if (!fs.existsSync(paths.musics))
-  fs.mkdirSync(paths.musics);
-if (!fs.existsSync(paths.playlistZip))
-  fs.mkdirSync(paths.playlistZip);
+if (!fs.existsSync('./public/musics'))
+  fs.mkdirSync('./public/musics');
+if (!fs.existsSync('./public/playlists'))
+  fs.mkdirSync('./public/playlists');
 
 require('./config/passport')(passport, lang, configAuth); // pass passport for configuration
 
@@ -69,7 +68,7 @@ var io = require('socket.io')(server).use(function(socket, next) {
 
 // routes ======================================================================
 require('./app/routes')(app, passport, lang); // load our routes and pass in our app and fully configured passport
-require('./app/core')(io, lang, configAuth, paths); // playlist things
+require('./app/core')(io, lang, configAuth); // playlist things
 
 // launch ======================================================================
 server.listen(port);

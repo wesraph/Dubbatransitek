@@ -106,6 +106,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Page to edit music info
  - Playlist music ordering with something like https://github.com/RubaXa/Sortable
  - Fix souncloud playlist import
+ - Random order playback
  - ...
 
 ### Tip
