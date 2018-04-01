@@ -62,7 +62,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function getSongs(name, callback) {
     Playlist.getPlaylist(name, function(res) {
-      callback(res.musics_ids);
+      callback(res.musics);
     });
   }
 
@@ -326,7 +326,7 @@ module.exports = function(io, lang, similarSongsOption) {
       if (result.author_id != userId)
         return callback(false, lang.playlist.notOwner);
 
-      if (result.musics_ids.length == 0) {
+      if (result.musics.length == 0) {
         Playlist.remove({
           name: playlistName
         }, function(err) {
@@ -338,14 +338,14 @@ module.exports = function(io, lang, similarSongsOption) {
           return callback(true, lang.playlist.successfullyDeletedPlaylist);
         });
       } else {
-        result.musics_ids.forEach(function(music, index) {
+        result.musics.forEach(function(music, index) {
           removeQueue.push(function(next) {
             removeSong(playlistName, music.music_id, userId, function() {
               next();
             });
           });
 
-          if (index == result.musics_ids.length - 1) {
+          if (index == result.musics.length - 1) {
             removeQueue.push(function(next) {
               Playlist.remove({
                 name: playlistName

@@ -90,7 +90,7 @@
             }
           }
           html += "</td>";
-          html += "<td>" + playlists[i].musics_ids.length + "</td>";
+          html += "<td>" + playlists[i].musics.length + "</td>";
           html += "<td><a class='btn btn-default' href='./musics?name=" + encodeURI(playlists[i].name) + "'><%= lang.pages.go %></a></td></tr>";
 
           $('#myTableBody').append(html);
