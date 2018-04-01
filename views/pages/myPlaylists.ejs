@@ -41,7 +41,10 @@
 <footer>
   <% include ../partials/notifJS %>
     <script>
+      var myPlaylists;
+
       socket.on('myPlaylists', function(playlists) {
+        myPlaylists=playlists;
         $("#myPlaylists").empty();
 
         for (var i = 0; i < playlists.length; i += 6) {
