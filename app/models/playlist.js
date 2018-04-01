@@ -74,7 +74,7 @@ playlistSchema.statics.getPlaylist = function(playlistName, callback) {
     .populate({
       path: 'musics.music_id',
       populate: {
-        path: 'author_id',
+        path: 'musics.music_id.author_id',
         select: 'local.username + spotify.username + deezer.username + youtube.displayName'
       }
     }).exec(function(err, res) {
