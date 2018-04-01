@@ -73,7 +73,7 @@ pip install eyeD3 && \
 cd ~ && \
 git clone https://github.com/Guisch/Dubbatransitek.git Dubbatransitek --branch dev && \
 cd ~/Dubbatransitek && \
-nvm install 9 && \
+nvm install 8.1 && \
 npm install && \
 mv ./config/auth-default.js ./config/auth.js && \
 sed -i -e 's/localhost/mongo/g' ./config/database.js && \

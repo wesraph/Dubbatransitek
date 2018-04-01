@@ -31,7 +31,7 @@ var musicSchema = mongoose.Schema({
   }
 });
 
-musicSchema.static.isUrlAlreadyDownloaded = function(url, callback) {
+musicSchema.statics.isUrlAlreadyDownloaded = function(url, callback) {
   return this.model('Music').find({
     url: url
   }, function(err, res) {
