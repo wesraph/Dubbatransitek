@@ -73,13 +73,15 @@ module.exports = function(io, lang, similarSongsOption) {
       return callback(false, lang.playlist.errorAddingMusic);
 
     if (infos._id) {
-      return Playlist.addMusicToPlaylist(playlistName, infos._id, userId, function(err) {
-        if (err) {
-          console.log(err);
-          return callback(false, lang.playlist.errorAddingMusic);
-        }
+      return Playlist.getPlaylist(playlistName, function(res) {
+        return Playlist.addMusicToPlaylist(playlistName, infos._id, userId, res.musics.length, function(err) {
+          if (err) {
+            console.log(err);
+            return callback(false, lang.playlist.errorAddingMusic);
+          }
 
-        return callback(true, lang.playlist.successfullyAddedMusic);
+          return callback(true, lang.playlist.successfullyAddedMusic);
+        });
       });
     }
 
@@ -124,13 +126,15 @@ module.exports = function(io, lang, similarSongsOption) {
         return callback(false, lang.playlist.errorAddingMusic);
       }
 
-      Playlist.addMusicToPlaylist(playlistName, music._id, userId, function(err) {
-        if (err) {
-          console.log(err);
-          return callback(false, lang.playlist.errorAddingMusic);
-        }
+      Playlist.getPlaylist(playlistName, function(res) {
+        Playlist.addMusicToPlaylist(playlistName, music._id, userId, res.musics.length, function(err) {
+          if (err) {
+            console.log(err);
+            return callback(false, lang.playlist.errorAddingMusic);
+          }
 
-        return callback(true, lang.playlist.successfullyAddedMusic);
+          return callback(true, lang.playlist.successfullyAddedMusic);
+        });
       });
     });
   }

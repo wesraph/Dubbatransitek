@@ -95,20 +95,18 @@ playlistSchema.statics.getPlaylistInfo = function(playlistName, callback) {
   });
 }
 
-playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, userId, callback) {
-  return this.getPlaylist(playlistName, function(res) {
-    return this.model('Playlist').update({
-      name: playlistName
-    }, {
-      $addToSet: {
-        musics: {
-          music_id: musicId,
-          contributor_id: userId,
-          index: res.musics.length
-        }
+playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, userId, index, callback) {
+  return this.model('Playlist').update({
+    name: playlistName
+  }, {
+    $addToSet: {
+      musics: {
+        music_id: musicId,
+        contributor_id: userId,
+        index: index
       }
-    }, callback);
-  });
+    }
+  }, callback);
 }
 
 // create the model for playlist and expose it to our app
