@@ -96,7 +96,7 @@ playlistSchema.statics.getPlaylistInfo = function(playlistName, callback) {
 }
 
 playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, userId, callback) {
-  return this.addMusicToPlaylist(playlistName, function(res) {
+  return this.getPlaylist(playlistName, function(res) {
     return this.model('Playlist').update({
       name: playlistName
     }, {
