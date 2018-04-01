@@ -71,13 +71,14 @@ playlistSchema.statics.getPlaylist = function(playlistName, callback) {
       name: playlistName
     }).populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
     .populate('musics.contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
-    .populate({
+    .populate('musics.music_id'
+      /*{
       path: 'musics.music_id',
       populate: {
         path: 'musics.music_id.author_id',
         select: 'local.username + spotify.username + deezer.username + youtube.displayName'
       }
-    }).exec(function(err, res) {
+    }*/).exec(function(err, res) {
       if (err) return;
 
       callback(res);
