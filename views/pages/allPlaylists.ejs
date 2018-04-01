@@ -83,9 +83,9 @@
             .deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
           html += "<td>";
           for (var j = 0; j < playlists[i].musics.length; j++) {
-            html += ((playlists[i].musics.contributor_id[j].local ? playlists[i].musics.contributor_id[j].local.username : false) || (playlists[i].musics.contributor_id[j].spotify ? playlists[i].musics.contributor_id[j].spotify.username : false) || (playlists[i].musics.contributor_id[
-              j].deezer ? playlists[i].musics.contributor_id[j].deezer.username : false) || (playlists[i].musics.contributor_id[j].youtube ? playlists[i].musics.contributor_id[j].youtube.displayName : false));
-            if (j < playlists[i].musics.contributor_id.length - 1) {
+            html += ((playlists[i].musics[j].contributor_id.local ? playlists[i].musics[j].contributor_id.local.username : false) || (playlists[i].musics[j].contributor_id.spotify ? playlists[i].musics[j].contributor_id.spotify.username : false) || (playlists[i].musics.contributor_id[
+              j].deezer ? playlists[i].musics[j].contributor_id.deezer.username : false) || (playlists[i].musics[j].contributor_id.youtube ? playlists[i].musics[j].contributor_id.youtube.displayName : false));
+            if (j < playlists[i].musics.length - 1) {
               html += ", ";
             }
           }
