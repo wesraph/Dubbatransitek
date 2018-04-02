@@ -32,13 +32,13 @@ var musicSchema = mongoose.Schema({
 });
 
 musicSchema.statics.isUrlAlreadyDownloaded = function(url, callback) {
-  return this.model('Music').find({
+  return this.model('Music').findOne({
     url: url
   }, function(err, res) {
     if (err)
       return callback();
 
-    if (res === undefined)
+    if (res === undefined || res == null)
       return callback(false);
 
     return callback(true, res);
