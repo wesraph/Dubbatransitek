@@ -116,6 +116,7 @@ module.exports = function(io, lang, similarSongsOption) {
     if (infos.genre)
       music.genre = infos.genre;
 
+    music.author_id = userId;
     music.url = url;
     music.file = file;
     music._id = mongoose.Types.ObjectId();
