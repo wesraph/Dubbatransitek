@@ -82,13 +82,13 @@
           html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id
             .deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
           html += "<td>";
+          var contributors;
           for (var j = 0; j < playlists[i].musics.length; j++) {
-            html += ((playlists[i].musics[j].contributor_id.local ? playlists[i].musics[j].contributor_id.local.username : false) || (playlists[i].musics[j].contributor_id.spotify ? playlists[i].musics[j].contributor_id.spotify.username : false) || (playlists[i].musics.contributor_id[
+            var c = ((playlists[i].musics[j].contributor_id.local ? playlists[i].musics[j].contributor_id.local.username : false) || (playlists[i].musics[j].contributor_id.spotify ? playlists[i].musics[j].contributor_id.spotify.username : false) || (playlists[i].musics.contributor_id[
               j].deezer ? playlists[i].musics[j].contributor_id.deezer.username : false) || (playlists[i].musics[j].contributor_id.youtube ? playlists[i].musics[j].contributor_id.youtube.displayName : false));
-            if (j < playlists[i].musics.length - 1) {
-              html += ", ";
-            }
+            if (contributors.indexOf(c) === -1) contributors.push(c);
           }
+          html += contributors.join(', ');
           html += "</td>";
           html += "<td>" + playlists[i].musics.length + "</td>";
           html += "<td><a class='btn btn-default' href='./musics?name=" + encodeURI(playlists[i].name) + "'><%= lang.pages.go %></a></td></tr>";
