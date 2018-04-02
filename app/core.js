@@ -60,9 +60,21 @@ module.exports = function(io, lang, similarSongsOption) {
     return site;
   }
 
+  function compare(a, b) {
+    let comparison = 0;
+
+    if (a.index > b.index) {
+      comparison = 1;
+    } else if (b.index > a.index) {
+      comparison = -1;
+    }
+
+    return comparison;
+  }
+
   function getSongs(name, callback) {
     Playlist.getPlaylist(name, function(res) {
-      callback(res.musics);
+      callback(res.musics.sort(compare));
     });
   }
 
