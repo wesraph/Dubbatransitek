@@ -558,7 +558,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       zip = new nzip();
       for (var i = 0; i < res.length; i++) {
-        zip.file(res[i].music_id.file.split('/').pop(), fs.readFileSync(res[i].file));
+        zip.file(res[i].music_id.file.split('/').pop(), fs.readFileSync(res[i].music_id.file));
       }
 
       var data = zip.generate({
