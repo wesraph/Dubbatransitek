@@ -74,7 +74,8 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function getSongs(name, callback) {
     Playlist.getPlaylist(name, function(res) {
-      callback(res.musics.sort(compare));
+      if (res && res.length != 0)
+        callback(res.musics.sort(compare));
     });
   }
 
@@ -252,34 +253,41 @@ module.exports = function(io, lang, similarSongsOption) {
     if (index >= foundedSongs.length)
       return callback(false, null);
 
-    alltomp3.getCompleteInfosFromURL('https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId).then(function(infos) {
-      if (!infos)
+    var urlYt = 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId;
+
+    Music.isUrlAlreadyDownloaded(urlYt, function(itis) {
+      if (itis)
         return forSimilar(foundedSongs, index + 1, callback);
 
-      var searchParams = [{
-        url: 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId
-      }];
+      alltomp3.getCompleteInfosFromURL(urlYt).then(function(infos) {
+        if (!infos)
+          return forSimilar(foundedSongs, index + 1, callback);
 
-      if (infos.deezerId)
-        searchParams.push({
-          deezerId: infos.deezerId
+        var searchParams = [{
+          url: urlYt
+        }];
+
+        if (infos.deezerId)
+          searchParams.push({
+            deezerId: infos.deezerId
+          });
+        if (infos.ituneId)
+          searchParams.push({
+            itunesId: infos.ituneId
+          });
+
+        Music.findOne({
+          $or: searchParams
+        }, function(err, res) {
+          if (err || res === undefined || res == null || (res != null && res.length == 0))
+            return callback(true, urlYt);
+
+          return forSimilar(foundedSongs, index + 1, callback);
         });
-      if (infos.ituneId)
-        searchParams.push({
-          itunesId: infos.ituneId
-        });
-
-      Music.findOne({
-        $or: searchParams
-      }, function(err, res) {
-        if (err || res === undefined || res == null || (res != null && res.length == 0))
-          return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
-
-        return forSimilar(foundedSongs, index + 1, callback);
+      }).catch(function(err) {
+        callback(false, null);
+        console.log('Error when getting info from URL\n', err);
       });
-    }).catch(function(err) {
-      callback(false, null);
-      console.log('Error when getting info from URL\n', err);
     });
   }
 
@@ -562,13 +570,18 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function downloadPlaylist(name, callback) {
-    getSongs(name, function(res) {
-      if (!res)
+    Playlist.findOne({
+      name: name
+    }, function(err, res) {
+      if (err || res === undefined || res == null || (res != null && res.length == 0))
         callback(false, lang.playlist.downloadFail);
 
+      if (res.isZipped)
+        return callback(true, lang.playlist.downloadReady);
+
       zip = new nzip();
-      for (var i = 0; i < res.length; i++) {
-        zip.file(res[i].music_id.file.split('/').pop(), fs.readFileSync(res[i].music_id.file));
+      for (var i = 0; i < res.musics.length; i++) {
+        zip.file(res.musics[i].music_id.file.split('/').pop(), fs.readFileSync(res.musics[i].music_id.file));
       }
 
       var data = zip.generate({
@@ -578,7 +591,14 @@ module.exports = function(io, lang, similarSongsOption) {
 
       // it's important to use *binary* encode
       fs.writeFileSync(path.join('./public/playlists', name + '.zip'), data, 'binary');
-      callback(true, lang.playlist.downloadReady);
+
+      Playlist.update({
+        name: name
+      }, {
+        isZipped: true
+      }, function(err) {
+        callback(true, lang.playlist.downloadReady);
+      });
     });
   }
 

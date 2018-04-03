@@ -40,6 +40,10 @@ var playlistSchema = mongoose.Schema({
   creationDate: {
     type: Date,
     default: Date.now
+  },
+  isZipped: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -99,7 +103,8 @@ playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, user
         contributor_id: userId,
         index: index
       }
-    }
+    },
+    isZipped: false
   }, callback);
 }
 
