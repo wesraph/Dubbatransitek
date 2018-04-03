@@ -570,10 +570,8 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function downloadPlaylist(name, callback) {
-    Playlist.findOne({
-      name: name
-    }, function(err, res) {
-      if (err || res === undefined || res == null || (res != null && res.length == 0))
+    Playlist.getPlaylist(name, function(res) {
+      if (res === undefined || res == null || (res != null && res.length == 0))
         callback(false, lang.playlist.downloadFail);
 
       if (res.isZipped)
