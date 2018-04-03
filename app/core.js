@@ -248,23 +248,39 @@ module.exports = function(io, lang, similarSongsOption) {
     }, progress);
   }
 
-  function forSimilar(foundedSongs, index, songs, callback) {
+  function forSimilar(foundedSongs, index, callback) {
     if (index >= foundedSongs.length)
       return callback(false, null);
 
     alltomp3.getCompleteInfosFromURL('https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId).then(function(infos) {
       if (!infos)
-        return forSimilar(foundedSongs, index + 1, songs, callback);
+        return forSimilar(foundedSongs, index + 1, callback);
 
-      for (var i = 0; i < songs.length; i++) {
-        if ((songs[i].deezerId && infos.deezerId && songs[i].deezerId == infos.deezerId) || (songs[i].url == 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId)) {
-          return forSimilar(foundedSongs, index + 1, songs, callback);
-        }
+      var searchParams = [{
+        url: 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId
+      }];
 
-        if (i == songs.length - 1) {
+      if (infos.deezerId)
+        searchParams.push({
+          deezerId: infos.deezerId
+        });
+      if (infos.ituneId)
+        searchParams.push({
+          itunesId: infos.ituneId
+        });
+
+      Music.findOne({
+        $or: searchParams
+      }, function(err, res) {
+        if (err)
           return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
-        }
-      }
+        if (res === undefined)
+          return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
+        if (res.length == 0)
+          return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
+
+        return forSimilar(foundedSongs, index + 1, callback);
+      });
     }).catch(function(err) {
       callback(false, null);
       console.log('Error when getting info from URL\n', err);
@@ -290,13 +306,11 @@ module.exports = function(io, lang, similarSongsOption) {
         if (err || foundedSongs.length == 0)
           return callback(false, lang.playlist.unableToFindSimilarSong);
 
-        getSongs(playlistName, function(songs) {
-          forSimilar(foundedSongs, 0, songs, function(success, url) {
-            if (!success)
-              return callback(false, lang.playlist.unableToFindSimilarSong);
+        forSimilar(foundedSongs, 0, function(success, url) {
+          if (!success)
+            return callback(false, lang.playlist.unableToFindSimilarSong);
 
-            addSongFromUrl(playlistName, url, userId, callback, progress);
-          });
+          addSongFromUrl(playlistName, url, userId, callback, progress);
         });
       });
     });
