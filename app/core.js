@@ -272,11 +272,7 @@ module.exports = function(io, lang, similarSongsOption) {
       Music.findOne({
         $or: searchParams
       }, function(err, res) {
-        if (err)
-          return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
-        if (res === undefined)
-          return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
-        if (res.length == 0)
+        if (err || res === undefined || res == null || (res != null && res.length == 0))
           return callback(true, 'https://www.youtube.com/watch?v=' + foundedSongs[index].youtubeId);
 
         return forSimilar(foundedSongs, index + 1, callback);
