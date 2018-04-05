@@ -82,7 +82,8 @@
     "myPlaylists": "Mes Playlists",
     "chooseYouConnectionMode": "Choisir son mode de connexion/inscription:",
     "tagTitle": "Tags",
-    "author": "Auteurs",
+    "author": "Auteur",
+    "authors": "Auteurs",
     "contributor": "Contributeur",
     "musicNb": "# de musique",
     "advancedSearch": "Recherche avancée",
@@ -96,6 +97,21 @@
     "syncImportedPlaylist": "Synchroniser les playlists importées",
     "on": "On",
     "off": "Off",
-    "autoAddSimilarSong": "Ajouter automatiquement des musiques similaires"
+    "autoAddSimilarSong": "Ajouter automatiquement des musiques similaires",
+    "title": "Titre",
+    "artistName": "Artiste",
+    "deezerId": "ID Deezer",
+    "ituneId": "ID Itune",
+    "position": "# de la musique sur l'album",
+    "duration": "Durée",
+    "deezerAlbum": "Album Deezer",
+    "discNumber": "# du disque",
+    "album": "Album",
+    "releaseDate": "Date de sortie",
+    "nbTracks": "Nombre de musique sur l'album",
+    "genreId": "ID du genre",
+    "cover": "URL de la cover",
+    "genre": "Genre",
+    "appearOn": "Apparait dans"
   }
 }
