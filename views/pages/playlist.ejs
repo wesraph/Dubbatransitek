@@ -181,9 +181,9 @@
 
           if (songsList[i].music_id.cover)
             html += '<div class="float-left"><img class="miniature" src="' + songsList[i].music_id.cover + '"></div>';
-          html += '<div>' + songsList[i].music_id.title + ' - ' + songsList[i].music_id.artistName + '</div>';
+          html += '<div class="margintop-15">' + songsList[i].music_id.title + ' - ' + songsList[i].music_id.artistName + '</div>';
           html += '</div><div class="col-md-3">'
-          html += '<a class="link btn btn-gray" href=./music?id="' + encodeURI(songsList[i].music_id._id) + '"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+          html += '<a class="link btn btn-info" href=./music?id="' + encodeURI(songsList[i].music_id._id) + '"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
           html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
           html += '<a class="link btn btn-primary" href="' + songsList[i].music_id.file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
           html += '<a class="link btn btn-default" href="' + songsList[i].music_id.url + '"><i class="fa fa-link" aria-hidden="true"></i></a>';

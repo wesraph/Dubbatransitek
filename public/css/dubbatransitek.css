@@ -58,3 +58,11 @@
 .whiteGradient {
   background: linear-gradient(white 60%, transparent);
 }
+
+.float-left {
+  float: left;
+}
+
+.margintop-15 {
+  margin-top: 15px;
+}
