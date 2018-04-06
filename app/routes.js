@@ -39,7 +39,7 @@ module.exports = function(app, passport, lang) {
 
     app.get('/music/', isLoggedIn, function(req, res) {
         if (req.query.id)
-            res.render('pages/playlist.ejs', {
+            res.render('pages/editMusic.ejs', {
                 name: req.query.id,
                 lang: lang,
                 masterVol: req.session.masterVol

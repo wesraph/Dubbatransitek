@@ -411,15 +411,30 @@ module.exports = function(io, lang, similarSongsOption) {
       if (res.author_id != userId)
         return callback ? callback(false, lang.playlist.notOwner) : null;
 
+      var musics = res.musics;
+      var indexToRemove = -1;
+
+      for (var i = 0; i < res.musics.length; i++) {
+        if (indexToRemove != -1) {
+          musics[i].index = res.musics[i].index - 1;
+        }
+
+        if (res.musics[i].music_id == musicId) {
+          indexToRemove = i;
+        }
+      }
+
+      if (indexToRemove > -1) {
+        musics.splice(indexToRemove, 1);
+      } else {
+        return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
+      }
+
       //Remove song from this playlist
       Playlist.update({
         name: playlistName
       }, {
-        $pull: {
-          musics: {
-            music_id: musicId
-          }
-        }
+        musics: musics
       }, {
         safe: true
       }, function(err) {
