@@ -143,6 +143,7 @@
       var sortableList;
       var syncImportedPlaylist;
       var autoAddSimilarSong;
+      var debugSortable;
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
 
@@ -178,7 +179,7 @@
           html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
 
           html += '<div class="col-md-9" onClick="loadWave(' + i.toString() + ')">';
-          html += '<div class="float-left"><i class="fa fa-arrows-v marginright-15"></i>';
+          html += '<div class="float-left"><i class="fa fa-arrows-v marginright-15 cursorR"></i>';
 
           if (songsList[i].music_id.cover)
             html += '<img class="miniature" src="' + songsList[i].music_id.cover + '">'
@@ -208,7 +209,10 @@
         // List with handle
         sortableList = Sortable.create(document.getElementById('songs'), {
           handle: '.fa-arrows-v',
-          animation: 150
+          animation: 150,
+          onEnd: function(elem) {
+            debugSortable = elem;
+          }
         });
       });
 

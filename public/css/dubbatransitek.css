@@ -26,6 +26,10 @@
   cursor: pointer;
 }
 
+.cursorR {
+  cursor: n-resize;
+}
+
 .thumb {
   height: 50%;
   width: 50%;
