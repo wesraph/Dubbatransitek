@@ -128,6 +128,7 @@
   <% include ../partials/notifJS %>
     <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/bootstrap-slider.min.js"></script>
+    <script src="//rubaxa.github.io/Sortable/Sortable.js"></script>
     <script>
       var songsList = [];
       var wavesurfer1;
@@ -139,6 +140,7 @@
       var fc1 = true;
       var fc2 = true;
       var masterVol = 1;
+      var sortableList;
       var syncImportedPlaylist;
       var autoAddSimilarSong;
       if (sessionStorage.getItem('masterVol') != null)
@@ -176,12 +178,15 @@
           html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
 
           html += '<div class="col-md-9" onClick="loadWave(' + i.toString() + ')">';
+          html += '<div class="float-left"><i class="fa fa-arrows-v marginright-15"></i>';
 
           if (songsList[i].music_id.cover)
-            html += '<div class="float-left"><img class="miniature" src="' + songsList[i].music_id.cover + '"></div>';
+            html += '<img class="miniature" src="' + songsList[i].music_id.cover + '">'
+
+          html += '</div>';
           html += '<div class="margintop-15">' + songsList[i].music_id.title + ' - ' + songsList[i].music_id.artistName + '</div>';
-          html += '</div><div class="col-md-3">'
-          html += '<a class="link btn btn-info" href="./music?id' + encodeURI(songsList[i].music_id._id) + '"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+          html += '</div><div class="col-md-3">';
+          html += '<a class="link btn btn-info" href="./music?id=' + encodeURI(songsList[i].music_id._id) + '"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
           html += '<button class="link btn btn-danger" onClick="deleteSong(' + i.toString() + ')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
           html += '<a class="link btn btn-primary" href="' + songsList[i].music_id.file + '"><i class="fa fa-download" aria-hidden="true"></i></a>';
           html += '<a class="link btn btn-default" href="' + songsList[i].music_id.url + '"><i class="fa fa-link" aria-hidden="true"></i></a>';
@@ -199,6 +204,12 @@
             isWS1Ready = false;
           }
         }
+
+        // List with handle
+        sortableList = Sortable.create('songs', {
+          handle: '.fa-arrows-v',
+          animation: 150
+        });
       });
 
       socket.on('downloadReady', function() {
