@@ -349,7 +349,7 @@ module.exports = function(io, lang, similarSongsOption) {
       return callback(false, lang.playlist.unableToEditOptions);
   }
 
-  function swapIndexes(playlistName, userID, oldIndex, newIndex, callback) {
+  function swapIndexes(playlistName, userId, oldIndex, newIndex, callback) {
     if (Number.isInteger(oldIndex) && oldIndex > -1 && Number.isInteger(newIndex) && newIndex > -1) {
       Playlist.findOne({
         name: playlistName
