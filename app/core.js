@@ -349,6 +349,42 @@ module.exports = function(io, lang, similarSongsOption) {
       return callback(false, lang.playlist.unableToEditOptions);
   }
 
+  function swapIndexes(playlistName, userID, oldIndex, newIndex, callback) {
+    if (Number.isInteger(oldIndex) && oldIndex > -1 && Number.isInteger(newIndex) && newIndex > -1) {
+      Playlist.findOne({
+        name: playlistName
+      }, function(err, res) {
+          if (err)
+            return callback(false, lang.playlist.unableToEditOptions);
+
+          if (result.author_id != userId)
+            return callback(false, lang.playlist.notOwner);
+
+          var musics = res.musics;
+
+          for(var i = 0; i < res.musics.length; i++) {
+            if (res.musics[i].index == oldIndex)
+              musics[i].index = newIndex;
+
+            if (res.musics[i].index == newIndex)
+              musics[i].index = oldIndex;
+          }
+
+          Playlist.update({
+            name: playlistName
+          }, {
+            musics: musics
+          }, function(err) {
+            if (err)
+              return callback(false, lang.playlist.unableToEditOptions);
+
+            return callback(true, lang.playlist.successfullyEditedOptions);
+          });
+      })
+    } else
+      return callback(false, lang.playlist.unableToEditOptions);
+  }
+
   // Remove
 
   function removePlaylist(playlistName, userId, callback) {
@@ -890,6 +926,24 @@ module.exports = function(io, lang, similarSongsOption) {
       });
     });
 
+    socket.on('swapIndexes', function(playlistName, oldIndex, newIndex) {
+      if (!socket.request.session.passport.user)
+        return socket.emit('fail', lang.playlist.sessionExpired);
+
+      swapIndexes(playlistName, socket.request.session.passport.user, oldIndex, newIndex, function(success, msg) {
+        if (!success) {
+          return socket.emit('fail', msg);
+        }
+
+        socket.emit('success', msg);
+        getSongs(playlistName, function(infos) {
+          if (infos) {
+            socket.emit('songs(' + playlistName + ')', infos);
+            socket.broadcast.emit('songs(' + playlistName + ')', infos);
+          }
+        });
+      });
+    })
   });
 
   new CronJob('0 0 * * *', function() {

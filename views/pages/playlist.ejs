@@ -143,7 +143,6 @@
       var sortableList;
       var syncImportedPlaylist;
       var autoAddSimilarSong;
-      var debugSortable;
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
 
@@ -210,8 +209,35 @@
         sortableList = Sortable.create(document.getElementById('songs'), {
           handle: '.fa-arrows-v',
           animation: 150,
-          onEnd: function(elem) {
-            debugSortable = elem;
+          onEnd: function(ev) {
+            if (ev.oldIndex != ev.newIndex) {
+              if (currentSong == ev.oldIndex) {
+                currentSong == ev.newIndex;
+
+                if ($('#waveform1').css('opacity') != 0) {
+                  wavesurfer2.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
+                }
+                if ($('#waveform2').css('opacity') != 0) {
+                  wavesurfer1.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
+                }
+              } else if (((currentSong + 1) % songsList.length) == ev.oldIndex) {
+                if ($('#waveform1').css('opacity') != 0) {
+                  wavesurfer2.load(songsList[ev.newIndex].music_id.file);
+                }
+                if ($('#waveform2').css('opacity') != 0) {
+                  wavesurfer1.load(songsList[ev.newIndex].music_id.file);
+                }
+              } else if (((currentSong + 1) % songsList.length) == ev.newIndex) {
+                if ($('#waveform1').css('opacity') != 0) {
+                  wavesurfer2.load(songsList[ev.oldIndex].music_id.file);
+                }
+                if ($('#waveform2').css('opacity') != 0) {
+                  wavesurfer1.load(songsList[ev.oldIndex].music_id.file);
+                }
+              }
+
+              socket.emit('swapIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
+            }
           }
         });
       });
