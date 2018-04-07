@@ -357,7 +357,7 @@ module.exports = function(io, lang, similarSongsOption) {
           if (err)
             return callback(false, lang.playlist.unableToEditOptions);
 
-          if (result.author_id != userId)
+          if (res.author_id != userId)
             return callback(false, lang.playlist.notOwner);
 
           var musics = res.musics;
