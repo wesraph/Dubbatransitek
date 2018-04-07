@@ -349,7 +349,7 @@ module.exports = function(io, lang, similarSongsOption) {
       return callback(false, lang.playlist.unableToEditOptions);
   }
 
-  function swapIndexes(playlistName, userId, oldIndex, newIndex, callback) {
+  function changeIndexes(playlistName, userId, oldIndex, newIndex, callback) {
     if (Number.isInteger(oldIndex) && oldIndex > -1 && Number.isInteger(newIndex) && newIndex > -1) {
       Playlist.findOne({
         name: playlistName
@@ -360,14 +360,26 @@ module.exports = function(io, lang, similarSongsOption) {
           if (res.author_id != userId)
             return callback(false, lang.playlist.notOwner);
 
-          var musics = res.musics;
+          var musics = JSON.parse(JSON.stringify(res.musics));
 
-          for(var i = 0; i < res.musics.length; i++) {
-            if (res.musics[i].index == oldIndex)
-              musics[i].index = newIndex;
+          if (newIndex < oldIndex) {
+            for (var i = 0; i < res.musics.length; i++) {
+              if (res.musics[i].index == oldIndex)
+                musics[i].index = newIndex;
 
-            if (res.musics[i].index == newIndex)
-              musics[i].index = oldIndex;
+              if (res.musics[i].index >= newIndex && res.musics[i].index < oldIndex)
+                musics[i].index+=1;
+            }
+          }
+
+          if (newIndex > oldIndex) {
+            for (var i = 0; i < res.musics.length; i++) {
+              if (res.musics[i].index == oldIndex)
+                musics[i].index = newIndex;
+
+              if (res.musics[i].index < newIndex && res.musics[i].index >= oldIndex)
+                musics[i].index-=1;
+            }
           }
 
           Playlist.update({
@@ -926,11 +938,11 @@ module.exports = function(io, lang, similarSongsOption) {
       });
     });
 
-    socket.on('swapIndexes', function(playlistName, oldIndex, newIndex) {
+    socket.on('changeIndexes', function(playlistName, oldIndex, newIndex) {
       if (!socket.request.session.passport.user)
         return socket.emit('fail', lang.playlist.sessionExpired);
 
-      swapIndexes(playlistName, socket.request.session.passport.user, oldIndex, newIndex, function(success, msg) {
+      changeIndexes(playlistName, socket.request.session.passport.user, oldIndex, newIndex, function(success, msg) {
         if (!success) {
           return socket.emit('fail', msg);
         }

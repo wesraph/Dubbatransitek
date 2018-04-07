@@ -222,21 +222,21 @@
                 }
               } else if (((currentSong + 1) % songsList.length) == ev.oldIndex) {
                 if ($('#waveform1').css('opacity') != 0) {
+                  wavesurfer2.load(songsList[((currentSong + 2) % songsList.length)].music_id.file);
+                }
+                if ($('#waveform2').css('opacity') != 0) {
+                  wavesurfer1.load(songsList[((currentSong + 2) % songsList.length)].music_id.file);
+                }
+              } else if (((currentSong + 1) % songsList.length) == ev.newIndex) {
+                if ($('#waveform1').css('opacity') != 0) {
                   wavesurfer2.load(songsList[ev.newIndex].music_id.file);
                 }
                 if ($('#waveform2').css('opacity') != 0) {
                   wavesurfer1.load(songsList[ev.newIndex].music_id.file);
                 }
-              } else if (((currentSong + 1) % songsList.length) == ev.newIndex) {
-                if ($('#waveform1').css('opacity') != 0) {
-                  wavesurfer2.load(songsList[ev.oldIndex].music_id.file);
-                }
-                if ($('#waveform2').css('opacity') != 0) {
-                  wavesurfer1.load(songsList[ev.oldIndex].music_id.file);
-                }
               }
 
-              socket.emit('swapIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
+              socket.emit('changeIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
             }
           }
         });
