@@ -377,7 +377,7 @@ module.exports = function(io, lang, similarSongsOption) {
               if (res.musics[i].index == oldIndex)
                 musics[i].index = newIndex;
 
-              if (res.musics[i].index < newIndex && res.musics[i].index >= oldIndex)
+              if (res.musics[i].index <= newIndex && res.musics[i].index > oldIndex)
                 musics[i].index-=1;
             }
           }
