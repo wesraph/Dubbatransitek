@@ -10,7 +10,7 @@
   <div class="container">
     <header>
       <% include ../partials/header %>
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/css/bootstrap-slider.min.css" integrity="sha256-pO9/5PQba+AqEbehe+LDIXgbKSXTlmwgoeayBfGRwjw=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css" integrity="sha256-WfuSLYdzGvlsFU6ImYYSE277WsjfyU30QeGuNIjeJEI=" crossorigin="anonymous" />
     </header>
 
     <div class="musicSticky">
@@ -126,8 +126,8 @@
 </body>
 <footer>
   <% include ../partials/notifJS %>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/bootstrap-slider.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/videojs-wavesurfer/2.2.2/videojs.wavesurfer.min.js" integrity="sha256-HO4eVTYxGlHeNmz1WV5vnXJLtk0e7KKK9cIBFQJrLl0=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js" integrity="sha256-ssw743RfM8cbNhwou26tmmPhiNhq3buUbRG/RevtfG4=" crossorigin="anonymous"></script>
     <script src="//rubaxa.github.io/Sortable/Sortable.js"></script>
     <script>
       var songsList = [];
@@ -211,30 +211,7 @@
           animation: 150,
           onEnd: function(ev) {
             if (ev.oldIndex != ev.newIndex) {
-              if (currentSong == ev.oldIndex) {
-                currentSong == ev.newIndex;
-
-                if ($('#waveform1').css('opacity') != 0) {
-                  wavesurfer2.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
-                }
-                if ($('#waveform2').css('opacity') != 0) {
-                  wavesurfer1.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
-                }
-              } else if (((currentSong + 1) % songsList.length) == ev.oldIndex) {
-                if ($('#waveform1').css('opacity') != 0) {
-                  wavesurfer2.load(songsList[((currentSong + 2) % songsList.length)].music_id.file);
-                }
-                if ($('#waveform2').css('opacity') != 0) {
-                  wavesurfer1.load(songsList[((currentSong + 2) % songsList.length)].music_id.file);
-                }
-              } else if (((currentSong + 1) % songsList.length) == ev.newIndex) {
-                if ($('#waveform1').css('opacity') != 0) {
-                  wavesurfer2.load(songsList[ev.newIndex].music_id.file);
-                }
-                if ($('#waveform2').css('opacity') != 0) {
-                  wavesurfer1.load(songsList[ev.newIndex].music_id.file);
-                }
-              }
+              // TODO: add
 
               socket.emit('changeIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
             }
