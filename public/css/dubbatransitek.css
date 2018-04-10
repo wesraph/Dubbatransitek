@@ -6,10 +6,12 @@
 
 #waveform1 {
   margin: 20px;
+  position: relative;
 }
 
 #waveform2 {
   margin: -148px 20px 20px 20px;
+  position: relative;
 }
 
 .miniature {
