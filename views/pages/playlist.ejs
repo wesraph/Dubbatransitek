@@ -143,6 +143,7 @@
       var sortableList;
       var syncImportedPlaylist;
       var autoAddSimilarSong;
+      var debugEv;
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
 
@@ -161,12 +162,7 @@
             loadWave(songRemoved);
           }
           if (songRemoved == currentSong + 1) {
-            if ($('#waveform1').css('opacity') != 0) {
-              wavesurfer2.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
-            }
-            if ($('#waveform2').css('opacity') != 0) {
-              wavesurfer1.load(songsList[(currentSong + 1) % songsList.length].music_id.file);
-            }
+            loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file)
           }
           if (songRemoved < currentSong)
             currentSong--;
@@ -195,14 +191,7 @@
         }
 
         if (currentSong == songsList.length - 2) {
-          if ($('#waveform1').css('opacity') != 0) {
-            wavesurfer2.load(songsList[songsList.length - 1].music_id.file);
-            isWS2Ready = false;
-          }
-          if ($('#waveform2').css('opacity') != 0) {
-            wavesurfer1.load(songsList[songsList.length - 1].music_id.file);
-            isWS1Ready = false;
-          }
+          loadNextWave(songsList[songsList.length - 1].music_id.file);
         }
 
         // List with handle
@@ -211,6 +200,12 @@
           animation: 150,
           onEnd: function(ev) {
             if (ev.oldIndex != ev.newIndex) {
+              debugEv = ev;
+
+              if (currentSong == ev.oldIndex) {
+                currentSong = ev.newIndex;
+                loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
+              }
               // TODO: add
 
               socket.emit('changeIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
@@ -235,6 +230,17 @@
         $($('input[name=autoAddSimilarSong]')[autoAddSimilarSong ? 1 : 0]).parent().removeClass('btn-primary').addClass('btn-default');
 
       });
+
+      function loadNextWave(s) {
+        if ($('#waveform1').css('opacity') != 0) {
+          wavesurfer2.load(s);
+          isWS2Ready = false;
+        }
+        if ($('#waveform2').css('opacity') != 0) {
+          wavesurfer1.load(s);
+          isWS1Ready = false;
+        }
+      }
 
       function deleteSong(id) {
         if (id == currentSong) {
