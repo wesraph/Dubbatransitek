@@ -210,10 +210,10 @@ module.exports = function(io, lang, similarSongsOption) {
                 return callback(false, lang.playlist.errorAddingMusic);
 
               alltomp3.findVideo(url).then(function(res) {
-                addSongToPlaylist(file, infos, res[0].url, userId, name, callback);
+                return addSongToPlaylist(file, infos, res[0].url, userId, name, callback);
               }).catch(function(err) {
-                callback(false, lang.playlist.errorAddingMusic);
-                console.log('Error when finding Video:\n', err);
+                console.log('Error when finding Video: ' + XMLHttpRequesturl, err);
+                return callback(false, lang.playlist.errorAddingMusic);
               });
             }, progress);
           });
@@ -241,10 +241,10 @@ module.exports = function(io, lang, similarSongsOption) {
         return callback(false, lang.playlist.errorAddingMusic);
 
       alltomp3.findVideo(query).then(function(res) {
-        addSongToPlaylist(file, infos, res[0].url, userId, playlistName, callback);
+        return addSongToPlaylist(file, infos, res[0].url, userId, playlistName, callback);
       }).catch(function(err) {
-        console.log('Error when finding Video\n', err);
-        callback(false, lang.playlist.errorAddingMusic);
+        console.log('Error when finding Video from query:', query, err);
+        return callback(false, lang.playlist.errorAddingMusic);
       });
     }, progress);
   }
@@ -276,7 +276,7 @@ module.exports = function(io, lang, similarSongsOption) {
             itunesId: infos.ituneId
           });
 
-        Music.findOne({
+        return Music.findOne({
           $or: searchParams
         }, function(err, res) {
           if (err || res === undefined || res == null || (res != null && res.length == 0))
@@ -285,8 +285,8 @@ module.exports = function(io, lang, similarSongsOption) {
           return forSimilar(foundedSongs, index + 1, callback);
         });
       }).catch(function(err) {
-        callback(false, null);
-        console.log('Error when getting info from URL\n', err);
+        console.log('Error when getting info from URL:', urlYt, err);
+        return callback(false, null);
       });
     });
   }
@@ -556,7 +556,7 @@ module.exports = function(io, lang, similarSongsOption) {
             itunesId: infos.ituneId
           });
 
-        Music.findOne({
+        return Music.findOne({
           $or: searchParams
         }, function(err, res) {
           if (err) return callback();
@@ -576,8 +576,8 @@ module.exports = function(io, lang, similarSongsOption) {
           });
         });
       }).catch(function(err) {
-        calback();
-        console.log('Error when getting info from URL\n', err);
+        console.log('Error when getting info from URL', url, err);
+        return calback();
       });
     })
   }
@@ -587,9 +587,10 @@ module.exports = function(io, lang, similarSongsOption) {
       for (var i = 0; i < array.items.length; i++) {
         downloadSong(array.items[i].url, callback, progress);
       }
+      return;
     }).catch(function(err) {
-      callback();
-      console.log('Error when getting infos from playlist URL\n', err);
+      console.log('Error when getting infos from playlist URL:', url, err);
+      return callback();
     });
   }
 
@@ -598,9 +599,10 @@ module.exports = function(io, lang, similarSongsOption) {
       for (var i = 0; i < array.items.length; i++) {
         findAndDownload(array.items[i].artistName + ' - ' + array.items[i].title, callback, progress);
       }
+      return;
     }).catch(function(err) {
-      callback();
-      console.log('Error when getting infos from playlist titles\n', err);
+      console.log('Error when getting infos from playlist titles:', url, err);
+      return callback();
     });
   }
 
@@ -625,10 +627,10 @@ module.exports = function(io, lang, similarSongsOption) {
       if (!res)
         return callback();
 
-      downloadSong(res[0].url, callback, progress);
+      return downloadSong(res[0].url, callback, progress);
     }).catch(function(err) {
-      callback();
-      console.log('Error when finding video\n', err);
+      console.log('Error when finding video from query:', query, err);
+      return callback();
     });
   }
 
