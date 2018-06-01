@@ -459,6 +459,8 @@ module.exports = function(io, lang, similarSongsOption) {
       if (err)
         return callback ? callback(false, lang.playlist.errorDeletingPlaylist) : null;
 
+        console.log("test1");
+
       if (res.author_id != userId)
         return callback ? callback(false, lang.playlist.notOwner) : null;
 
@@ -483,6 +485,8 @@ module.exports = function(io, lang, similarSongsOption) {
         }
       }
 
+      console.log("test2");
+
       //Remove song from this playlist
       Playlist.update({
         name: playlistName
@@ -494,10 +498,14 @@ module.exports = function(io, lang, similarSongsOption) {
         if (err)
           return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
+        console.log("test3");
+
         //Search if the song is used in another playlist
         Playlist.findOne({
           'musics.music_id': musicId
         }, function(err, res) {
+
+          console.log("test4");
           //If not, remove the file
           if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
@@ -505,12 +513,16 @@ module.exports = function(io, lang, similarSongsOption) {
             Music.findOne({
               _id: musicId
             }, function(err, res) {
+              console.log("test5");
+
               if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
               fs.unlink(res.file, function() {
                 Music.remove({
                   _id: musicId
                 }, function(err) {
+                  console.log("test6");
+
                   if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
                   return callback ? callback(true, lang.playlist.successfullyDeletedMusic) : null;
