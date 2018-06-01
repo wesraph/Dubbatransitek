@@ -737,11 +737,7 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function sanitizeUrl(url) {
-    var urlSanitized = url;
-    if (!url.startsWith('http'))
-      urlSanitized = 'https://' + url;
-
-    return urlSanitized.replace(/(http)(s)?\:\/\//, "https://");
+    return url.replace(/(http)(s)?\:\/\//, "https://");
   }
 
   // -------------------------------------------------------------------------
