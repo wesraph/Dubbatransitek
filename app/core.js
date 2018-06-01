@@ -534,6 +534,7 @@ module.exports = function(io, lang, similarSongsOption) {
       alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
         if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
           return downloadQueue.push(function(next) {
+            console.log("Downloading",url);
             var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
               next();
               if (!infos)
