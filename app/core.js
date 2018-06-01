@@ -459,7 +459,7 @@ module.exports = function(io, lang, similarSongsOption) {
       if (err)
         return callback ? callback(false, lang.playlist.errorDeletingPlaylist) : null;
 
-        console.log("test1");
+        console.log(res.author_id != userId);
 
       if (res.author_id != userId)
         return callback ? callback(false, lang.playlist.notOwner) : null;
@@ -474,6 +474,7 @@ module.exports = function(io, lang, similarSongsOption) {
         }
       }
 
+      console.log(i == musics.length);
       if (i == musics.length)
         return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
