@@ -466,27 +466,25 @@ module.exports = function(io, lang, similarSongsOption) {
 
       var musics = JSON.parse(JSON.stringify(res.musics));
       var fakeIndexToRemove;
+      var i;
 
-      for (var i = 0; i < musics.length; i++) {
+      for (i = 0; i < musics.length; i++) {
         if (res.musics[i].music_id == musicId) {
           fakeIndexToRemove = res.musics[i].index;
           break;
         }
       }
 
-      console.log(i);
       if (i == musics.length)
         return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
       musics.splice(i, 1);
 
-      for (var i = 0; i < musics.length; i++) {
+      for (i = 0; i < musics.length; i++) {
         if (musics[i].index > fakeIndexToRemove) {
           musics[i].index -= 1;
         }
       }
-
-      console.log("test2");
 
       //Remove song from this playlist
       Playlist.update({
@@ -499,14 +497,10 @@ module.exports = function(io, lang, similarSongsOption) {
         if (err)
           return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
-        console.log("test3");
-
         //Search if the song is used in another playlist
         Playlist.findOne({
           'musics.music_id': musicId
         }, function(err, res) {
-
-          console.log("test4");
           //If not, remove the file
           if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
@@ -514,16 +508,12 @@ module.exports = function(io, lang, similarSongsOption) {
             Music.findOne({
               _id: musicId
             }, function(err, res) {
-              console.log("test5");
-
               if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
               fs.unlink(res.file, function() {
                 Music.remove({
                   _id: musicId
                 }, function(err) {
-                  console.log("test6");
-
                   if (err) return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
 
                   return callback ? callback(true, lang.playlist.successfullyDeletedMusic) : null;
