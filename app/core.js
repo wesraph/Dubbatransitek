@@ -354,51 +354,51 @@ module.exports = function(io, lang, similarSongsOption) {
       Playlist.findOne({
         name: playlistName
       }, function(err, res) {
+        if (err)
+          return callback(false, lang.playlist.unableToEditOptions);
+
+        if (res.author_id != userId)
+          return callback(false, lang.playlist.notOwner);
+
+        var musics = JSON.parse(JSON.stringify(res.musics));
+
+        if (newIndex < oldIndex) {
+          for (var i = 0; i < res.musics.length; i++) {
+            if (res.musics[i].index == oldIndex)
+              musics[i].index = newIndex;
+
+            if (res.musics[i].index >= newIndex && res.musics[i].index < oldIndex)
+              musics[i].index += 1;
+          }
+        }
+
+        if (newIndex > oldIndex) {
+          for (var i = 0; i < res.musics.length; i++) {
+            if (res.musics[i].index == oldIndex)
+              musics[i].index = newIndex;
+
+            if (res.musics[i].index <= newIndex && res.musics[i].index > oldIndex)
+              musics[i].index -= 1;
+          }
+        }
+
+        Playlist.update({
+          name: playlistName
+        }, {
+          musics: musics
+        }, function(err) {
           if (err)
             return callback(false, lang.playlist.unableToEditOptions);
 
-          if (res.author_id != userId)
-            return callback(false, lang.playlist.notOwner);
-
-          var musics = JSON.parse(JSON.stringify(res.musics));
-
-          if (newIndex < oldIndex) {
-            for (var i = 0; i < res.musics.length; i++) {
-              if (res.musics[i].index == oldIndex)
-                musics[i].index = newIndex;
-
-              if (res.musics[i].index >= newIndex && res.musics[i].index < oldIndex)
-                musics[i].index+=1;
-            }
-          }
-
-          if (newIndex > oldIndex) {
-            for (var i = 0; i < res.musics.length; i++) {
-              if (res.musics[i].index == oldIndex)
-                musics[i].index = newIndex;
-
-              if (res.musics[i].index <= newIndex && res.musics[i].index > oldIndex)
-                musics[i].index-=1;
-            }
-          }
-
-          Playlist.update({
-            name: playlistName
-          }, {
-            musics: musics
-          }, function(err) {
-            if (err)
-              return callback(false, lang.playlist.unableToEditOptions);
-
-            return callback(true, lang.playlist.successfullyEditedOptions);
-          });
+          return callback(true, lang.playlist.successfullyEditedOptions);
+        });
       })
     } else
       return callback(false, lang.playlist.unableToEditOptions);
   }
 
   // Remove
-
+  // BUG Not deleting songs
   function removePlaylist(playlistName, userId, callback) {
     Playlist.findOne({
       name: playlistName
@@ -423,6 +423,7 @@ module.exports = function(io, lang, similarSongsOption) {
       } else {
         result.musics.forEach(function(music, index) {
           removeQueue.push(function(next) {
+            console.log(playlistName, music.music_id, userId);
             removeSong(playlistName, music.music_id, userId, function() {
               next();
             });
@@ -449,6 +450,7 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function removeSong(playlistName, musicId, userId, callback) {
+    console.log(playlistName,musicId,userId);
     //Search for the playlist where to delete song
     Playlist.findOne({
       name: playlistName
@@ -459,23 +461,25 @@ module.exports = function(io, lang, similarSongsOption) {
       if (res.author_id != userId)
         return callback ? callback(false, lang.playlist.notOwner) : null;
 
-      var musics = res.musics;
-      var indexToRemove = -1;
+      var musics = JSON.parse(JSON.stringify(res.musics));
+      var fakeIndexToRemove;
 
-      for (var i = 0; i < res.musics.length; i++) {
-        if (indexToRemove != -1) {
-          musics[i].index = res.musics[i].index - 1;
-        }
-
+      for (var i = 0; i < musics.length; i++) {
         if (res.musics[i].music_id == musicId) {
-          indexToRemove = i;
+          fakeIndexToRemove = res.musics[i].index;
+          break;
         }
       }
 
-      if (indexToRemove > -1) {
-        musics.splice(indexToRemove, 1);
-      } else {
+      if (i == musics.length)
         return callback ? callback(false, lang.playlist.errorDeletingMusic) : null;
+
+      musics.splice(i, 1);
+
+      for (var i = 0; i < musics.length; i++) {
+        if (musics[i].index > fakeIndexToRemove) {
+          musics[i].index -= 1;
+        }
       }
 
       //Remove song from this playlist
@@ -585,7 +589,7 @@ module.exports = function(io, lang, similarSongsOption) {
   function downloadSongsFromUrl(url, callback, progress) {
     alltomp3.getPlaylistURLsInfos(url).then(function(array) {
       for (var i = 0; i < array.items.length; i++) {
-        downloadSong(array.items[i].url, callback, progress);
+        downloadSong(sanitizeUrl(array.items[i].url), callback, progress);
       }
       return;
     }).catch(function(err) {
@@ -732,6 +736,14 @@ module.exports = function(io, lang, similarSongsOption) {
     });
   }
 
+  function sanitizeUrl(url) {
+    var urlSanitized = url;
+    if (!url.startsWith('http'))
+      urlSanitized = 'https://' + url;
+
+    return urlSanitized.replace(/(http)(s)?\:\/\//, "https://");
+  }
+
   // -------------------------------------------------------------------------
   // Not function
   // -------------------------------------------------------------------------
@@ -783,7 +795,7 @@ module.exports = function(io, lang, similarSongsOption) {
           return socket.emit('fail', msg1);
         }
 
-        addPlaylist(name, tag, url, socket.request.session.passport.user, function() {
+        addPlaylist(name, tag, sanitizeUrl(url), socket.request.session.passport.user, function() {
           Playlist.getUserPlaylists(socket.request.session.passport.user, function(res) {
             socket.emit('myPlaylists', res);
             socket.broadcast.emit('myPlaylists', res);
@@ -810,11 +822,12 @@ module.exports = function(io, lang, similarSongsOption) {
       });
     });
 
-    socket.on('addSong', function(playlistName, url) {
+    socket.on('addSong', function(playlistName, uri) {
       if (!socket.request.session.passport.user) {
         return socket.emit('fail', lang.playlist.sessionExpired);
       }
 
+      url = sanitizeUrl(uri);
       switch (getUrlType(url)) {
         case 'youtube':
         case 'soundcloud':
@@ -895,7 +908,7 @@ module.exports = function(io, lang, similarSongsOption) {
       })
     });
 
-    socket.on('removePlaylist', function(name, tag, url) {
+    socket.on('removePlaylist', function(name) {
       if (!socket.request.session.passport.user)
         return socket.emit('fail', lang.playlist.sessionExpired);
 
