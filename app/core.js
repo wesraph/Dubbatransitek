@@ -423,7 +423,6 @@ module.exports = function(io, lang, similarSongsOption) {
       } else {
         result.musics.forEach(function(music, index) {
           removeQueue.push(function(next) {
-            console.log(playlistName, music.music_id, userId);
             removeSong(playlistName, music.music_id, userId, function() {
               next();
             });
@@ -431,7 +430,6 @@ module.exports = function(io, lang, similarSongsOption) {
 
           if (index == result.musics.length - 1) {
             removeQueue.push(function(next) {
-              console.log("Playlist removed");
               Playlist.remove({
                 name: playlistName
               }, function(err) {
@@ -451,15 +449,12 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function removeSong(playlistName, musicId, userId, callback) {
-    console.log(playlistName,musicId,userId);
     //Search for the playlist where to delete song
     Playlist.findOne({
       name: playlistName
     }, function(err, res) {
       if (err)
         return callback ? callback(false, lang.playlist.errorDeletingPlaylist) : null;
-
-      console.log(res.author_id != userId);
 
       if (res.author_id != userId)
         return callback ? callback(false, lang.playlist.notOwner) : null;
@@ -470,6 +465,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       for (i = 0; i < musics.length; i++) {
         if (res.musics[i].music_id == musicId) {
+          console.log(res.musics[i]);
           fakeIndexToRemove = res.musics[i].index;
           break;
         }
