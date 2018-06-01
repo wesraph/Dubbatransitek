@@ -431,6 +431,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
           if (index == result.musics.length - 1) {
             removeQueue.push(function(next) {
+              console.log("Playlist removed");
               Playlist.remove({
                 name: playlistName
               }, function(err) {
