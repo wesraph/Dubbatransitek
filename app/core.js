@@ -453,7 +453,6 @@ module.exports = function(io, lang, similarSongsOption) {
     Playlist.findOne({
       name: playlistName
     }, function(err, res) {
-      console.log(res);
       if (err)
         return callback ? callback(false, lang.playlist.errorDeletingPlaylist) : null;
 
@@ -465,9 +464,7 @@ module.exports = function(io, lang, similarSongsOption) {
       var i;
 
       for (i = 0; i < musics.length; i++) {
-        console.log(res.musics[i].music_id, musicId);
-        if (res.musics[i].music_id == musicId) {
-          console.log(res.musics[i]);
+        if (res.musics[i].music_id == musicId.toString()) {
           fakeIndexToRemove = res.musics[i].index;
           break;
         }
