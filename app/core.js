@@ -48,11 +48,17 @@ module.exports = function(io, lang, similarSongsOption) {
           site = 'soundcloud playlist';
         else
           site = 'soundcloud';
-      } else if (url.indexOf('spotify.com') !== -1 && url.indexOf('playlist') !== -1)
-        site = 'spotify playlist';
-      else if (url.indexOf('deezer.com') !== -1 && url.indexOf('playlist') !== -1)
-        site = 'deezer playlist';
-      else
+      } else if (url.indexOf('spotify.com') !== -1) {
+        if (url.indexOf('playlist') !== -1)
+          site = 'spotify playlist';
+        else if (url.indexOf('track') !== -1)
+          site = 'spotify'
+      } else if (url.indexOf('deezer.com') !== -1) {
+        if(url.indexOf('playlist') !== -1)
+          site = 'deezer playlist';
+        else if (url.indexOf('track') !== -1)
+          site = 'deezer';
+      } else
         site = 'unknown';
     } else {
       site = 'query';
