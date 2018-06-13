@@ -1,5 +1,5 @@
 //load all the thing we need
-var alltomp3 = require('alltomp3');
+var ssyd = require('ssydtomp3');
 var similarSongs = require('similar-songs');
 var CronJob = require('cron').CronJob;
 var queue = require('queue');
@@ -100,6 +100,8 @@ module.exports = function(io, lang, similarSongsOption) {
 
     var music = new Music();
 
+    if (infos.tags)
+      music.tags = infos.tags;
     if (infos.title)
       music.title = infos.title;
     if (infos.artistName)
@@ -107,23 +109,27 @@ module.exports = function(io, lang, similarSongsOption) {
     if (infos.deezerId)
       music.deezerId = infos.deezerId;
     if (infos.itunesId)
-      music.itunesId = infos.itunesId;
+      music.itunesId = infos.ituneId;
+    if (infos.spotifyId)
+      music.spotifyId = infos.spotifyId;
+    if (infos.itunesAlbumId)
+      music.ituneAlbumId = infos.ituneAlbumId;
+    if (infos.spotifyAlbumId)
+      music.spotifyAlbumId = infos.spotifyAlbumId;
     if (infos.position)
-      music.position = infos.position;
+      music.position = infos.trackPosition;
     if (infos.duration)
-      music.duration = infos.duration;
+      music.duration = infos.duration / 1000;
     if (infos.deezerAlbum)
-      music.deezerAlbum = infos.deezerAlbum;
+      music.deezerAlbum = infos.deezerAlbumId;
     if (infos.discNumber)
-      music.discNumber = infos.discNumber;
+      music.discNumber = infos.discPosition;
     if (infos.album)
-      music.album = infos.album;
-    if (infos.releaseDate)
-      music.releaseDate = infos.releaseDate;
+      music.album = infos.albumName;
+    if (infos.releaseYear)
+      music.releaseDate = infos.releaseYear;
     if (infos.nbTracks)
-      music.nbTracks = infos.nbTracks;
-    if (infos.genreId)
-      music.genreId = infos.genreId;
+      music.nbTracks = infos.trackCount;
     if (infos.cover)
       music.cover = infos.cover;
     if (infos.genre)
@@ -153,16 +159,36 @@ module.exports = function(io, lang, similarSongsOption) {
     });
   }
 
-  function addSongFromUrl(playlistName, url, userId, callback, progress) {
-    downloadSong(url, function(file, infos) {
-      addSongToPlaylist(file, infos, url, userId, playlistName, callback);
-    }, progress);
+  function addSongFromYoutube(playlistName, url, userId, callback, progress) {
+    ssyd.getYoutubeMusicInfos(url, function(err, res) {
+      downloadSong(url, function(file, infos) {
+        addSongToPlaylist(file, infos, url, userId, playlistName, callback);
+      }, progress, res);
+    });
   }
 
-  function addSongsFromUrl(playlistName, url, userId, callback, progress) {
-    downloadSongs(url, function(file, infos, urlYt) {
-      addSongToPlaylist(file, infos, urlYt, userId, playlistName, callback);
-    }, progress);
+  function addSongFromDeezer(playlistName, url, userId, callback, progress) {
+    ssyd.getDeezerMusicInfos(url, function(err, res) {
+      downloadSong(url, function(file, infos) {
+        addSongToPlaylist(file, infos, url, userId, playlistName, callback);
+      }, progress, res);
+    });
+  }
+
+  function addSongFromSoundcloud(playlistName, url, userId, callback, progress) {
+    ssyd.getSoundcloudInfos(url, function(err, res) {
+      downloadSong(url, function(file, infos) {
+        addSongToPlaylist(file, infos, url, userId, playlistName, callback);
+      }, progress, res);
+    });
+  }
+
+  function addSongFromSpotify(playlistName, url, userId, callback, progress) {
+    ssyd.getSpotifyMusicInfos(url, function(err, res) {
+      downloadSong(url, function(file, infos) {
+        addSongToPlaylist(file, infos, url, userId, playlistName, callback);
+      }, progress, res);
+    });
   }
 
   function addPlaylist(name, tag, url, userId, plCreated, callback, progress) {
@@ -175,6 +201,15 @@ module.exports = function(io, lang, similarSongsOption) {
     if (url) {
       switch (getUrlType(url)) {
         case 'youtube':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            addSongFromYoutube(name, url, userId, callback, progress);
+          });
+          break;
         case 'soundcloud':
           newPlaylist.save(function(err) {
             if (err) {
@@ -182,12 +217,65 @@ module.exports = function(io, lang, similarSongsOption) {
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
             plCreated();
-            addSongFromUrl(name, url, userId, callback, progress);
+            addSongFromSoundcloud(name, url, userId, callback, progress);
+          });
+          break;
+        case 'deezer':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            addSongFromDeezer(name, url, userId, callback, progress);
+          });
+          break;
+        case 'spotify':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            addSongFromSpotify(name, url, userId, callback, progress);
           });
           break;
         case 'soundcloud playlist':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            downloadSongsFromSoundcloud(url, function(file, infos, url) {
+              addSongToPlaylist(file, infos, url, userId, name, callback);
+            }, progress);
+          });
+          break;
         case 'youtube playlist':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            downloadSongsFromYoutube(url, function(file, infos, url) {
+              addSongToPlaylist(file, infos, url, userId, name, callback);
+            }, progress);
+          });
+          break;
         case 'spotify playlist':
+          newPlaylist.save(function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorCreatingPlaylist);
+            }
+            plCreated();
+            downloadSongsFromSpotify(url, function(file, infos, url) {
+              addSongToPlaylist(file, infos, url, userId, name, callback);
+            }, progress);
+          });
+          break;
         case 'deezer playlist':
           newPlaylist.save(function(err) {
             if (err) {
@@ -195,7 +283,9 @@ module.exports = function(io, lang, similarSongsOption) {
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
             plCreated();
-            addSongsFromUrl(name, url, userId, callback, progress);
+            downloadSongsFromDeezer(url, function(file, infos, url) {
+              addSongToPlaylist(file, infos, url, userId, name, callback);
+            }, progress);
           });
           break;
         case 'query':
@@ -205,17 +295,8 @@ module.exports = function(io, lang, similarSongsOption) {
               return callback(false, lang.playlist.errorCreatingPlaylist);
             }
             plCreated();
-            findAndDownload(url, function(file, infos) {
-              if (!file || !infos)
-                return callback(false, lang.playlist.errorAddingMusic);
 
-              alltomp3.findVideo(url).then(function(res) {
-                return addSongToPlaylist(file, infos, res[0].url, userId, name, callback);
-              }).catch(function(err) {
-                console.log('Error when finding Video: ' + XMLHttpRequesturl, err);
-                return callback(false, lang.playlist.errorAddingMusic);
-              });
-            }, progress);
+            addSongFromQuery(name, url, userId, callback, progress);
           });
 
           break;
@@ -236,16 +317,11 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function addSongFromQuery(playlistName, query, userId, callback, progress) {
-    findAndDownload(query, function(file, infos) {
+    findAndDownload(query, function(file, infos, url) {
       if (!file || !infos)
         return callback(false, lang.playlist.errorAddingMusic);
 
-      alltomp3.findVideo(query).then(function(res) {
-        return addSongToPlaylist(file, infos, res[0].url, userId, playlistName, callback);
-      }).catch(function(err) {
-        console.log('Error when finding Video from query:', query, err);
-        return callback(false, lang.playlist.errorAddingMusic);
-      });
+      addSongToPlaylist(file, infos, url, userId, playlistName, callback);
     }, progress);
   }
 
@@ -259,21 +335,25 @@ module.exports = function(io, lang, similarSongsOption) {
       if (itis)
         return forSimilar(foundedSongs, index + 1, callback);
 
-      alltomp3.getCompleteInfosFromURL(urlYt).then(function(infos) {
-        if (!infos)
+      ssyd.getYoutubeMusicInfos(urlYt, function(err, res) {
+        if (err)
           return forSimilar(foundedSongs, index + 1, callback);
 
         var searchParams = [{
           url: urlYt
         }];
 
-        if (infos.deezerId)
+        if (res.deezerRes && res.deezerRes.id)
           searchParams.push({
-            deezerId: infos.deezerId
+            deezerId: res.deezerRes.id
           });
-        if (infos.ituneId)
+        if (res.ituneRes && res.ituneRes.trackId)
           searchParams.push({
-            itunesId: infos.ituneId
+            itunesId: res.ituneRes.trackId
+          });
+        if (res.spotifyRes && res.spotifyRes.id)
+          searchParams.push({
+            itunesId: res.ituneRes.trackId
           });
 
         return Music.findOne({
@@ -284,9 +364,6 @@ module.exports = function(io, lang, similarSongsOption) {
 
           return forSimilar(foundedSongs, index + 1, callback);
         });
-      }).catch(function(err) {
-        console.log('Error when getting info from URL:', urlYt, err);
-        return callback(false, null);
       });
     });
   }
@@ -314,7 +391,7 @@ module.exports = function(io, lang, similarSongsOption) {
           if (!success)
             return callback(false, lang.playlist.unableToFindSimilarSong);
 
-          addSongFromUrl(playlistName, url, userId, callback, progress);
+          addSongFromYoutube(playlistName, url, userId, callback, progress);
         });
       });
     });
@@ -525,101 +602,142 @@ module.exports = function(io, lang, similarSongsOption) {
 
   // Download
 
-  function downloadSong(url, callback, progress) {
+  function downloadSong(url, callback, progress, metaData) {
     Music.isUrlAlreadyDownloaded(url, function(itis, res) {
       if (itis === undefined) return callback();
 
       if (itis) return callback(res.file, res, url);
 
-      alltomp3.getCompleteInfosFromURL(url).then(function(infos) {
-        if (infos === undefined || (infos !== undefined && infos.deezerId === undefined)) {
-          return downloadQueue.push(function(next) {
-            console.log("Downloading",url);
-            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
-              next();
-              if (!infos)
-                return callback();
+      if (!metaData.ituneRes && !metaData.deezerRes && !metaData.spotifyRes) {
+        return downloadQueue.push(function(next) {
+          console.log("Downloading", url);
+          var dl = ssyd.downloadAndTag(url, './public/musics', metaData, function(err, filePath, info) {
+            next();
+            if (err)
+              return callback();
 
-              return callback(infos.file, infos.infos, url);
-            });
-
-            progress(dl);
-          });
-        }
-
-        var searchParams = [{
-          url: url
-        }];
-
-        if (infos.deezerId)
-          searchParams.push({
-            deezerId: infos.deezerId
-          });
-        if (infos.ituneId)
-          searchParams.push({
-            itunesId: infos.ituneId
+            return callback(filePath, info, url);
           });
 
-        return Music.findOne({
-          $or: searchParams
-        }, function(err, res) {
-          if (err) return callback();
-
-          if (res) return callback(res.file, res, url);
-
-          downloadQueue.push(function(next) {
-            console.log("Downloading",url);
-            var dl = alltomp3.downloadAndTagSingleURL(url, './public/musics', function(infos) {
-              next();
-              if (!infos)
-                return callback();
-
-              return callback(infos.file, infos.infos, url);
-            }, '', false, infos);
-
-            progress(dl);
-          });
+          progress(dl);
         });
-      }).catch(function(err) {
-        console.log('Error when getting info from URL', url, err);
-        return calback();
+      }
+
+      var searchParams = [{
+        url: url
+      }];
+
+      if (metaData.deezerRes && metaData.deezerRes.id)
+        searchParams.push({
+          deezerId: metaData.deezerRes.id
+        });
+      if (metaData.ituneRes && metaData.ituneRes.trackId)
+        searchParams.push({
+          itunesId: metaData.ituneRes.trackId
+        });
+      if (metaData.spotifyRes && metaData.spotifyRes.id)
+        searchParams.push({
+          spotifyId: metaData.spotifyRes.id
+        });
+
+      return Music.findOne({
+        $or: searchParams
+      }, function(err, res) {
+        if (err) return callback();
+
+        if (res) return callback(res.file, res, url);
+
+        downloadQueue.push(function(next) {
+          console.log("Downloading", url);
+          var dl = ssyd.downloadAndTag(url, './public/musics', metaData, function(err, filePath, info) {
+            next();
+            if (err)
+              return callback();
+
+            return callback(filePath, info, url);
+          });
+
+          progress(dl);
+        });
       });
     })
   }
 
-  function downloadSongsFromUrl(url, callback, progress) {
-    alltomp3.getPlaylistURLsInfos(url).then(function(array) {
-      for (var i = 0; i < array.items.length; i++) {
-        downloadSong(sanitizeUrl(array.items[i].url), callback, progress);
+  function downloadSongsFromYoutube(url, callback, progress) {
+    ssyd.getYoutubePlaylist(url, function(err, res) {
+      if (err) {
+        console.log('Error when getting infos from playlist URL:', url, err);
+        return callback();
       }
-      return;
-    }).catch(function(err) {
-      console.log('Error when getting infos from playlist URL:', url, err);
-      return callback();
+
+      for (var i = 0; i < res.length; i++) {
+        ssyd.getYoutubeMusicInfos('https://www.youtube.com/watch?v=' + res[i].contentDetails.videoId, function(err, res) {
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+        }, {
+          items: [res[i]]
+        });
+      }
     });
   }
 
-  function downloadSongsFromTitle(url, callback, progress) {
-    alltomp3.getPlaylistTitlesInfos(url).then(function(array) {
-      for (var i = 0; i < array.items.length; i++) {
-        findAndDownload(array.items[i].artistName + ' - ' + array.items[i].title, callback, progress);
+  function downloadSongsFromSoundcloud(url, callback, progress) {
+    ssyd.getSoundcloudPlaylist(url, function(err, res) {
+      if (err) {
+        console.log('Error when getting infos from playlist URL:', url, err);
+        return callback();
       }
-      return;
-    }).catch(function(err) {
-      console.log('Error when getting infos from playlist titles:', url, err);
-      return callback();
+
+      for (var i = 0; i < res.length; i++) {
+        ssyd.getSoundcloudInfos(res[i].permalink_url, function(err, res) {
+          downloadSong(res.soundcloudRes.permalink_url, calback, progress, res);
+        }, res[i]);
+      }
+    });
+  }
+
+  function downloadSongsFromDeezer(url, callback, progress) {
+    ssyd.getDeezerPlaylist(url, function(err, res) {
+      if (err) {
+        console.log('Error when getting infos from playlist URL:', url, err);
+        return callback();
+      }
+
+      for (var i = 0; i < res.length; i++) {
+        ssyd.getDeezerMusicInfos(res[i].link, function(err, res) {
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+        }, res[i]);
+      }
+    });
+  }
+
+  function downloadSongsFromSpotify(url, callback, progress) {
+    ssyd.getSpotifyPlaylist(url, function(err, res) {
+      if (err) {
+        console.log('Error when getting infos from playlist URL:', url, err);
+        return callback();
+      }
+
+      for (var i = 0; i < res.length; i++) {
+        ssyd.getSpotifyMusicInfos(res[i].track.external_urls.spotify, function(err, res) {
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+        }, res[i].track);
+      }
     });
   }
 
   function downloadSongs(url, callback, progress) {
     switch (getUrlType(url)) {
       case 'soundcloud playlist':
+        downloadSongsFromSoundcloud(url, callback, progress);
+        break;
       case 'youtube playlist':
-        downloadSongsFromUrl(url, callback, progress);
+        downloadSongsFromYoutube(url, callback, progress);
         break;
       case 'spotify playlist':
+        downloadSongsFromSpotify(url, callback, progress);
+        break;
       case 'deezer playlist':
-        downloadSongsFromTitle(url, callback, progress);
+        downloadSongsFromDeezer(url, callback, progress);
         break;
       default:
         callback();
@@ -628,14 +746,13 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function findAndDownload(query, callback, progress) {
-    alltomp3.findVideo(query).then(function(res) {
-      if (!res)
+    ssyd.findVideoFromQuery(query, function(err, res) {
+      if (err) {
+        console.log('Error when finding video from query:', query, err);
         return callback();
+      }
 
-      return downloadSong(res[0].url, callback, progress);
-    }).catch(function(err) {
-      console.log('Error when finding video from query:', query, err);
-      return callback();
+      return downloadSong(res.youtubeRes.id.videoId, callback, progress, res);
     });
   }
 
@@ -825,39 +942,64 @@ module.exports = function(io, lang, similarSongsOption) {
       }
 
       url = sanitizeUrl(uri);
+
+      function successSongFunction(success, msg) {
+        if (!success)
+          return socket.emit('fail', msg);
+
+        getSongs(playlistName, function(infos) {
+          socket.emit('songs(' + playlistName + ')', infos);
+          socket.broadcast.emit('songs(' + playlistName + ')', infos);
+        });
+
+        return socket.emit('success', msg);
+      }
+
       switch (getUrlType(url)) {
+        case 'deezer':
+          addSongFromDeezer(playlistName, url, socket.request.session.passport.user, successSongFunction, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
+        case 'spotify':
+          addSongFromSpotify(playlistName, url, socket.request.session.passport.user, successSongFunction, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
         case 'youtube':
+          addSongFromYoutube(playlistName, url, socket.request.session.passport.user, successSongFunction, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
         case 'soundcloud':
-          addSongFromUrl(playlistName, url, socket.request.session.passport.user, function(success, msg) {
-            if (!success)
-              return socket.emit('fail', msg);
-
-            getSongs(playlistName, function(infos) {
-              socket.emit('songs(' + playlistName + ')', infos);
-              socket.broadcast.emit('songs(' + playlistName + ')', infos);
-            });
-
-            return socket.emit('success', msg);
-
-          }, function(dl) {
+          addSongFromSoundcloud(playlistName, url, socket.request.session.passport.user, successSongFunction, function(dl) {
             progressMessages(dl, socket);
           });
           break;
         case 'soundcloud playlist':
+          downloadSongsFromSoundcloud(url, function(file, infos, url) {
+            addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
+          }, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
         case 'youtube playlist':
+          downloadSongsFromYoutube(url, function(file, infos, url) {
+            addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
+          }, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
         case 'spotify playlist':
+          downloadSongsFromSpotify(url, function(file, infos, url) {
+            addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
+          }, function(dl) {
+            progressMessages(dl, socket);
+          });
+          break;
         case 'deezer playlist':
-          addSongsFromUrl(playlistName, url, socket.request.session.passport.user, function(success, msg) {
-            if (!success)
-              return socket.emit('fail', msg);
-
-            getSongs(playlistName, function(infos) {
-              socket.emit('songs(' + playlistName + ')', infos);
-              socket.broadcast.emit('songs(' + playlistName + ')', infos);
-            });
-
-            return socket.emit('success', msg);
-
+          downloadSongsFromDeezer(url, function(file, infos, url) {
+            addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
           }, function(dl) {
             progressMessages(dl, socket);
           });

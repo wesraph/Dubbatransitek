@@ -15,6 +15,9 @@ var musicSchema = mongoose.Schema({
   artistName: String,
   deezerId: Number,
   itunesId: Number,
+  itunesAlbumId: Number,
+  spotifyId: Number,
+  spotifyAlbumId: Number,
   position: Number,
   duration: Number,
   deezerAlbum: Number,
@@ -25,6 +28,9 @@ var musicSchema = mongoose.Schema({
   genreId: Number,
   cover: String,
   genre: String,
+  trackWebpage: String,
+  artistWebpage: String,
+  tags: [String],
   creationDate: {
     type: Date,
     default: Date.now
