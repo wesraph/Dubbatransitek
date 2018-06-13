@@ -791,36 +791,26 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function progressMessages(dl, socket) {
     if (dl) {
-      var urls;
-
-      dl.on('search-end', function() {
-        socket.emit('wait', lang.playlist.searchEnd);
+      dl.on('progress', function(p) {
+        socket.emit('wait', lang.playlist.download.replace('%d', Math.round(p)));
       });
-      dl.on('download', function(infos) {
-        if (infos.progress)
-          socket.emit('wait', lang.playlist.download.replace('%d', Math.round(infos.progress)));
+      dl.on('fetching', function() {
+        socket.emit('wait', lang.playlist.fetching);
       });
-      dl.on('download-end', function() {
-        socket.emit('wait', lang.playlist.downloadEnd);
-      });
-      dl.on('convert', function(infos) {
-        if (infos.progress)
-          socket.emit('wait', lang.playlist.convert.replace('%d', Math.round(infos.progress)));
+      dl.on('convert-start', function() {
+        socket.emit('wait', lang.playlist.convert);
       });
       dl.on('convert-end', function() {
         socket.emit('wait', lang.playlist.convertEnd);
       });
-      dl.on('begin-url', function(index) {
-        socket.emit('wait', lang.playlist.beginUrl.replace('%d', index + 1));
+      dl.on('dl-end', function() {
+        socket.emit('wait', lang.playlist.downloadEnd);
       });
-      dl.on('end-url', function(index) {
-        socket.emit('wait', lang.playlist.beginUrl.replace('%d', index + 1));
+      dl.on('dl-start', function() {
+        socket.emit('wait', lang.playlist.downloadStart);
       });
       dl.on('end', function() {
         socket.emit('wait', lang.playlist.end, true);
-      });
-      dl.on('playlist-infos', function(urlss) {
-        urls = urlss;
       });
       dl.on('error', function(error) {
         console.log('Error when downloading\n', error);

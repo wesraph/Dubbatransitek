@@ -5,15 +5,12 @@
     "usernameAlreadyTaken": "Ce nom d'utilisateur est déjà pris."
   },
   "playlist": {
-    "searchEnd": "Fin de la recherche",
+    "fetching": "Recherche de la musique",
     "download": "Téléchargement en cours: %d%",
-    "downloads": "Téléchargement n°%d: %d%",
     "downloadEnd": "Fin du téléchargement",
-    "convert": "Conversion en cours: %d%",
-    "converts": "Conversion n°%d: %d%",
+    "downloadStart": "Démarrage du téléchargement",
+    "convert": "Conversion en cours",
     "convertEnd": "Fin de la conversion",
-    "beginUrl": "Lancement de la musique n°%d",
-    "endUrl": "Fin de la musique n°%d",
     "end": "C'est fini !",
     "noPlaylistName": "Un nom est obligatoire pour créer une playlist",
     "errorDB": "Erreur lors de la vérification (pour voir si la playlist existe déjà)",
