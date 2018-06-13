@@ -175,7 +175,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function addSongFromDeezer(playlistName, url, userId, callback, progress) {
     ssyd.getDeezerMusicInfos(url, function(err, res) {
-      downloadSong(url, function(file, infos) {
+      downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, function(file, infos) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
     });
@@ -191,7 +191,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function addSongFromSpotify(playlistName, url, userId, callback, progress) {
     ssyd.getSpotifyMusicInfos(url, function(err, res) {
-      downloadSong(url, function(file, infos) {
+      downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, function(file, infos) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
     });
