@@ -167,6 +167,9 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function addSongFromYoutube(playlistName, url, userId, callback, progress) {
     ssyd.getYoutubeMusicInfos(url, function(err, res) {
+      if (err)
+        return callback(false, lang.playlist.errorAddingMusic);
+
       downloadSong(url, function(file, infos) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
@@ -175,6 +178,9 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function addSongFromDeezer(playlistName, url, userId, callback, progress) {
     ssyd.getDeezerMusicInfos(url, function(err, res) {
+      if (err)
+        return callback(false, lang.playlist.errorAddingMusic);
+
       downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, function(file, infos, url) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
@@ -183,6 +189,9 @@ module.exports = function(io, lang, similarSongsOption) {
 
   function addSongFromSoundcloud(playlistName, url, userId, callback, progress) {
     ssyd.getSoundcloudInfos(url, function(err, res) {
+      if (err)
+        return callback(false, lang.playlist.errorAddingMusic);
+
       downloadSong(url, function(file, infos) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
@@ -190,9 +199,10 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   function addSongFromSpotify(playlistName, url, userId, callback, progress) {
-    console.log(playlistName, url, userId);
     ssyd.getSpotifyMusicInfos(url, function(err, res) {
-      console.log(err, res);
+      if (err)
+        return callback(false, lang.playlist.errorAddingMusic);
+
       downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, function(file, infos, url) {
         addSongToPlaylist(file, infos, url, userId, playlistName, callback);
       }, progress, res);
@@ -651,6 +661,7 @@ module.exports = function(io, lang, similarSongsOption) {
       return Music.findOne({
         $or: searchParams
       }, function(err, res) {
+        console.log(err, res);
         if (err) return callback();
 
         if (res) return callback(res.file, res, url);
