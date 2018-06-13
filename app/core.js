@@ -693,7 +693,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       for (var i = 0; i < res.length; i++) {
         ssyd.getYoutubeMusicInfos('https://www.youtube.com/watch?v=' + res[i].contentDetails.videoId, function(err, res) {
-          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, callback, progress, res);
         }, {
           items: [res[i]]
         });
@@ -710,7 +710,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       for (var i = 0; i < res.length; i++) {
         ssyd.getSoundcloudInfos(res[i].permalink_url, function(err, res) {
-          downloadSong(res.soundcloudRes.permalink_url, calback, progress, res);
+          downloadSong(res.soundcloudRes.permalink_url, callback, progress, res);
         }, res[i]);
       }
     });
@@ -725,7 +725,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       for (var i = 0; i < res.length; i++) {
         ssyd.getDeezerMusicInfos(res[i].link, function(err, res) {
-          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, callback, progress, res);
         }, res[i]);
       }
     });
@@ -740,7 +740,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
       for (var i = 0; i < res.length; i++) {
         ssyd.getSpotifyMusicInfos(res[i].track.external_urls.spotify, function(err, res) {
-          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, calback, progress, res);
+          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, callback, progress, res);
         }, res[i].track);
       }
     });
