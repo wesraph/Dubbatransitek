@@ -691,13 +691,15 @@ module.exports = function(io, lang, similarSongsOption) {
         return callback();
       }
 
-      for (var i = 0; i < res.length; i++) {
-        ssyd.getYoutubeMusicInfos('https://www.youtube.com/watch?v=' + res[i].contentDetails.videoId, function(err, res) {
-          downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, callback, progress, res);
-        }, {
-          items: [res[i]]
-        });
-      }
+      res.forEach(function(elem, index) {
+        setTimeout(function() {
+          ssyd.getYoutubeMusicInfos('https://www.youtube.com/watch?v=' + elem.contentDetails.videoId, function(err, res) {
+            downloadSong('https://www.youtube.com/watch?v=' + res.youtubeRes.id.videoId, callback, progress, res);
+          }, {
+            items: [elem]
+          });
+        }, index*100);
+      });
     });
   }
 
@@ -708,11 +710,13 @@ module.exports = function(io, lang, similarSongsOption) {
         return callback();
       }
 
-      for (var i = 0; i < res.length; i++) {
-        ssyd.getSoundcloudInfos(res[i].permalink_url, function(err, res) {
-          downloadSong(res.soundcloudRes.permalink_url, callback, progress, res);
-        }, res[i]);
-      }
+      res.forEach(function(elem, index) {
+        setTimeout(function() {
+          ssyd.getSoundcloudInfos(elem.permalink_url, function(err, res) {
+            downloadSong(res.soundcloudRes.permalink_url, callback, progress, res);
+          }, elem);
+        }, index*100);
+      });
     });
   }
 
