@@ -54,7 +54,7 @@ module.exports = function(io, lang, similarSongsOption) {
         else if (url.indexOf('track') !== -1)
           site = 'spotify'
       } else if (url.indexOf('deezer.com') !== -1) {
-        if(url.indexOf('playlist') !== -1)
+        if (url.indexOf('playlist') !== -1)
           site = 'deezer playlist';
         else if (url.indexOf('track') !== -1)
           site = 'deezer';
@@ -661,8 +661,10 @@ module.exports = function(io, lang, similarSongsOption) {
       return Music.findOne({
         $or: searchParams
       }, function(err, res) {
-        console.log(err, res);
-        if (err) return callback();
+        if (err) {
+          console.log(err);
+          return callback();
+        }
 
         if (res) return callback(res.file, res, url);
 
