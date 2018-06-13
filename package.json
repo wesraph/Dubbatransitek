@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Guisch/Dubbatransitek#readme",
   "dependencies": {
-    "ssydtopmp3": "git+https://github.com/Guisch/ssydtomp3.git",
+    "ssydtomp3": "git+https://github.com/Guisch/ssydtomp3.git",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "connect-flash": "^0.1.1",
