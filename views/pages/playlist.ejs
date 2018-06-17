@@ -216,6 +216,8 @@
               } else if (ev.oldIndex < currentSong && ev.newIndex == currentSong) {
                 currentSong -= 1;
                 loadNextWave(songsList[ev.oldIndex].music_id.file);
+              } else if (ev.oldIndex > currentSong && ev.newIndex == currentSong + 1) {
+                loadNextWave(songsList[ev.oldIndex].music_id.file);
               }
 
 
