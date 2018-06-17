@@ -205,13 +205,19 @@
               if (currentSong == ev.oldIndex) {
                 currentSong = ev.newIndex;
                 loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
-              } else {
-                if (ev.newIndex < currentSong && ev.oldIndex > currentSong) {
-                  currentSong += 1;
-                } else if (ev.newIndex > currentSong && ev.oldIndex < currentSong) {
-                  currentSong -= 1;
+              } else if (ev.newIndex < currentSong && ev.oldIndex > currentSong) {
+                currentSong += 1;
+
+                if (ev.oldIndex == currentSong) {
+                  loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
                 }
+              } else if (ev.newIndex > currentSong && ev.oldIndex < currentSong) {
+                currentSong -= 1;
+              } else if (ev.oldIndex < currentSong && ev.newIndex == currentSong) {
+                currentSong -= 1;
+                loadNextWave(songsList[ev.newIndex].music_id.file);
               }
+
 
               socket.emit('changeIndexes', '<%= name %>', ev.oldIndex, ev.newIndex);
             }
