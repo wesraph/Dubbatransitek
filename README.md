@@ -116,10 +116,10 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Fix remove button (launch music when clicked)
  - Improve music changing speed: no more reloading
  - Use ssydtomp3 instead of alltomp3 wich fix souncloud playlist import and add spotify and deezer track download
+ - Playlist music ordering with something like https://github.com/RubaXa/Sortable
 
  - Add docker ! Install Dubbatransitek in a command ! (WIP)
  - Page to edit music info (WIP)
- - Playlist music ordering with something like https://github.com/RubaXa/Sortable (WIP)
 
  **0.0.4:**
  - Remove the opacity fade transition (it was causing bug when seeking during the musics transition)
