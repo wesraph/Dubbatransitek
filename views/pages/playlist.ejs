@@ -154,11 +154,13 @@
 
         songsList = infos.slice(0);
 
-        if (random && currentSong) {
+        if (random) {
           songsList.sort(function() {
             return 0.5 - Math.random()
           });
-          currentSong = songsList.indexOf(infos[currentSong]);
+
+          if (currentSong)
+            currentSong = songsList.indexOf(infos[currentSong]);
         }
 
 
