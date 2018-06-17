@@ -198,9 +198,10 @@
           var html;
 
           html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
-
           html += '<div class="col-md-9" onClick="loadWave(' + i.toString() + ')">';
-          html += '<div class="float-left"><i class="fa fa-arrows-v marginright-15 cursorR"></i>';
+
+          if (!random)
+            html += '<div class="float-left"><i class="fa fa-arrows-v marginright-15 cursorR"></i>';
 
           if (songsList[i].music_id.cover)
             html += '<img class="miniature" src="' + songsList[i].music_id.cover + '">'
