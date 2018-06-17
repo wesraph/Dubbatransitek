@@ -51,7 +51,7 @@
           var html = "<div class='row' id='myPlaylist" + i.toString() + "'>";
           for (var j = i; j < i + 6; j++) {
             if (j < playlists.length) {
-              html += "<a href='./playlist?name=" + encodeURI(playlists[j].name) + "' class='col-sm-2 col-xs-12'>";
+              html += "<a href='./playlist?name=" + encodeURI(playlists[j].name) + "' class='col-sm-2 col-xs-6'>";
               if (playlists[j].musics.length > 0 && playlists[j].musics[0].music_id.cover)
                 html += '<img class="thumb" src="' + playlists[j].musics[0].music_id.cover + '">';
               if (playlists[j].musics.length > 1 && playlists[j].musics[1].music_id.cover)
