@@ -139,6 +139,8 @@
       var syncImportedPlaylist;
       var autoAddSimilarSong;
       var random = false;
+      var debugA;
+      var debugB;
 
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
@@ -150,8 +152,8 @@
       socket.on('songs(<%= name %>)', function(infos, songRemoved) {
         if (!random && currentSong) {
           console.log(currentSong);
-          console.log(infos);
-          console.log(songsList);
+          debugA = songsList.slice(0);
+          debugB = infos.slice(0);
         }
 
         songsList = infos.slice(0);
