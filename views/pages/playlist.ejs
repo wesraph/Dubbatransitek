@@ -525,11 +525,11 @@
         $('#random').click(function() {
           if (random) {
             random = false;
-            $('#random').removeClass('btn-primary').addClass('btn-default');
+            $('#random').removeClass('btn-default').addClass('btn-primary');
             socket.emit('getSongs', '<%= name %>');
           } else {
             random = true;
-            $('#random').removeClass('btn-default').addClass('btn-primary');
+            $('#random').removeClass('btn-primary').addClass('btn-default');
             socket.emit('getSongs', '<%= name %>');
           }
         });
