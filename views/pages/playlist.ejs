@@ -149,7 +149,9 @@
 
       socket.on('songs(<%= name %>)', function(infos, songRemoved) {
         if (!random && currentSong) {
-          currentSong = infos.indexOf(songsList[currentSong]);
+          console.log(currentSong);
+          console.log(infos);
+          console.log(songsList);
         }
 
         songsList = infos.slice(0);
@@ -162,8 +164,6 @@
           if (currentSong)
             currentSong = songsList.indexOf(infos[currentSong]);
         }
-
-
 
         $("#songs").empty();
 
