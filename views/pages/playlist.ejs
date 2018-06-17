@@ -150,7 +150,7 @@
       socket.emit('getPlaylistInfo', '<%= name %>');
 
       socket.on('songs(<%= name %>)', function(infos, songRemoved) {
-        if (!random && currentSong) {
+        if (!random && currentSong !== undefined) {
           /*
            * Does not work: Why ?
            * currentSong = infos.indexOf(songsList[currentSong])
@@ -172,7 +172,7 @@
             return 0.5 - Math.random()
           });
 
-          if (currentSong) {
+          if (currentSong !== undefined) {
             currentSong = songsList.indexOf(infos[currentSong]);
             loadNextWave(songsList[(currentSong + 1) % infos.length].music_id.file);
           }
