@@ -159,6 +159,7 @@
           for (var i = 0; i < infos.length; i++) {
             if (infos[i]._id == songsList[currentSong]._id) {
               currentSong = i;
+              loadNextWave(infos[(currentSong + 1) % infos.length].music_id.file);
               break;
             }
           }
@@ -171,8 +172,10 @@
             return 0.5 - Math.random()
           });
 
-          if (currentSong)
+          if (currentSong) {
             currentSong = songsList.indexOf(infos[currentSong]);
+            loadNextWave(songsList[(currentSong + 1) % infos.length].music_id.file);
+          }
         }
 
         $("#songs").empty();
