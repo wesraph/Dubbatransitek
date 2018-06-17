@@ -139,8 +139,7 @@
       var syncImportedPlaylist;
       var autoAddSimilarSong;
       var random = false;
-      var debugA;
-      var debugB;
+      var shuffled = false;
 
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
@@ -167,10 +166,11 @@
 
         songsList = infos.slice(0);
 
-        if (random) {
+        if (random && !shuffled) {
           songsList.sort(function() {
             return 0.5 - Math.random()
           });
+          shuffled = true;
 
           if (currentSong !== undefined) {
             currentSong = songsList.indexOf(infos[currentSong]);
