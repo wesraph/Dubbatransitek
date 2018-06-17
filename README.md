@@ -73,16 +73,6 @@ make install && \
 hash -r
 source ~/.profile
 ```
- - eyeD3 >= 0.7.10 (https://eyed3.readthedocs.io/en/latest/installation.html)
-```
-apt-get install python python-pip
-pip install --upgrade pip
-pip install eyeD3
-```
- - node-acoutstid requirements (https://github.com/parshap/node-acoustid#installation - https://acoustid.org/chromaprint)
-```
-apt-get install libchromaprint-tools
-```
  - mongodb (https://docs.mongodb.com/manual/installation/)
 
 If you would like to use Youtube, Soundcloud, Spotify or Deezer authentication, you will also need to register a new app on website, and rename /config/auth-default.js to /config/auth.js and edit the file with different key from
@@ -122,10 +112,14 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  **0.0.5 (in-dev):**
  - Totally rethink the database structure (add music model, be careful, old database <=0.0.4 or not compatible with newer)
  - Update README
- - Add docker ! Run dubbatransitek in a command ! (not finished)
  - Design change on playlist pages (sticky player)
  - Fix remove button (launch music when clicked)
  - Improve music changing speed: no more reloading
+ - Use ssydtomp3 instead of alltomp3 wich fix souncloud playlist import and add spotify and deezer track download
+
+ - Add docker ! Install Dubbatransitek in a command ! (WIP)
+ - Page to edit music info (WIP)
+ - Playlist music ordering with something like https://github.com/RubaXa/Sortable (WIP)
 
  **0.0.4:**
  - Remove the opacity fade transition (it was causing bug when seeking during the musics transition)
@@ -157,14 +151,12 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - first working version
 
 ## TODO
- - spotify and deezer track
  - Import playlist from youtube, deezer or spotify section
  - Improve download playlist function (add field on playlist model)
- - Page to edit music info
- - Playlist music ordering with something like https://github.com/RubaXa/Sortable
- - Fix souncloud playlist import
  - Random order playback
- - ...
+ - Party mode to be enable to remote control playlist
+ - Feed of last added song with the abilty to like and comment
+ - Feel free to propose in issue section
 
 ## Tip
 If you like my work, offer me a beer ! :)
