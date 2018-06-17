@@ -208,16 +208,8 @@
               } else {
                 if (ev.newIndex < currentSong && ev.oldIndex > currentSong) {
                   currentSong += 1;
-
-                  if (currentSong == ev.oldIndex) {
-                    loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
-                  }
                 } else if (ev.newIndex > currentSong && ev.oldIndex < currentSong) {
                   currentSong -= 1;
-
-                  if (currentSong == ev.newIndex - 1) {
-                    loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
-                  }
                 }
               }
 
@@ -246,6 +238,7 @@
 
       function loadNextWave(s) {
         if ($('#waveform1').css('opacity') != 0) {
+          wavesurfer2.empty();
           wavesurfer2.load(s);
           isWS2Ready = false;
         }
