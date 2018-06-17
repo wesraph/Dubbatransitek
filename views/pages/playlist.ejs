@@ -207,17 +207,17 @@
                 loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
               } else {
                 if (ev.newIndex < currentSong && ev.oldIndex > currentSong) {
-                  if (ev.oldIndex == ((currentSong + 1) % songsList.length)) {
-                    loadNextWave(songsList[(currentSong + 2) % songsList.length].music_id.file);
-                  }
-
                   currentSong += 1;
-                } else if (ev.newIndex > currentSong && ev.oldIndex < currentSong) {
-                  if (ev.newIndex == ((currentSong + 1) % songsList.length)) {
-                    loadNextWave(songsList[(currentSong + 2) % songsList.length].music_id.file);
-                  }
 
+                  if (currentSong == ev.oldIndex) {
+                    loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
+                  }
+                } else if (ev.newIndex > currentSong && ev.oldIndex < currentSong) {
                   currentSong -= 1;
+
+                  if (currentSong == ev.newIndex - 1) {
+                    loadNextWave(songsList[(currentSong + 1) % songsList.length].music_id.file);
+                  }
                 }
               }
 
