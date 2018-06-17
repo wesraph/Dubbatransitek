@@ -151,9 +151,17 @@
 
       socket.on('songs(<%= name %>)', function(infos, songRemoved) {
         if (!random && currentSong) {
-          console.log(currentSong);
-          debugA = songsList.slice(0);
-          debugB = infos.slice(0);
+          /*
+           * Does not work: Why ?
+           * currentSong = infos.indexOf(songsList[currentSong])
+           *
+           */
+          for (var i = 0; i < infos.length; i++) {
+            if (infos[i]._id == songsList[currentSong]._id) {
+              currentSong = i;
+              break;
+            }
+          }
         }
 
         songsList = infos.slice(0);
@@ -207,7 +215,7 @@
           loadNextWave(songsList[songsList.length - 1].music_id.file);
         }
 
-        if (random) {
+        if (!random) {
           // List with handle
           sortableList = Sortable.create(document.getElementById('songs'), {
             handle: '.fa-arrows-v',
