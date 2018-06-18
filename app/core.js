@@ -259,6 +259,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'soundcloud playlist':
+          newPlaylist.importedPl = [url];
           newPlaylist.save(function(err) {
             if (err) {
               console.log(err);
@@ -271,6 +272,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'youtube playlist':
+          newPlaylist.importedPl = [url];
           newPlaylist.save(function(err) {
             if (err) {
               console.log(err);
@@ -283,6 +285,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'spotify playlist':
+          newPlaylist.importedPl = [url];
           newPlaylist.save(function(err) {
             if (err) {
               console.log(err);
@@ -295,6 +298,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'deezer playlist':
+          newPlaylist.importedPl = [url];
           newPlaylist.save(function(err) {
             if (err) {
               console.log(err);
@@ -493,7 +497,7 @@ module.exports = function(io, lang, similarSongsOption) {
   }
 
   // Remove
-  // BUG Not deleting songs
+
   function removePlaylist(playlistName, userId, callback) {
     Playlist.findOne({
       name: playlistName
@@ -992,6 +996,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'soundcloud playlist':
+          Playlist.addImportedPl(playlistName, url);
           downloadSongsFromSoundcloud(url, function(file, infos, url) {
             addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
           }, function(dl) {
@@ -999,6 +1004,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'youtube playlist':
+          Playlist.addImportedPl(playlistName, url);
           downloadSongsFromYoutube(url, function(file, infos, url) {
             addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
           }, function(dl) {
@@ -1006,6 +1012,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'spotify playlist':
+          Playlist.addImportedPl(playlistName, url);
           downloadSongsFromSpotify(url, function(file, infos, url) {
             addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
           }, function(dl) {
@@ -1013,6 +1020,7 @@ module.exports = function(io, lang, similarSongsOption) {
           });
           break;
         case 'deezer playlist':
+          Playlist.addImportedPl(playlistName, url);
           downloadSongsFromDeezer(url, function(file, infos, url) {
             addSongToPlaylist(file, infos, url, socket.request.session.passport.user, playlistName, successSongFunction);
           }, function(dl) {

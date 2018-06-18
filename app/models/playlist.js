@@ -108,5 +108,15 @@ playlistSchema.statics.addMusicToPlaylist = function(playlistName, musicId, user
   }, callback);
 }
 
+playlistSchema.statics.addImportedPl = function(playlistName, url) {
+  return this.model('Playlist').update({
+    name: playlistName
+  }, {
+    $addToSet: {
+      importedPl: url
+    }
+  });
+}
+
 // create the model for playlist and expose it to our app
 module.exports = mongoose.model('Playlist', playlistSchema);
