@@ -1113,10 +1113,11 @@ module.exports = function(io, lang, similarSongsOption) {
 
       changeIndexes(playlistName, socket.request.session.passport.user, oldIndex, newIndex, function(success, msg) {
         if (!success) {
-          return socket.emit('fail', msg);
+          socket.emit('fail', msg);
+        } else {
+          socket.emit('success', msg);
         }
 
-        socket.emit('success', msg);
         getSongs(playlistName, function(infos) {
           if (infos) {
             socket.emit('songs(' + playlistName + ')', infos);
