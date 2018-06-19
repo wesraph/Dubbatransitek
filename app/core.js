@@ -22,7 +22,7 @@ var fs = require('fs');
 var path = require('path');
 
 // The zip library needs to be instantiated:
-var zip = require('systemZipJs');
+var zip = require('systemzipjs');
 
 module.exports = function(io, lang, similarSongsOption) {
 
