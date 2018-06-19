@@ -22,7 +22,7 @@ var fs = require('fs');
 var path = require('path');
 
 // The zip library needs to be instantiated:
-var nzip = require('node-zip');
+var archiver = require('archiver');
 
 module.exports = function(io, lang, similarSongsOption) {
 
@@ -702,7 +702,7 @@ module.exports = function(io, lang, similarSongsOption) {
           }, {
             items: [elem]
           });
-        }, index*100);
+        }, index * 100);
       });
     });
   }
@@ -719,7 +719,7 @@ module.exports = function(io, lang, similarSongsOption) {
           ssyd.getSoundcloudInfos(elem.permalink_url, function(err, res) {
             downloadSong(res.soundcloudRes.permalink_url, callback, progress, res);
           }, elem);
-        }, index*100);
+        }, index * 100);
       });
     });
   }
@@ -793,26 +793,47 @@ module.exports = function(io, lang, similarSongsOption) {
       if (res.isZipped)
         return callback(true, lang.playlist.downloadReady);
 
-      zip = new nzip();
+      // create a file to stream archive data to.
+      var output = fs.createWriteStream(path.join('./public/playlists', name + '.zip'));
+      var archive = archiver('zip', {
+        zlib: {
+          level: 0
+        } // Sets the compression level.
+      });
+
+      output.on('end', function() {
+        Playlist.update({
+          name: name
+        }, {
+          isZipped: true
+        }, function(err) {
+          if (err) {
+            console.log(err);
+            return callback(false, lang.playlist.downloadFail);
+          }
+
+          callback(true, lang.playlist.downloadReady);
+        });
+      });
+
+      // good practice to catch this error explicitly
+      archive.on('error', function(err) {
+        console.log(err);
+        callback(false, lang.playlist.downloadFail);
+      });
+
+      // pipe archive data to the file
+      archive.pipe(output);
+
       for (var i = 0; i < res.musics.length; i++) {
-        zip.file(res.musics[i].music_id.file.split('/').pop(), fs.readFileSync(res.musics[i].music_id.file));
+        archive.append(fs.createReadStream(res[i].music_id.file), {
+          name: res[i].music_id.file.split('/').pop()
+        });
       }
 
-      var data = zip.generate({
-        base64: false,
-        compression: 'DEFLATE'
-      });
-
-      // it's important to use *binary* encode
-      fs.writeFileSync(path.join('./public/playlists', name + '.zip'), data, 'binary');
-
-      Playlist.update({
-        name: name
-      }, {
-        isZipped: true
-      }, function(err) {
-        callback(true, lang.playlist.downloadReady);
-      });
+      // finalize the archive (ie we are done appending files but streams have to finish yet)
+      // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
+      archive.finalize();
     });
   }
 
