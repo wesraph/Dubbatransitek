@@ -22,7 +22,7 @@ var fs = require('fs');
 var path = require('path');
 
 // The zip library needs to be instantiated:
-var archiver = require('archiver');
+var zip = require('systemZipJs');
 
 module.exports = function(io, lang, similarSongsOption) {
 
@@ -785,7 +785,7 @@ module.exports = function(io, lang, similarSongsOption) {
     });
   }
 
-  function downloadPlaylist(name, callback) {
+  function downloadPlaylist(name, callback, socket) {
     Playlist.getPlaylist(name, function(res) {
       if (res === undefined || res == null || (res != null && res.length == 0))
         callback(false, lang.playlist.downloadFail);
@@ -793,15 +793,24 @@ module.exports = function(io, lang, similarSongsOption) {
       if (res.isZipped)
         return callback(true, lang.playlist.downloadReady);
 
-      // create a file to stream archive data to.
-      var output = fs.createWriteStream(path.join('./public/playlists', name + '.zip'));
-      var archive = archiver('zip', {
-        zlib: {
-          level: 0
-        } // Sets the compression level.
+      var files = [];
+
+      for (var i = 0; i < res.musics.length; i++) {
+        files.push(res[i].music_id.file);
+      }
+
+      var zipped = zip.zipFiles(path.join('./public/playlists', name + '.zip'), files);
+
+      zipped.on('progess', function(i) {
+        socket.emit('wait', lang.playlist.zipProgress.replace('%d', i*100/res.music.length));
       });
 
-      output.on('end', function() {
+      zipped.on('error', function(err) {
+        console.log(err);
+        return callback(false, lang.playlist.downloadFail);
+      });
+
+      zipped.on('end', function() {
         Playlist.update({
           name: name
         }, {
@@ -815,25 +824,6 @@ module.exports = function(io, lang, similarSongsOption) {
           callback(true, lang.playlist.downloadReady);
         });
       });
-
-      // good practice to catch this error explicitly
-      archive.on('error', function(err) {
-        console.log(err);
-        callback(false, lang.playlist.downloadFail);
-      });
-
-      // pipe archive data to the file
-      archive.pipe(output);
-
-      for (var i = 0; i < res.musics.length; i++) {
-        archive.append(fs.createReadStream(res[i].music_id.file), {
-          name: res[i].music_id.file.split('/').pop()
-        });
-      }
-
-      // finalize the archive (ie we are done appending files but streams have to finish yet)
-      // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
-      archive.finalize();
     });
   }
 
@@ -940,7 +930,7 @@ module.exports = function(io, lang, similarSongsOption) {
           socket.emit('downloadReady');
         } else
           socket.emit('fail', msg);
-      });
+      }, socket);
     });
 
     socket.on('addPlaylist', function(name, tag, url) {

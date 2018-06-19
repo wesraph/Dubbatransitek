@@ -31,6 +31,7 @@
     "downloadReady": "Le téléchargement est pret !",
     "downloadFail": "Impossible de télécharger la playlist",
     "waitUntilDownloadReady": "Création de l'archive en cours",
+    "zipProgress": "Progression: %d%",
     "unableToFindSimilarSong": "Impossible de trouver une musique similaire",
     "needToListenFirst": "Vous devez d'abbord écouter une musique pour trouver un musique similaire à celle-ci",
     "unableToEditOptions": "Impossible d'éditer les options",
