@@ -796,13 +796,13 @@ module.exports = function(io, lang, similarSongsOption) {
       var files = [];
 
       for (var i = 0; i < res.musics.length; i++) {
-        files.push(res[i].music_id.file);
+        files.push(res.musics[i].music_id.file);
       }
 
       var zipped = zip.zipFiles(path.join('./public/playlists', name + '.zip'), files);
 
       zipped.on('progess', function(i) {
-        socket.emit('wait', lang.playlist.zipProgress.replace('%d', i*100/res.music.length));
+        socket.emit('wait', lang.playlist.zipProgress.replace('%d', Math.round(i * 100 / res.musics.length)));
       });
 
       zipped.on('error', function(err) {
