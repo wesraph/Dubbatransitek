@@ -115,6 +115,10 @@ playlistSchema.statics.addImportedPl = function(playlistName, url) {
     $addToSet: {
       importedPl: url
     }
+  }, function(err) {
+    if (err) {
+      console.log(err);
+    }
   });
 }
 

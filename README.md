@@ -118,6 +118,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Use [ssydtomp3](https://github.com/Guisch/ssydtomp3) instead of alltomp3 wich fix souncloud playlist import and add spotify and deezer track download
  - Playlist music ordering https://github.com/RubaXa/Sortable
  - Random order playback
+ - Improve download playlist as zip function
  - Add docker ! Install Dubbatransitek in a command ! (WIP)
  - Page to edit music info (WIP)
 
