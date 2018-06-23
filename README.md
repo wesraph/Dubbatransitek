@@ -119,6 +119,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Playlist music ordering https://github.com/RubaXa/Sortable
  - Random order playback
  - Improve download playlist as zip function
+ - Imported Playlist syncing now working properly every 30 min
  - Add docker ! Install Dubbatransitek in a command ! (WIP)
  - Page to edit music info (WIP)
 
