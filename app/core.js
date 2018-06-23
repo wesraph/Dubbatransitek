@@ -1104,7 +1104,7 @@ module.exports = function(io, lang, similarSongsOption) {
         removeSong(playlistName, musicId, socket.request.session.passport.user, function(success, msg) {
           if (success) {
             for (var i = 0; i < infos.length; i++) {
-              if (infos[i]._id == musicId)
+              if (infos[i].music_id._id == musicId)
                 break;
             }
 
@@ -1113,7 +1113,7 @@ module.exports = function(io, lang, similarSongsOption) {
               systemzipjs.removeFileFromZip('./public/playlists', playlistName + '.zip', songFile, next);
             });
             infos.splice(i, 1);
-            
+
             socket.emit('success', msg);
 
             if (infos) {
