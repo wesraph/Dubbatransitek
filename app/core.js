@@ -1142,7 +1142,7 @@ module.exports = function(io, lang, similarSongsOption) {
     })
   });
 
-  new CronJob('0 * * * *', function() {
+  new CronJob('*/30 * * * *', function() {
     Playlist.getAllPlaylists(function(res) {
       if (res === undefined || res.length == 0)
         return;
