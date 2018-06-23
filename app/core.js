@@ -517,11 +517,11 @@ module.exports = function(io, lang, similarSongsOption) {
             return callback(false, lang.playlist.errorDeletingPlaylist);
           }
 
-          fs.unlink('./public/playlists/', result.name + '.zip', function(err) {
+          callback(true, lang.playlist.successfullyDeletedPlaylist)
+          return fs.unlink('./public/playlists/', result.name + '.zip', function(err) {
             if (err)
               console.log(err);
           });
-          return callback(true, lang.playlist.successfullyDeletedPlaylist);
         });
       } else {
         result.musics.forEach(function(music, index) {
@@ -542,11 +542,11 @@ module.exports = function(io, lang, similarSongsOption) {
                   return callback(false, lang.playlist.errorDeletingPlaylist);
                 }
 
-                fs.unlink('./public/playlists/' + result.name + '.zip', function(err) {
+                callback(true, lang.playlist.successfullyDeletedPlaylist);
+                return fs.unlink('./public/playlists/' + result.name + '.zip', function(err) {
                   if (err)
                     console.log(err);
                 });
-                return callback(true, lang.playlist.successfullyDeletedPlaylist);
               });
             });
           }
