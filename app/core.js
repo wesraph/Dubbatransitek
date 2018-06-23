@@ -542,7 +542,7 @@ module.exports = function(io, lang, similarSongsOption) {
                   return callback(false, lang.playlist.errorDeletingPlaylist);
                 }
 
-                fs.unlink('./public/playlists', result.name + '.zip', function(err) {
+                fs.unlink('./public/playlists' + result.name + '.zip', function(err) {
                   if (err)
                     console.log(err);
                 });
