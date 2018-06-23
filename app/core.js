@@ -1143,8 +1143,8 @@ module.exports = function(io, lang, similarSongsOption) {
   });
 
   new CronJob('0 * * * *', function() {
-    Playlist.getAllPlaylists(function(err, res) {
-      if (err || !res)
+    Playlist.getAllPlaylists(function(res) {
+      if (res === undefined || res.length == 0)
         return;
 
       res.forEach(function(playlist) {
