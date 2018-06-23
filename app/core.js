@@ -518,7 +518,7 @@ module.exports = function(io, lang, similarSongsOption) {
           }
 
           callback(true, lang.playlist.successfullyDeletedPlaylist)
-          return fs.unlink(path.join(__dirname, '/public/playlists', result.name + '.zip'), function(err) {
+          return fs.unlink(path.join(__dirname, '../public/playlists', result.name + '.zip'), function(err) {
             if (err)
               console.log(err);
           });
@@ -543,7 +543,7 @@ module.exports = function(io, lang, similarSongsOption) {
                 }
 
                 callback(true, lang.playlist.successfullyDeletedPlaylist);
-                return fs.unlink(path.join(__dirname, '/public/playlists', result.name + '.zip'), function(err) {
+                return fs.unlink(path.join(__dirname, '../public/playlists', result.name + '.zip'), function(err) {
                   if (err)
                     console.log(err);
                 });
@@ -807,7 +807,7 @@ module.exports = function(io, lang, similarSongsOption) {
         files.push(res.musics[i].music_id.file);
       }
 
-      var zipped = zip.zipFiles(path.join(__dirname, '/public/playlists', name + '.zip'), files);
+      var zipped = zip.zipFiles(path.join(__dirname, '../public/playlists', name + '.zip'), files);
 
       zipped.on('progess', function(i) {
         socket.emit('wait', lang.playlist.zipProgress.replace('%d', Math.round(i * 100 / res.musics.length)));
@@ -1110,7 +1110,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
             var songFile = infos[i].music_id.file.split('/').pop();
             removeQueue.push(function(next) {
-              zip.removeFileFromZip(path.join(__dirname, '/public/playlists', playlistName + '.zip'), songFile, next);
+              zip.removeFileFromZip(path.join(__dirname, '../public/playlists', playlistName + '.zip'), songFile, next);
             });
             infos.splice(i, 1);
 
