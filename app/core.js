@@ -517,7 +517,7 @@ module.exports = function(io, lang, similarSongsOption) {
             return callback(false, lang.playlist.errorDeletingPlaylist);
           }
 
-          fs.unlink('./public/playlists', result.name + '.zip', function(err) {
+          fs.unlink('./public/playlists/', result.name + '.zip', function(err) {
             if (err)
               console.log(err);
           });
@@ -542,7 +542,7 @@ module.exports = function(io, lang, similarSongsOption) {
                   return callback(false, lang.playlist.errorDeletingPlaylist);
                 }
 
-                fs.unlink('./public/playlists' + result.name + '.zip', function(err) {
+                fs.unlink('./public/playlists/' + result.name + '.zip', function(err) {
                   if (err)
                     console.log(err);
                 });
@@ -1110,7 +1110,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
             var songFile = infos[i].music_id.file.split('/').pop();
             removeQueue.push(function(next) {
-              zip.removeFileFromZip('./public/playlists' + playlistName + '.zip', songFile, next);
+              zip.removeFileFromZip('./public/playlists/' + playlistName + '.zip', songFile, next);
             });
             infos.splice(i, 1);
 
