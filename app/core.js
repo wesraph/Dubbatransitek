@@ -1110,7 +1110,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
             var songFile = infos[i].music_id.file.split('/').pop();
             removeQueue.push(function(next) {
-              zip.removeFileFromZip('./public/playlists', playlistName + '.zip', songFile, next);
+              zip.removeFileFromZip('./public/playlists' + playlistName + '.zip', songFile, next);
             });
             infos.splice(i, 1);
 
