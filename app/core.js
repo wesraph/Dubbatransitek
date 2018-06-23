@@ -883,11 +883,6 @@ module.exports = function(io, lang, similarSongsOption) {
       }
     });
   }
-
-  function sanitizeUrl(url) {
-    return url.replace(/(http)(s)?\:\/\//, "https://");
-  }
-
   // -------------------------------------------------------------------------
   // Not function
   // -------------------------------------------------------------------------
@@ -939,7 +934,7 @@ module.exports = function(io, lang, similarSongsOption) {
           return socket.emit('fail', msg1);
         }
 
-        addPlaylist(name, tag, sanitizeUrl(url), socket.request.session.passport.user, function() {
+        addPlaylist(name, tag, ssyd.sanitizeUrl(url), socket.request.session.passport.user, function() {
           Playlist.getUserPlaylists(socket.request.session.passport.user, function(res) {
             socket.emit('myPlaylists', res);
             socket.broadcast.emit('myPlaylists', res);
@@ -971,7 +966,7 @@ module.exports = function(io, lang, similarSongsOption) {
         return socket.emit('fail', lang.playlist.sessionExpired);
       }
 
-      url = sanitizeUrl(uri);
+      url = ssyd.sanitizeUrl(uri);
 
       function successSongFunction(success, msg) {
         if (!success)
@@ -1147,7 +1142,7 @@ module.exports = function(io, lang, similarSongsOption) {
     })
   });
 
-  new CronJob('0 0 * * *', function() {
+  new CronJob('0 * * * *', function() {
     Playlist.getAllPlaylists(function(err, res) {
       if (err || !res)
         return;
@@ -1156,17 +1151,13 @@ module.exports = function(io, lang, similarSongsOption) {
         if (playlist.syncImportedPlaylist == true) {
           playlist.importedPl.forEach(function(urlImportedPl) {
 
-            downloadSongs(urlImportedPl, function(file, infos, urlYt) {
-              Music.findOne({
-                url: urlYt
-              }, function(err, res) {
-                if (err) return;
-
-                if (res) return;
-
-                addSongToPlaylist(file, infos, urlYt, playlist.author_id, playlist.name, function(a) {
-
-                });
+            downloadSongs(urlImportedPl, function(file, infos, url) {
+              Playlist.isUrlAlreadyInPlaylist(playlist.name, url, function(itIs) {
+                if (!itIs) {
+                  addSongToPlaylist(file, infos, url, playlist.author_id, playlist.name, function(a) {
+                      console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
+                  });
+                }
               });
             }, function(a) {
 

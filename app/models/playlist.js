@@ -122,5 +122,21 @@ playlistSchema.statics.addImportedPl = function(playlistName, url) {
   });
 }
 
+playlistSchema.statics.isUrlAlreadyInPlaylist = function(playlistName, url, callback) {
+  return this.model('Playlist').findOne({
+    name: playlistName
+  }).populate('musics.music_id').exec(function(err, res) {
+    if (err) return;
+
+    for (var i = 0; i < res.musics.length; i++) {
+      if (res.musics[i].music_id.url == url) {
+        return callback(true);
+      }
+    }
+
+    return callback(false);
+  });
+}
+
 // create the model for playlist and expose it to our app
 module.exports = mongoose.model('Playlist', playlistSchema);
