@@ -517,6 +517,10 @@ module.exports = function(io, lang, similarSongsOption) {
             return callback(false, lang.playlist.errorDeletingPlaylist);
           }
 
+          fs.unlink('./public/playlists', result.name + '.zip', function(err) {
+            if (err)
+              console.log(err);
+          });
           return callback(true, lang.playlist.successfullyDeletedPlaylist);
         });
       } else {
@@ -538,6 +542,10 @@ module.exports = function(io, lang, similarSongsOption) {
                   return callback(false, lang.playlist.errorDeletingPlaylist);
                 }
 
+                fs.unlink('./public/playlists', result.name + '.zip', function(err) {
+                  if (err)
+                    console.log(err);
+                });
                 return callback(true, lang.playlist.successfullyDeletedPlaylist);
               });
             });
@@ -1092,17 +1100,29 @@ module.exports = function(io, lang, similarSongsOption) {
       if (!socket.request.session.passport.user)
         return socket.emit('fail', lang.playlist.sessionExpired);
 
-      removeSong(playlistName, musicId, socket.request.session.passport.user, function(success, msg) {
-        if (success) {
-          socket.emit('success', msg);
-          getSongs(playlistName, function(infos) {
+      getSongs(playlistName, function(infos) {
+        removeSong(playlistName, musicId, socket.request.session.passport.user, function(success, msg) {
+          if (success) {
+            for (var i = 0; i < infos.length; i++) {
+              if (infos[i]._id == musicId)
+                break;
+            }
+
+            var songFile = infos[i].music_id.file.split('/').pop();
+            removeQueue.push(function(next) {
+              systemzipjs.removeFileFromZip('./public/playlists', playlistName + '.zip', songFile, next);
+            });
+            infos.splice(i, 1);
+            
+            socket.emit('success', msg);
+
             if (infos) {
               socket.emit('songs(' + playlistName + ')', infos, index);
               socket.broadcast.emit('songs(' + playlistName + ')', infos, index);
             }
-          });
-        } else
-          socket.emit('fail', msg);
+          } else
+            socket.emit('fail', msg);
+        });
       });
     });
 
@@ -1155,7 +1175,7 @@ module.exports = function(io, lang, similarSongsOption) {
               Playlist.isUrlAlreadyInPlaylist(playlist.name, url, function(itIs) {
                 if (!itIs) {
                   addSongToPlaylist(file, infos, url, playlist.author_id, playlist.name, function(a) {
-                      console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
+                    console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
                   });
                 }
               });
