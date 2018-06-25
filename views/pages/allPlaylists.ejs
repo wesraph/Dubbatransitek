@@ -46,19 +46,19 @@
               <%= lang.pages.thumbnail %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="<%= lang.pages.name %>" />
+              <%= lang.pages.name %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="<%= lang.pages.tagTitle %>" />
+              <%= lang.pages.tagTitle %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="<%= lang.pages.author %>" />
+              <%= lang.pages.author %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="<%= lang.pages.contributor %>" />
+              <%= lang.pages.contributor %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="<%= lang.pages.musicNb %>" />
+              <%= lang.pages.musicNb %>
             </th>
           </tr>
         </tfoot>
@@ -87,7 +87,7 @@
             html += '<img class="thumb2" src="' + playlists[i].musics[2].music_id.cover + '">';
           if (playlists[i].musics.length > 3 && playlists[i].musics[3].music_id.cover)
             html += '<img class="thumb2" src="' + playlists[i].musics[3].music_id.cover + '">';
-          html+= "</td><td><a href='./playlist?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
+          html += "</td><td><a href='./playlist?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
           html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id
             .deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
@@ -105,6 +105,11 @@
 
           $('#myTableBody').append(html);
         }
+
+        $('#myTable tfoot th').each(function() {
+          var title = $(this).text();
+          $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        });
 
         table = $('#myTable').DataTable();
         table.columns().every(function() {
