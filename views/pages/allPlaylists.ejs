@@ -20,6 +20,9 @@
         <thead>
           <tr>
             <th>
+              <%= lang.pages.thumbnail %>
+            </th>
+            <th>
               <%= lang.pages.name %>
             </th>
             <th>
@@ -39,6 +42,9 @@
 
         <tfoot>
           <tr>
+            <th>
+              <%= lang.pages.thumbnail %>
+            </th>
             <th>
               <input type="text" placeholder="<%= lang.pages.name %>" />
             </th>
@@ -72,7 +78,16 @@
         $('#myTableBody').empty();
         allPlaylists = playlists;
         for (var i = 0; i < playlists.length; i++) {
-          var html = "<tr><td><a href='./playlist?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
+          var html = "<tr><td>";
+          if (playlists[i].musics.length > 0 && playlists[i].musics[0].music_id.cover)
+            html += '<img class="thumb15" src="' + playlists[i].musics[0].music_id.cover + '">';
+          if (playlists[i].musics.length > 1 && playlists[i].musics[1].music_id.cover)
+            html += '<img class="thumb15" src="' + playlists[i].musics[1].music_id.cover + '">';
+          if (playlists[i].musics.length > 2 && playlists[i].musics[2].music_id.cover)
+            html += '<img class="thumb15" src="' + playlists[i].musics[2].music_id.cover + '">';
+          if (playlists[i].musics.length > 3 && playlists[i].musics[3].music_id.cover)
+            html += '<img class="thumb15" src="' + playlists[i].musics[3].music_id.cover + '">';
+          html+= "</td><td><a href='./playlist?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
           html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id
             .deezer.username : false) || (playlists[i].author_id.youtube ? playlists[i].author_id.youtube.displayName : false)) + "</td>";
@@ -97,9 +112,7 @@
 
           $('input', this.footer()).on('keyup change', function() {
             if (that.search() !== this.value) {
-              that
-                .search(this.value)
-                .draw();
+              that.search(this.value).draw();
             }
           });
         });

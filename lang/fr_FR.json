@@ -108,6 +108,7 @@
     "genreId": "ID du genre",
     "cover": "URL de la cover",
     "genre": "Genre",
-    "appearOn": "Apparait dans"
+    "appearOn": "Apparait dans",
+    "thumbnail": "Miniature"
   }
 }

@@ -51,7 +51,7 @@ playlistSchema.statics.getAllPlaylists = function(callback) {
   return this.model('Playlist').find({})
     .populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
     .populate('musics.contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
-    .exec(function(err, res) {
+    .populate('musics.music_id').exec(function(err, res) {
       if (err)
         return;
 
