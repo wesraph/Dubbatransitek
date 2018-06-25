@@ -46,19 +46,19 @@
               <%= lang.pages.thumbnail %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="Search <%= lang.pages.name %>" />
+              <%= lang.pages.name %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="Search <%= lang.pages.tagTitle %>" />
+              <%= lang.pages.tagTitle %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="Search <%= lang.pages.author %>" />
+              <%= lang.pages.author %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="Search <%= lang.pages.contributor %>" />
+              <%= lang.pages.contributor %>
             </th>
             <th>
-              <input type="text" class="form-control" placeholder="Search <%= lang.pages.musicNb %>" />
+              <%= lang.pages.musicNb %>
             </th>
           </tr>
         </tfoot>
@@ -107,7 +107,7 @@
         }
 
         table = $('#myTable').DataTable();
-        table.columns().every(function() {
+        /*table.columns().every(function() {
           var that = this;
 
           $('input', this.footer()).on('keyup change', function() {
@@ -115,7 +115,7 @@
               that.search(this.value).draw();
             }
           });
-        });
+        });*/
       });
 
       socket.emit('getAllPlaylists');
