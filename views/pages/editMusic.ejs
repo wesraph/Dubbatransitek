@@ -13,102 +13,125 @@
       <% include ../partials/header %>
     </header>
 
+    <div class="musicSticky">
+      <div class="row whiteBg">
+        <h1 class="text-center"><%= name %></h1>
+        <h4 class="text-center" id="currentTitle"> </h4>
+      </div>
+      <!-- DISPLAY MUSICS -->
+      <div class="row whiteBg">
+        <div class="col-md-2 col-xs-6 text-center">
+          <button id="previous" class="btn btn-primary">
+                        <i class="fa fa-step-backward" aria-hidden="true"></i>
+                        <%= lang.pages.previous %></button>
+        </div>
+        <div class="col-md-2 col-xs-6 text-center">
+          <button id="playpause" class="btn btn-primary">
+                        <i class="fa fa-play" aria-hidden="true"></i>
+                        <%= lang.pages.playPause %></button>
+        </div>
+        <div class="col-md-4 col-xs-12 text-center hidden-xs">
+          <input id="vol" data-slider-id='volSlider' type="text" />
+        </div>
+        <div class="col-md-2 col-xs-6 text-center">
+          <button id="random" class="btn btn-primary">
+                        <i class="fa fa-random" aria-hidden="true"></i>
+                        <%= lang.pages.random %></button>
+        </div>
+        <div class="col-md-2 col-xs-6 text-center">
+          <button id="next" class="btn btn-primary">
+                        <i class="fa fa-step-forward" aria-hidden="true"></i>
+                        <%= lang.pages.next %></button>
+        </div>
+
+      </div>
+      <div class="row col-md-12 whiteGradient">
+        <div id="waveform1"></div>
+      </div>
+    </div>
+
     <div class="row">
       <!-- Titre -->
-      <div class="form-group row">
-        <label for="example-text-input" class="col-2 col-form-label"><%= lang.pages.title %></label>
-        <div class="col-10">
+      <div class="input-group row">
+        <label for="example-text-input" class="col-md-1 col-form-label"><%= lang.pages.title %></label>
+        <div class="col-md-5">
           <input class="form-control" type="text" value="" id="title">
         </div>
-      </div>
-      <!-- Artistname -->
-      <div class="form-group row">
-        <label for="example-text-input" class="col-2 col-form-label"><%= lang.pages.artistName %></label>
-        <div class="col-10">
+        <!-- Artistname -->
+        <label for="example-text-input" class="col-md-1 col-form-label"><%= lang.pages.artistName %></label>
+        <div class="col-md-5">
           <input class="form-control" type="text" value="" id="artistName">
         </div>
       </div>
       <!-- deezerId -->
       <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.deezerId %></label>
-        <div class="col-10">
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.deezerId %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="deezerId">
         </div>
-      </div>
-      <!-- ituneId -->
-      <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.ituneId %></label>
-        <div class="col-10">
+        <!-- ituneId -->
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.ituneId %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="ituneId">
         </div>
       </div>
       <!-- Position -->
       <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.position %></label>
-        <div class="col-10">
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.position %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="position">
         </div>
-      </div>
-      <!-- Duration -->
-      <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.duration %></label>
-        <div class="col-10">
+        <!-- Duration -->
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.duration %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="duration">
         </div>
       </div>
       <!-- deezerAlbum -->
       <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.deezerAlbum %></label>
-        <div class="col-10">
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.deezerAlbum %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="deezerAlbum">
         </div>
-      </div>
-      <!-- discNumber -->
-      <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.discNumber %></label>
-        <div class="col-10">
+        <!-- discNumber -->
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.discNumber %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="discNumber">
         </div>
       </div>
       <!-- album -->
       <div class="form-group row">
-        <label for="example-text-input" class="col-2 col-form-label"><%= lang.pages.album %></label>
-        <div class="col-10">
+        <label for="example-text-input" class="col-md-1 col-form-label"><%= lang.pages.album %></label>
+        <div class="col-md-5">
           <input class="form-control" type="text" value="" id="album">
         </div>
-      </div>
-      <!-- releaseDate -->
-      <div class="form-group row">
-        <label for="example-date-input" class="col-2 col-form-label"><%= lang.pages.releaseDate %></label>
-        <div class="col-10">
+        <!-- releaseDate -->
+        <label for="example-date-input" class="col-md-1 col-form-label"><%= lang.pages.releaseDate %></label>
+        <div class="col-md-5">
           <input class="form-control" type="date" value="" id="releaseDate">
         </div>
       </div>
       <!-- nbTracks -->
       <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.nbTracks %></label>
-        <div class="col-10">
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.nbTracks %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="nbTracks">
         </div>
-      </div>
-      <!-- genreId -->
-      <div class="form-group row">
-        <label for="example-number-input" class="col-2 col-form-label"><%= lang.pages.genreId %></label>
-        <div class="col-10">
+        <!-- genreId -->
+        <label for="example-number-input" class="col-md-1 col-form-label"><%= lang.pages.genreId %></label>
+        <div class="col-md-5">
           <input class="form-control" type="number" value="" id="genreId">
         </div>
       </div>
       <!-- cover -->
       <div class="form-group row">
-        <label for="example-url-input" class="col-2 col-form-label"><%= lang.pages.cover %></label>
-        <div class="col-10">
+        <label for="example-url-input" class="col-md-1 col-form-label"><%= lang.pages.cover %></label>
+        <div class="col-md-5">
           <input class="form-control" type="url" value="" id="cover">
         </div>
-      </div>
-      <!-- genre -->
-      <div class="form-group row">
-        <label for="example-text-input" class="col-2 col-form-label"><%= lang.pages.genre %></label>
-        <div class="col-10">
+        <!-- genre -->
+        <label for="example-text-input" class="col-md-1 col-form-label"><%= lang.pages.genre %></label>
+        <div class="col-md-5">
           <input class="form-control" type="text" value="" id="genre">
         </div>
       </div>
@@ -172,6 +195,8 @@
 <footer>
   <% include ../partials/notifJS %>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js" integrity="sha256-mZrPKkWr22NunmKlLknHHhzzbUTlxkZwPU8pM/MnB9A=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js" integrity="sha256-ssw743RfM8cbNhwou26tmmPhiNhq3buUbRG/RevtfG4=" crossorigin="anonymous"></script>
     <script>
     </script>
 </footer>
