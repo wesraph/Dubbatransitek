@@ -34,31 +34,25 @@
             <th>
               <%= lang.pages.musicNb %>
             </th>
-            <th>
-              <%= lang.pages.go %>
-            </th>
           </tr>
         </thead>
 
         <tfoot>
           <tr>
             <th>
-              <%= lang.pages.name %>
+              <input type="text" placeholder="<%= lang.pages.name %>" />
             </th>
             <th>
-              <%= lang.pages.tagTitle %>
+              <input type="text" placeholder="<%= lang.pages.tagTitle %>" />
             </th>
             <th>
-              <%= lang.pages.author %>
+              <input type="text" placeholder="<%= lang.pages.author %>" />
             </th>
             <th>
-              <%= lang.pages.contributor %>
+              <input type="text" placeholder="<%= lang.pages.contributor %>" />
             </th>
             <th>
-              <%= lang.pages.musicNb %>
-            </th>
-            <th>
-              <%= lang.pages.go %>
+              <input type="text" placeholder="<%= lang.pages.musicNb %>" />
             </th>
           </tr>
         </tfoot>
@@ -73,6 +67,7 @@
     <script type="text/javascript" src="//cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
     <script>
       var allPlaylists;
+      var table;
       socket.on('allPlaylists', function(playlists) {
         $('#myTableBody').empty();
         allPlaylists = playlists;
@@ -91,13 +86,23 @@
           }
           html += contributors.join(', ');
           html += "</td>";
-          html += "<td>" + playlists[i].musics.length + "</td>";
-          html += "<td><a class='btn btn-default' href='./playlist?name=" + encodeURI(playlists[i].name) + "'><%= lang.pages.go %></a></td></tr>";
+          html += "<td>" + playlists[i].musics.length + "</td></tr>";
 
           $('#myTableBody').append(html);
         }
 
-        $('#myTable').DataTable();
+        table = $('#myTable').DataTable();
+        table.columns().every(function() {
+          var that = this;
+
+          $('input', this.footer()).on('keyup change', function() {
+            if (that.search() !== this.value) {
+              that
+                .search(this.value)
+                .draw();
+            }
+          });
+        });
       });
 
       socket.emit('getAllPlaylists');
