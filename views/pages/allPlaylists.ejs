@@ -80,13 +80,13 @@
         for (var i = 0; i < playlists.length; i++) {
           var html = "<tr><td>";
           if (playlists[i].musics.length > 0 && playlists[i].musics[0].music_id.cover)
-            html += '<img class="miniature" src="' + playlists[i].musics[0].music_id.cover + '">';
+            html += '<img class="thumb2" src="' + playlists[i].musics[0].music_id.cover + '">';
           if (playlists[i].musics.length > 1 && playlists[i].musics[1].music_id.cover)
-            html += '<img class="miniature" src="' + playlists[i].musics[1].music_id.cover + '">';
+            html += '<img class="thumb2" src="' + playlists[i].musics[1].music_id.cover + '">';
           if (playlists[i].musics.length > 2 && playlists[i].musics[2].music_id.cover)
-            html += '<img class="miniature" src="' + playlists[i].musics[2].music_id.cover + '">';
+            html += '<img class="thumb2" src="' + playlists[i].musics[2].music_id.cover + '">';
           if (playlists[i].musics.length > 3 && playlists[i].musics[3].music_id.cover)
-            html += '<img class="miniature" src="' + playlists[i].musics[3].music_id.cover + '">';
+            html += '<img class="thumb2" src="' + playlists[i].musics[3].music_id.cover + '">';
           html+= "</td><td><a href='./playlist?name=" + encodeURI(playlists[i].name) + "'>" + playlists[i].name + "</a></td>";
           html += "<td>" + playlists[i].tag.join(", ") + "</td>";
           html += "<td>" + ((playlists[i].author_id.local ? playlists[i].author_id.local.username : false) || (playlists[i].author_id.spotify ? playlists[i].author_id.spotify.username : false) || (playlists[i].author_id.deezer ? playlists[i].author_id
