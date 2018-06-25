@@ -46,19 +46,19 @@
               <%= lang.pages.thumbnail %>
             </th>
             <th>
-              <%= lang.pages.name %>
+              <input type="text" class="form-control" placeholder="Search <%= lang.pages.name %>" />
             </th>
             <th>
-              <%= lang.pages.tagTitle %>
+              <input type="text" class="form-control" placeholder="Search <%= lang.pages.tagTitle %>" />
             </th>
             <th>
-              <%= lang.pages.author %>
+              <input type="text" class="form-control" placeholder="Search <%= lang.pages.author %>" />
             </th>
             <th>
-              <%= lang.pages.contributor %>
+              <input type="text" class="form-control" placeholder="Search <%= lang.pages.contributor %>" />
             </th>
             <th>
-              <%= lang.pages.musicNb %>
+              <input type="text" class="form-control" placeholder="Search <%= lang.pages.musicNb %>" />
             </th>
           </tr>
         </tfoot>
@@ -105,11 +105,6 @@
 
           $('#myTableBody').append(html);
         }
-
-        $('#myTable tfoot th').each(function() {
-          var title = $(this).text();
-          $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-        });
 
         table = $('#myTable').DataTable();
         table.columns().every(function() {
