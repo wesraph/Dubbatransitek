@@ -34,7 +34,8 @@ var musicSchema = mongoose.Schema({
   creationDate: {
     type: Date,
     default: Date.now
-  }
+  },
+  waveform: [Number]
 });
 
 musicSchema.statics.isUrlAlreadyDownloaded = function(url, callback) {
