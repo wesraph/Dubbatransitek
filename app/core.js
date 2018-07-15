@@ -4,6 +4,7 @@ var similarSongs = require('similar-songs');
 var CronJob = require('cron').CronJob;
 var queue = require('queue');
 var mongoose = require('mongoose');
+var simplewaveformjs = require('simplewaveformjs');
 var downloadQueue = queue({
   autostart: true,
   concurrency: 1
@@ -146,20 +147,25 @@ module.exports = function(io, lang, similarSongsOption) {
     music.file = file;
     music._id = mongoose.Types.ObjectId();
 
-    music.save(function(err) {
-      if (err) {
-        console.log(err);
-        return callback(false, lang.playlist.errorAddingMusic);
-      }
+    simplewaveformjs.getWaveform(file, function(wfRes) {
+      if (wfRes && wfRes.length != 0)
+        music.waveform = wfRes;
 
-      Playlist.getPlaylist(playlistName, function(res) {
-        Playlist.addMusicToPlaylist(playlistName, music._id, userId, res.musics.length, function(err) {
-          if (err) {
-            console.log(err);
-            return callback(false, lang.playlist.errorAddingMusic);
-          }
+      music.save(function(err) {
+        if (err) {
+          console.log(err);
+          return callback(false, lang.playlist.errorAddingMusic);
+        }
 
-          return callback(true, lang.playlist.successfullyAddedMusic);
+        Playlist.getPlaylist(playlistName, function(res) {
+          Playlist.addMusicToPlaylist(playlistName, music._id, userId, res.musics.length, function(err) {
+            if (err) {
+              console.log(err);
+              return callback(false, lang.playlist.errorAddingMusic);
+            }
+
+            return callback(true, lang.playlist.successfullyAddedMusic);
+          });
         });
       });
     });

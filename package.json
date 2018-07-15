@@ -41,6 +41,7 @@
     "passport-youtube-v3": "^2.1.0",
     "queue": "^4.4.2",
     "similar-songs": "^0.1.3",
+    "simplewaveformjs": "git+https://github.com/Guisch/simpleWaveformJs.git",
     "socket.io": "^2.1.0",
     "ssydtomp3": "git+https://github.com/Guisch/ssydtomp3.git",
     "systemzipjs": "git+https://github.com/Guisch/systemZipJs.git"
