@@ -446,6 +446,7 @@
         socket.emit('addSong', '<%= name %>', $('#url').val());
         loadingNotif();
         $('#url').val('');
+        return false;
       }
 
       function addSimilar() {
@@ -550,6 +551,7 @@
 
       $(document).ready(function() {
         wavesurfersInit();
+
         $('#add').submit(add);
         $('#addSimilar').click(addSimilar);
         $('#del').click(del);
