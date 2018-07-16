@@ -176,7 +176,7 @@
         var html = '';
 
         for (var i = 0; i < songsList.length; i++) {
-          html = '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
+          html += '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
           html += '<div class="col-md-9" onClick="loadWave(' + i.toString() + ')">';
           html += '<div class="float-left">';
           html += '<i class="fa fa-arrows-v marginright-15 cursorR"></i>';
