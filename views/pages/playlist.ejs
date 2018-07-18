@@ -132,7 +132,8 @@
       var wavesurfer2;
       var currentSong;
       var fadeTime = 10;
-      var nextSong = 1;
+      var previousSong;
+      //var nextSong = 1;
       var fc1 = true;
       var fc2 = true;
       var masterVol = 1;
@@ -156,7 +157,7 @@
           for (var i = 0; i < songsList.length; i++) {
             if (songsList[i]._id == currentSongId) {
               currentSong = i;
-              loadeNextWave((currentSong + nextSong) % songsList.length);
+              loadeNextWave((currentSong + nextSong()) % songsList.length);
               break;
             }
           }
@@ -166,8 +167,8 @@
         if (songRemoved !== undefined && songsList.length != 0) {
           if (songRemoved == currentSong)
             loadWave(songRemoved);
-          if (songRemoved == currentSong + nextSong)
-            loadNextWave(currentSong + nextSong);
+          if (songRemoved == currentSong + nextSong())
+            loadNextWave(currentSong + nextSong());
           if (songRemoved < currentSong)
             currentSong--;
         }
@@ -244,8 +245,10 @@
 
       function deleteSong(id) {
         if (id == currentSong) {
-          if (songsList.length == 1)
+          if (songsList.length == 1) {
+            previousSong = currentSong;
             currentSong = null;
+          }
 
           $('#currentTitle').empty();
           if ($('#waveform1').css('opacity') != 0)
@@ -263,7 +266,7 @@
         if (currentSong == id)
           return;
 
-        if (id == (currentSong + nextSong) % songsList.length) {
+        if (id == (currentSong + nextSong()) % songsList.length) {
           if (wavesurfer1.isPlaying() && wavesurfer2.isReady) {
             wavesurfer1.pause();
             finish1();
@@ -289,20 +292,21 @@
 
         $('#song' + id.toString()).addClass('active');
         $('#currentTitle').text(songsList[id].music_id.title + ' - ' + songsList[id].music_id.artistName);
+        previousSong = currentSong;
         currentSong = id;
         wavesurfer1.empty();
         wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer1.isReady = false;
-        wavesurfer1.play();
-        wavesurfer1.on('ready', function() {
-          wavesurfer1.play();
-          wavesurfer1.un('ready');
+        wavesurfer1.on('play', function() {
+          wavesurfer1.un('play');
 
           wavesurfer2.empty();
-          var nextTemp = (currentSong + nextSong) % songsList.length;
+          var nextTemp = (currentSong + nextSong()) % songsList.length;
           wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
         });
+
+        wavesurfer1.play();
 
         $('#waveform1').css('opacity', 1);
         $('#waveform1').css('z-index', 10);
@@ -353,11 +357,12 @@
         if (currentSong != null)
           $('#song' + currentSong.toString()).removeClass('active');
 
-        currentSong = (currentSong + nextSong) % songsList.length;
+        previousSong = currentSong;
+        currentSong = (currentSong + nextSong()) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
 
-        var id = (currentSong + nextSong) % songsList.length;
+        var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer1.empty();
         wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer1.isReady = false;
@@ -399,11 +404,12 @@
         if (currentSong != null)
           $('#song' + currentSong.toString()).removeClass('active');
 
-        currentSong = (currentSong + nextSong) % songsList.length;
+        previousSong = currentSong;
+        currentSong = (currentSong + nextSong()) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
 
-        var id = (currentSong + nextSong) % songsList.length;
+        var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer2.empty();
         wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer2.isReady = false;
@@ -433,6 +439,10 @@
       }
 
       // UI
+
+      function nextSong() {
+        return random ? Math.floor(songsList.length * Math.random()) : 1;
+      }
 
       function loadingNotif() {
         notify = $.notify({
@@ -490,28 +500,24 @@
         }
       }
 
-      function random() {
+      function randomf() {
         if (random) {
           random = false;
           $('#random').removeClass('btn-default').addClass('btn-primary');
-          clearInterval(randomInterval);
         } else {
           random = true;
           $('#random').removeClass('btn-primary').addClass('btn-default');
-          randomInterval = setInterval(function() {
-            nextSong = Math.floor(songsList.length * Math.random());
-          }, 60000);
         }
       }
 
-      function previous() {
+      function previousf() {
         if (currentSong !== undefined)
-          loadWave(currentSong - nextSong);
+          loadWave(previousSong);
       }
 
-      function next() {
+      function nextf() {
         if (currentSong !== undefined)
-          loadWave(currentSong + nextSong);
+          loadWave(currentSong + nextSong());
       }
 
       function onSlide(e) {
@@ -559,9 +565,9 @@
         $('#del').click(del);
         $('#download').click(download);
         $('#playpause').click(playpause);
-        $('#random').click(random);
-        $('#previous').click(random);
-        $('#next').click(random);
+        $('#random').click(randomf);
+        $('#previous').click(previousf);
+        $('#next').click(nextf);
         $('input[name=syncImportedPlaylist]').click(sync);
         $('input[name=autoAddSimilarSong]').click(autoAdd);
 
@@ -584,13 +590,13 @@
             playpause();
           }
           if (e.which == 82 || e.which == 114) {
-            random();
+            randomf();
           }
           if (e.which == 66 || e.which == 98) {
-            previous();
+            previousf();
           }
           if (e.which == 78 || e.which == 110) {
-            next();
+            nextf();
           }
         });
       });
