@@ -89,7 +89,7 @@ playlistSchema.statics.getPlaylistInfo = function(playlistName, callback) {
     if (err)
       return;
 
-    return callback(result.syncImportedPlaylist, result.autoAddSimilarSong, result.saveAutoAddedSimilarSong);
+    return callback(result.syncImportedPlaylist, result.autoAddSimilarSong);
   });
 }
 
