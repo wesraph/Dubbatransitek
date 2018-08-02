@@ -305,7 +305,7 @@
         wavesurfer1.isReady = false;
         wavesurfer1.on('ready', function() {
           wavesurfer1.un('ready');
-
+          wavesurfer1.play();
           wavesurfer2.empty();
           var nextTemp = (currentSong + nextSong()) % songsList.length;
           wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
