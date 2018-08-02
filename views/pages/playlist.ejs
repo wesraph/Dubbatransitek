@@ -204,7 +204,7 @@
           loadNextWave(songsList[songsList.length - 1].music_id.file);
 
         // Sortable List
-        sortableList = Sortable.create($('#songs'), {
+        sortableList = Sortable.create($('#songs')[0], {
           handle: '.fa-arrows-v',
           animation: 150,
           onEnd: function(ev) {
