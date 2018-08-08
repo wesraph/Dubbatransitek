@@ -1165,7 +1165,27 @@ module.exports = function(io, lang, similarSongsOption) {
           }
         });
       });
-    })
+    });
+
+    socket.on('resetAllWf', function() {
+      Music.find({}).exec(function(err, res) {
+        if (err || res === undefined || res.length == 0)
+          return;
+
+        var wf = require('simpleWaveFormJS');
+        var resetAllWfQueue = queue({
+          autostart: true,
+          concurrency: 1
+        });
+        res.forEach(function(elem, index) {
+          resetAllWfQueue.push(function(next) {
+            wf.getWaveform(elem.file, function(result) {
+              console.log(elem._id);
+            });
+          });
+        });
+      });
+    });
   });
 
   new CronJob('*/30 * * * *', function() {
