@@ -1168,7 +1168,9 @@ module.exports = function(io, lang, similarSongsOption) {
     });
 
     socket.on('resetAllWf', function() {
-      Music.find({}).exec(function(err, res) {
+      Music.find({
+        file: 'public/musics/Amelie Lens - 1 - In Silence.mp3'
+      }).exec(function(err, res) {
         if (err || res === undefined || res.length == 0)
           return;
 
@@ -1187,7 +1189,7 @@ module.exports = function(io, lang, similarSongsOption) {
               }, function(err) {
                 if (err)
                   return console.log('Error while updating', elem.file, err);
-
+                console.log(JSON.stringify(result));
                 console.log((index+1).toString() + '/' + res.length, 'Successfully generated waveform for', elem.file);
               })
               next();
