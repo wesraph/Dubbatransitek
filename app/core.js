@@ -1176,10 +1176,20 @@ module.exports = function(io, lang, similarSongsOption) {
           autostart: true,
           concurrency: 1
         });
+
         res.forEach(function(elem, index) {
           resetAllWfQueue.push(function(next) {
             simplewaveformjs.getWaveform(elem.file, function(result) {
-              console.log(elem._id);
+              Music.update({
+                _id: elem._id
+              }, {
+                waveform: result
+              }, function(err) {
+                if (err)
+                  return console.log('Error while updating', elem.file, err);
+
+                console.log(index + '/' + elem.length, 'Successfully generated waveform for', elem.file);
+              })
               next();
             });
           });
