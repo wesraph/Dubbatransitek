@@ -1169,7 +1169,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
     socket.on('resetAllWf', function() {
       Music.find({
-        file: 'public/musics/Amelie Lens - 1 - In Silence.mp3'
+        //file: 'public/musics/Amelie Lens - 1 - In Silence.mp3'
       }).exec(function(err, res) {
         if (err || res === undefined || res.length == 0)
           return;
@@ -1192,7 +1192,8 @@ module.exports = function(io, lang, similarSongsOption) {
                 console.log(JSON.stringify(result));
                 console.log((index+1).toString() + '/' + res.length, 'Successfully generated waveform for', elem.file);
               })
-              next();
+
+              setTimeout(next, 10000);
             });
           });
         });
