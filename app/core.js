@@ -1189,11 +1189,10 @@ module.exports = function(io, lang, similarSongsOption) {
               }, function(err) {
                 if (err)
                   return console.log('Error while updating', elem.file, err);
-                console.log(JSON.stringify(result));
+                //console.log(JSON.stringify(result));
                 console.log((index+1).toString() + '/' + res.length, 'Successfully generated waveform for', elem.file);
-              })
-
-              setTimeout(next, 10000);
+                setTimeout(next, 10000);
+              });
             });
           });
         });
