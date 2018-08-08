@@ -1172,14 +1172,13 @@ module.exports = function(io, lang, similarSongsOption) {
         if (err || res === undefined || res.length == 0)
           return;
 
-        var wf = require('simpleWaveFormJS');
         var resetAllWfQueue = queue({
           autostart: true,
           concurrency: 1
         });
         res.forEach(function(elem, index) {
           resetAllWfQueue.push(function(next) {
-            wf.getWaveform(elem.file, function(result) {
+            simplewaveformjs.getWaveform(elem.file, function(result) {
               console.log(elem._id);
             });
           });
