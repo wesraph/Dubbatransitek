@@ -1180,6 +1180,7 @@ module.exports = function(io, lang, similarSongsOption) {
           resetAllWfQueue.push(function(next) {
             simplewaveformjs.getWaveform(elem.file, function(result) {
               console.log(elem._id);
+              next();
             });
           });
         });
