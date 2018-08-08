@@ -1188,7 +1188,7 @@ module.exports = function(io, lang, similarSongsOption) {
                 if (err)
                   return console.log('Error while updating', elem.file, err);
 
-                console.log(index + '/' + res.length, 'Successfully generated waveform for', elem.file);
+                console.log((index+1).toString() + '/' + res.length, 'Successfully generated waveform for', elem.file);
               })
               next();
             });
