@@ -305,7 +305,7 @@
           var nextTemp = (currentSong + nextSong()) % songsList.length;
           //wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
-          load2(songsList[id].music_id.file, songsList[id].music_id.waveform);
+          load2(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
         });
         wavesurfer1.isReady = false;
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
