@@ -1169,7 +1169,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
     socket.on('resetAllWf', function() {
       Music.find({
-        artistName: 'Amelie Lens'
+        _id: '5b26e422533c543de2bcd06b'
       }).exec(function(err, res) {
         if (err || res === undefined || res.length == 0)
           return;
