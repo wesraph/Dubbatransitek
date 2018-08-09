@@ -264,6 +264,7 @@
       }
 
       function loadWave(index) {
+        playpause();
         var id = index % songsList.length;
         if (id < 0)
           id = songsList.length + id;
