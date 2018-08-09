@@ -233,16 +233,14 @@
       function loadNextWave(s) {
         if ($('#waveform1').css('opacity') != 0) {
           wavesurfer2.empty();
-          wavesurfer2.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
-          // Hotfix waiting PR response
-          wavesurfer2.getArrayBuffer(songsList[s].music_id.file, data => wavesurfer2.loadArrayBuffer(data));
+          //wavesurfer2.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
+          load2(songsList[s].music_id.file, songsList[s].music_id.waveform);
           wavesurfer2.isReady = false;
         }
         if ($('#waveform2').css('opacity') != 0) {
           wavesurfer1.empty();
-          wavesurfer1.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
-          // Hotfix waiting PR response
-          wavesurfer1.getArrayBuffer(songsList[s].music_id.file, data => wavesurfer1.loadArrayBuffer(data));
+          //wavesurfer1.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
+          load1(songsList[s].music_id.file, songsList[s].music_id.waveform);
           wavesurfer1.isReady = false;
         }
       }
@@ -305,17 +303,14 @@
           wavesurfer1.play();
           wavesurfer2.empty();
           var nextTemp = (currentSong + nextSong()) % songsList.length;
-          wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
-          // Hotfix waiting PR response
-          wavesurfer2.getArrayBuffer(songsList[nextTemp].music_id.file, data => wavesurfer2.loadArrayBuffer(data));
+          //wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
+          load2(songsList[id].music_id.file, songsList[id].music_id.waveform);
         });
         wavesurfer1.isReady = false;
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         // Hotfix waiting PR response
-        wavesurfer1.backend.setPeaks(songsList[id].music_id.waveform);
-        wavesurfer1.drawBuffer();
-        wavesurfer1.getArrayBuffer(songsList[id].music_id.file, data => wavesurfer1.loadArrayBuffer(data));
+        load1(songsList[id].music_id.file, songsList[id].music_id.waveform);
 
         //wavesurfer1.play();
 
@@ -357,6 +352,12 @@
 
       // Wavesurfer 1
 
+      function load1(url, peak) {
+        wavesurfer1.backend.setPeaks(peak);
+        wavesurfer1.drawBuffer();
+        wavesurfer1.getArrayBuffer(url, data => wavesurfer1.loadArrayBuffer(data));
+      }
+
       function finish1() {
         fc1 = true;
         wavesurfer1.setVolume(masterVol);
@@ -375,9 +376,8 @@
 
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer1.empty();
-        wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
-        // Hotfix waiting PR response
-        wavesurfer1.getArrayBuffer(songsList[id].music_id.file, data => wavesurfer1.loadArrayBuffer(data));
+        load1(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer1.isReady = false;
 
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
@@ -406,6 +406,12 @@
 
       // WaveSurfer 2
 
+      function load2(url, peak) {
+        wavesurfer2.backend.setPeaks(peak);
+        wavesurfer2.drawBuffer();
+        wavesurfer2.getArrayBuffer(url, data => wavesurfer2.loadArrayBuffer(data));
+      }
+
       function finish2() {
         fc2 = true;
         wavesurfer1.setVolume(masterVol);
@@ -424,9 +430,8 @@
 
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer2.empty();
-        wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
-        // Hotfix waiting PR response
-        wavesurfer2.getArrayBuffer(songsList[id].music_id.file, data => wavesurfer2.loadArrayBuffer(data));
+        //wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        load2(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer2.isReady = false;
 
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
