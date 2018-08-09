@@ -1169,7 +1169,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
     socket.on('resetAllWf', function() {
       Music.find({
-        _id: '5b26e422533c543de2bcd06b'
+        artistName: 'Amelie Lens'
       }).exec(function(err, res) {
         if (err || res === undefined || res.length == 0)
           return;
@@ -1182,6 +1182,7 @@ module.exports = function(io, lang, similarSongsOption) {
         res.forEach(function(elem, index) {
           resetAllWfQueue.push(function(next) {
             simplewaveformjs.getWaveform(elem.file, function(result) {
+              console.log(elem._id);
               Music.update({
                 _id: elem._id
               }, {
