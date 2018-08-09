@@ -300,10 +300,6 @@
         previousSong = currentSong;
         currentSong = id;
         wavesurfer1.empty();
-        wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
-        // Hotfix waiting PR response
-        wavesurfer1.getArrayBuffer(songsList[id].music_id.file, data => wavesurfer1.loadArrayBuffer(data));
-        wavesurfer1.isReady = false;
         wavesurfer1.on('ready', function() {
           wavesurfer1.un('ready');
           wavesurfer1.play();
@@ -314,8 +310,12 @@
           wavesurfer2.getArrayBuffer(songsList[nextTemp].music_id.file, data => wavesurfer2.loadArrayBuffer(data));
           wavesurfer2.isReady = false;
         });
+        wavesurfer1.isReady = false;
+        wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        // Hotfix waiting PR response
+        wavesurfer1.getArrayBuffer(songsList[id].music_id.file, data => wavesurfer1.loadArrayBuffer(data));
 
-        wavesurfer1.play();
+        //wavesurfer1.play();
 
         $('#waveform1').css('opacity', 1);
         $('#waveform1').css('z-index', 10);
