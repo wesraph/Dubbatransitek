@@ -1182,7 +1182,6 @@ module.exports = function(io, lang, similarSongsOption) {
         res.forEach(function(elem, index) {
           resetAllWfQueue.push(function(next) {
             simplewaveformjs.getWaveform(elem.file, function(result) {
-              console.log(elem._id);
               Music.update({
                 _id: elem._id
               }, {
