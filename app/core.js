@@ -1169,7 +1169,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
     socket.on('resetAllWf', function() {
       Music.find({
-        artistName: 'Amelie Lens'
+        //artistName: 'Amelie Lens'
       }).exec(function(err, res) {
         if (err || res === undefined || res.length == 0)
           return;
@@ -1189,10 +1189,8 @@ module.exports = function(io, lang, similarSongsOption) {
               }, function(err) {
                 if (err)
                   return console.log('Error while updating', elem.file, err);
-                //console.log(JSON.stringify(result));
-                console.log(result[2], result[100]);
                 console.log((index+1).toString() + '/' + res.length, 'Successfully generated waveform for', elem.file);
-                setTimeout(next, 10000);
+                next();
               });
             });
           });
