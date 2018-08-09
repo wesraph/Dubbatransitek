@@ -1185,7 +1185,7 @@ module.exports = function(io, lang, similarSongsOption) {
               Music.update({
                 _id: elem._id
               }, {
-                waveform: result
+                waveform: JSON.parse(JSON.stringify(result))
               }, function(err) {
                 if (err)
                   return console.log('Error while updating', elem.file, err);
