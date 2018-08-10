@@ -133,7 +133,7 @@
       var currentSong;
       var fadeTime = 10;
       var previousSong;
-      //var nextSong = 1;
+      var nextSong = 1;
       var fc1 = true;
       var fc2 = true;
       var masterVol = 1;
@@ -141,7 +141,6 @@
       var syncImportedPlaylist;
       var autoAddSimilarSong;
       var random = false;
-      var randomInterval;
       var loadSong = false;
 
       if (sessionStorage.getItem('masterVol') != null)
@@ -158,7 +157,7 @@
           for (var i = 0; i < songsList.length; i++) {
             if (songsList[i]._id == currentSongId) {
               currentSong = i;
-              loadeNextWave((currentSong + nextSong()) % songsList.length);
+              loadeNextWave((currentSong + nextSong) % songsList.length);
               break;
             }
           }
@@ -168,8 +167,8 @@
         if (songRemoved !== undefined && songsList.length != 0) {
           if (songRemoved == currentSong)
             loadWave(songRemoved);
-          if (songRemoved == currentSong + nextSong())
-            loadNextWave(currentSong + nextSong());
+          if (songRemoved == currentSong + nextSong)
+            loadNextWave(currentSong + nextSong);
           if (songRemoved < currentSong)
             currentSong--;
         }
@@ -285,7 +284,7 @@
         if (currentSong == id)
           return;
 
-        if (id == (currentSong + nextSong()) % songsList.length) {
+        if (id == (currentSong + nextSong) % songsList.length) {
           if (wavesurfer1.isPlaying() && wavesurfer2.isReady) {
             wavesurfer1.pause();
             finish1();
@@ -318,7 +317,7 @@
           wavesurfer1.un('ready');
           wavesurfer1.play();
           wavesurfer2.empty();
-          var nextTemp = (currentSong + nextSong()) % songsList.length;
+          var nextTemp = (currentSong + nextSong) % songsList.length;
           //wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
           load2(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id._id);
@@ -387,12 +386,12 @@
           $('#song' + currentSong.toString()).removeClass('active');
 
         previousSong = currentSong;
-        currentSong = (currentSong + nextSong()) % songsList.length;
+        currentSong = (currentSong + nextSong) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
         window.history.pushState("??", "??", "/playlist?name=" + encodeURI("<%= name %>") + "&play=" + currentSong);
 
-        var id = (currentSong + nextSong()) % songsList.length;
+        var id = (currentSong + nextSong) % songsList.length;
         wavesurfer1.empty();
         load1(songsList[id].music_id.file, songsList[id].music_id._id);
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
@@ -401,6 +400,8 @@
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
           socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)].music_id._id);
         }
+        if (random)
+          nextSong = Math.floor(songsList.length * Math.random());
       }
 
       function audioprocess1() {
@@ -443,12 +444,12 @@
           $('#song' + currentSong.toString()).removeClass('active');
 
         previousSong = currentSong;
-        currentSong = (currentSong + nextSong()) % songsList.length;
+        currentSong = (currentSong + nextSong) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
         window.history.pushState("??", "??", "/playlist?name=" + encodeURI("<%= name %>") + "&play=" + currentSong);
 
-        var id = (currentSong + nextSong()) % songsList.length;
+        var id = (currentSong + nextSong) % songsList.length;
         wavesurfer2.empty();
         //wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         load2(songsList[id].music_id.file, songsList[id].music_id._id);
@@ -457,6 +458,8 @@
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
           socket.emit('addSimilar', '<%= name %>', songsList[Math.floor(Math.random() * songsList.length)].music_id._id);
         }
+        if (random)
+          nextSong = Math.floor(songsList.length * Math.random());
       }
 
       function audioprocess2() {
@@ -479,10 +482,6 @@
       }
 
       // UI
-
-      function nextSong() {
-        return random ? Math.floor(songsList.length * Math.random()) : 1;
-      }
 
       function loadingNotif() {
         notify = $.notify({
@@ -543,9 +542,11 @@
       function randomf() {
         if (random) {
           random = false;
+          nextSong = 1;
           $('#random').removeClass('btn-default').addClass('btn-primary');
         } else {
           random = true;
+          nextSong = Math.floor(songsList.length * Math.random());
           $('#random').removeClass('btn-primary').addClass('btn-default');
         }
       }
@@ -557,7 +558,7 @@
 
       function nextf() {
         if (currentSong !== undefined)
-          loadWave(currentSong + nextSong());
+          loadWave(currentSong + nextSong);
       }
 
       function onSlide(e) {
