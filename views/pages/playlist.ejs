@@ -546,9 +546,11 @@
           random = false;
           nextSong = 1;
           $('#random').removeClass('btn-default').addClass('btn-primary');
+          loadNextWave((currentSong + nextSong) % songsList.length);
         } else {
           random = true;
           nextSong = Math.floor(songsList.length * Math.random());
+          loadNextWave((currentSong + nextSong) % songsList.length);
           $('#random').removeClass('btn-primary').addClass('btn-default');
         }
       }
