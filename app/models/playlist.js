@@ -62,7 +62,7 @@ playlistSchema.statics.getAllPlaylists = function(callback) {
 playlistSchema.statics.getUserPlaylists = function(userId, callback) {
   return this.model('Playlist').find({
     author_id: userId
-  }).populate('musics.music_id', 'cover').exec(function(err, res) {
+  }, 'name + musics.music_id').populate('musics.music_id', 'cover').exec(function(err, res) {
     if (err)
       return;
 
