@@ -142,6 +142,7 @@
       var autoAddSimilarSong;
       var random = false;
       var randomInterval;
+      var loadSong = false;
 
       if (sessionStorage.getItem('masterVol') != null)
         masterVol = sessionStorage.getItem('masterVol');
@@ -212,6 +213,11 @@
               socket.emit('changeIndexes', '<%= name %>', ev.oldIndex, ev.newIndex, songsList[currentSong]._id);
           }
         });
+
+        if (loadSong) {
+          loadWave(parseInt((new URL(window.location.href)).searchParams.get("play")));
+          loadSong = false;
+        }
       });
 
       socket.on('downloadReady', function() {
@@ -592,6 +598,9 @@
       }
 
       $(document).ready(function() {
+        if ((new URL(window.location.href)).searchParams.get("play") != null) {
+          loadSong = true;
+        }
         wavesurfersInit();
 
         $('#add').submit(add);

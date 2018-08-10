@@ -122,6 +122,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Imported Playlist syncing now working properly every 30 min
  - Server side generated waveform
  - Increase of navigation speed by reducing amount of data sent
+ - URL is now updated while music is changing
  - Add docker ! Install Dubbatransitek in a command ! (WIP)
  - Page to edit music info (WIP)
 
