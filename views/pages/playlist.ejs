@@ -231,7 +231,6 @@
       });
 
       socket.on('waveform', function(isWs1, peak) {
-        console.log(isWs1, peak);
         if (isWs1) {
           wavesurfer1.backend.setPeaks(peak);
           wavesurfer1.drawBuffer();
