@@ -120,6 +120,8 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Random order playback
  - Improve download playlist as zip function
  - Imported Playlist syncing now working properly every 30 min
+ - Server side generated waveform
+ - Increase of navigation speed by reducing amount of data sent
  - Add docker ! Install Dubbatransitek in a command ! (WIP)
  - Page to edit music info (WIP)
 
@@ -153,6 +155,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - first working version
 
 ## TODO
+ - Improve notification system
  - Import playlist from youtube, deezer or spotify section
  - Improve download playlist function (add field on playlist model)
  - Party mode to be enable to remote control playlist
