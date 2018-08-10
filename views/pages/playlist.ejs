@@ -167,8 +167,8 @@
         if (songRemoved !== undefined && songsList.length != 0) {
           if (songRemoved == currentSong)
             loadWave(songRemoved);
-          if (songRemoved == currentSong + nextSong)
-            loadNextWave(currentSong + nextSong);
+          if (songRemoved == (currentSong + nextSong) % songsList.length)
+            loadNextWave((currentSong + nextSong) % songsList.length);
           if (songRemoved < currentSong)
             currentSong--;
         }
