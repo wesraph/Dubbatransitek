@@ -48,10 +48,10 @@ var playlistSchema = mongoose.Schema({
 });
 
 playlistSchema.statics.getAllPlaylists = function(callback) {
-  return this.model('Playlist').find({})
+  return this.model('Playlist').find({}, 'name + musics.music_id + musics.contributor_id + tag + author_id')
     .populate('author_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
     .populate('musics.contributor_id', 'local.username + spotify.username + deezer.username + youtube.displayName')
-    .populate('musics.music_id').exec(function(err, res) {
+    .populate('musics.music_id', 'cover').exec(function(err, res) {
       if (err)
         return;
 
