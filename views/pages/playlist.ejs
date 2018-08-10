@@ -321,7 +321,7 @@
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         // Hotfix waiting PR response
         load1(songsList[id].music_id.file, songsList[id].music_id._id);
-
+        window.history.pushState("??", "??", "/playlist?name=" + encodeURI("<%= name %>") + "&play=" + id);
         //wavesurfer1.play();
 
         $('#waveform1').css('opacity', 1);
@@ -384,6 +384,7 @@
         currentSong = (currentSong + nextSong()) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
+        window.history.pushState("??", "??", "/playlist?name=" + encodeURI("<%= name %>") + "&play=" + currentSong);
 
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer1.empty();
@@ -439,6 +440,7 @@
         currentSong = (currentSong + nextSong()) % songsList.length;
         $('#song' + currentSong.toString()).addClass('active');
         $('#currentTitle').text(songsList[currentSong].music_id.title + ' - ' + songsList[currentSong].music_id.artistName);
+        window.history.pushState("??", "??", "/playlist?name=" + encodeURI("<%= name %>") + "&play=" + currentSong);
 
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer2.empty();
