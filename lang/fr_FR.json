@@ -35,7 +35,8 @@
     "unableToFindSimilarSong": "Impossible de trouver une musique similaire",
     "needToListenFirst": "Vous devez d'abbord écouter une musique pour trouver un musique similaire à celle-ci",
     "unableToEditOptions": "Impossible d'éditer les options",
-    "successfullyEditedOptions": "C'est sauvegardé !"
+    "successfullyEditedOptions": "C'est sauvegardé !",
+    "cantGetWaveform": "Impossible de trouver la waveform"
   },
   "pages": {
     "createAccount": "Créer un compte",

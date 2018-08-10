@@ -930,6 +930,15 @@ module.exports = function(io, lang, similarSongsOption) {
       });
     });
 
+    socket.on('getWaveform', function(isWs1, id) {
+      Music.getWaveform(id, function(res) {
+        if (!res)
+          return socket.emit('fail', lang.playlist.cantGetWaveform);
+
+        socket.emit('waveform', isWs1, res);
+      })
+    });
+
     socket.on('downloadPlaylist', function(name) {
       socket.emit('wait', lang.playlist.waitUntilDownloadReady);
       downloadPlaylist(name, function(success, msg) {

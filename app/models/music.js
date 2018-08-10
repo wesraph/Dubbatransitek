@@ -52,5 +52,16 @@ musicSchema.statics.isUrlAlreadyDownloaded = function(url, callback) {
   });
 }
 
+musicSchema.statics.getWaveform = function(id, callback) {
+  return this.model('Music').findOne({
+    _id: id
+  }, function(err, res) {
+    if (err)
+      return callback();
+
+    return callback(res.waveform);
+  })
+}
+
 // create the model for playlist and expose it to our app
 module.exports = mongoose.model('Music', musicSchema);

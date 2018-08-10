@@ -230,17 +230,27 @@
         $($('input[name=autoAddSimilarSong]')[autoAddSimilarSong ? 1 : 0]).parent().removeClass('btn-primary').addClass('btn-default');
       });
 
+      socket.on('waveform', function(isWs1, waveform) {
+        if (isWs1) {
+          wavesurfer1.backend.setPeaks(peak);
+          wavesurfer1.drawBuffer();
+        } else {
+          wavesurfer2.backend.setPeaks(peak);
+          wavesurfer2.drawBuffer();
+        }
+      })
+
       function loadNextWave(s) {
         if ($('#waveform1').css('opacity') != 0) {
           wavesurfer2.empty();
           //wavesurfer2.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
-          load2(songsList[s].music_id.file, songsList[s].music_id.waveform);
+          load2(songsList[s].music_id.file, songsList[s].music_id._id);
           wavesurfer2.isReady = false;
         }
         if ($('#waveform2').css('opacity') != 0) {
           wavesurfer1.empty();
           //wavesurfer1.load(songsList[s].music_id.file, songsList[s].music_id.waveform);
-          load1(songsList[s].music_id.file, songsList[s].music_id.waveform);
+          load1(songsList[s].music_id.file, songsList[s].music_id._id);
           wavesurfer1.isReady = false;
         }
       }
@@ -305,12 +315,12 @@
           var nextTemp = (currentSong + nextSong()) % songsList.length;
           //wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
-          load2(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
+          load2(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id._id);
         });
         wavesurfer1.isReady = false;
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         // Hotfix waiting PR response
-        load1(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        load1(songsList[id].music_id.file, songsList[id].music_id._id);
 
         //wavesurfer1.play();
 
@@ -352,9 +362,10 @@
 
       // Wavesurfer 1
 
-      function load1(url, peak) {
-        wavesurfer1.backend.setPeaks(peak);
+      function load1(url, id) {
+        wavesurfer1.backend.setPeaks([]);
         wavesurfer1.drawBuffer();
+        socket.emit('getWaveform', true, id);
         wavesurfer1.getArrayBuffer(url, data => wavesurfer1.loadArrayBuffer(data));
       }
 
@@ -376,7 +387,7 @@
 
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer1.empty();
-        load1(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        load1(songsList[id].music_id.file, songsList[id].music_id._id);
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer1.isReady = false;
 
@@ -406,9 +417,10 @@
 
       // WaveSurfer 2
 
-      function load2(url, peak) {
-        wavesurfer2.backend.setPeaks(peak);
+      function load2(url, id) {
+        wavesurfer2.backend.setPeaks([]);
         wavesurfer2.drawBuffer();
+        socket.emit('getWaveform', false, id);
         wavesurfer2.getArrayBuffer(url, data => wavesurfer2.loadArrayBuffer(data));
       }
 
@@ -431,7 +443,7 @@
         var id = (currentSong + nextSong()) % songsList.length;
         wavesurfer2.empty();
         //wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
-        load2(songsList[id].music_id.file, songsList[id].music_id.waveform);
+        load2(songsList[id].music_id.file, songsList[id].music_id._id);
         wavesurfer2.isReady = false;
 
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
