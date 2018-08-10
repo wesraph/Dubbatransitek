@@ -230,7 +230,8 @@
         $($('input[name=autoAddSimilarSong]')[autoAddSimilarSong ? 1 : 0]).parent().removeClass('btn-primary').addClass('btn-default');
       });
 
-      socket.on('waveform', function(isWs1, waveform) {
+      socket.on('waveform', function(isWs1, peak) {
+        console.log(isWs1, peak);
         if (isWs1) {
           wavesurfer1.backend.setPeaks(peak);
           wavesurfer1.drawBuffer();
@@ -238,7 +239,7 @@
           wavesurfer2.backend.setPeaks(peak);
           wavesurfer2.drawBuffer();
         }
-      })
+      });
 
       function loadNextWave(s) {
         if ($('#waveform1').css('opacity') != 0) {
