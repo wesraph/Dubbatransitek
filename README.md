@@ -6,6 +6,19 @@ Dubbatransitek is a collaborative musical platform. It allows you to create or i
 
 ## Docker Install
 
+First, download and run mongoDB Docker
+```
+docker pull mongo:latest
+docker run --name md -d mongo
+```
+Then, build and run the docker file
+```
+git clone https://github.com/Guisch/Dubbatransitek.git
+cd Dubbatransitek
+docker build -t dubbatransitek .
+docker run --name db --link md:mongo -p 8880:8880 -d dubbatransitek
+```
+
 ## Classic Install
 ### Prerequisites
 
@@ -123,7 +136,7 @@ By default, it will use the environment variable PORT, or 8880 if there's nothin
  - Server side generated waveform
  - Increase of navigation speed by reducing amount of data sent
  - URL is now updated while music is changing
- - Add docker ! Install Dubbatransitek in a command ! (WIP)
+ - Add docker ! Install Dubbatransitek in a command !
  - Page to edit music info (WIP)
 
  **0.0.4:**
