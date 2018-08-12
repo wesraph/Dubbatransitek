@@ -616,8 +616,8 @@
         $('#random').click(randomf);
         $('#previous').click(previousf);
         $('#next').click(nextf);
-        $('input[name=syncImportedPlaylist]').click(sync);
-        $('input[name=autoAddSimilarSong]').click(autoAdd);
+        $('input[name=syncImportedPlaylist]').parent().click(sync);
+        $('input[name=autoAddSimilarSong]').parent().click(autoAdd);
 
         var vol = $("#vol").slider({
           formatter: function(value) {
