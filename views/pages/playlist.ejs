@@ -99,10 +99,10 @@
         <h4><%= lang.pages.syncImportedPlaylist %></h4>
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default">
-              <input type="radio"  name="syncImportedPlaylist" value="on" autocomplete="off"> <%= lang.pages.on %>
+              <input type="radio" id="sIPOn" name="syncImportedPlaylist" value="on" autocomplete="off"> <%= lang.pages.on %>
             </label>
           <label class="btn btn-default">
-              <input type="radio"  name="syncImportedPlaylist" value="off" autocomplete="off"> <%= lang.pages.off %>
+              <input type="radio" id="sIPOff"  name="syncImportedPlaylist" value="off" autocomplete="off"> <%= lang.pages.off %>
             </label>
         </div>
       </div>
@@ -111,10 +111,10 @@
         <h4><%= lang.pages.autoAddSimilarSong %></h4>
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default">
-              <input type="radio"  name="autoAddSimilarSong" value="on" autocomplete="off"> <%= lang.pages.on %>
+              <input type="radio" id="aASSOn"  name="autoAddSimilarSong" value="on" autocomplete="off"> <%= lang.pages.on %>
             </label>
           <label class="btn btn-default">
-              <input type="radio"  name="autoAddSimilarSong" value="off" autocomplete="off"> <%= lang.pages.off %>
+              <input type="radio" id="aASSOff"  name="autoAddSimilarSong" value="off" autocomplete="off"> <%= lang.pages.off %>
             </label>
         </div>
       </div>
@@ -579,24 +579,12 @@
 
       }
 
-      function sync() {
-        var val;
-        if ($('input[name=syncImportedPlaylist]:checked').val() == 'on')
-          val = true;
-        else if ($('input[name=syncImportedPlaylist]:checked').val() == 'off')
-          val = false;
-
+      function sync(val) {
         if (val != syncImportedPlaylist)
           socket.emit('editPlaylistOptions', '<%= name %>', val, autoAddSimilarSong);
       }
 
-      function autoAdd() {
-        var val;
-        if ($('input[name=autoAddSimilarSong]:checked').val() == 'on')
-          val = true;
-        else if ($('input[name=autoAddSimilarSong]:checked').val() == 'off')
-          val = false;
-
+      function autoAdd(val) {
         if (val != autoAddSimilarSong)
           socket.emit('editPlaylistOptions', '<%= name %>', syncImportedPlaylist, val);
 
@@ -616,8 +604,18 @@
         $('#random').click(randomf);
         $('#previous').click(previousf);
         $('#next').click(nextf);
-        $('input[name=syncImportedPlaylist]').parent().click(sync);
-        $('input[name=autoAddSimilarSong]').parent().click(autoAdd);
+        $('#sIPOn').parent().click(function() {
+          sync(true);
+        });
+        $('#sIPOff').parent().click(function() {
+          sync(false);
+        });
+        $('#aASSOn').parent().click(function() {
+          autoAdd(true);
+        });
+        $('#aASSOff').parent().click(function() {
+          autoAdd(false);
+        });
 
         var vol = $("#vol").slider({
           formatter: function(value) {
