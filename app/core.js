@@ -432,7 +432,7 @@ module.exports = function(io, lang, similarSongsOption) {
       Playlist.findOne({
         name: playlistName
       }, function(err, result) {
-        if (err)
+        if (err || result == null)
           return callback(false, lang.playlist.unableToEditOptions);
 
         if (result.author_id != userId)
