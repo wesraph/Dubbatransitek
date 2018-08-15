@@ -1221,9 +1221,9 @@ module.exports = function(io, lang, similarSongsOption) {
           playlist.importedPl.forEach(function(urlImportedPl) {
             console.log('Syncing', urlImportedPl);
             downloadSongs(urlImportedPl, function(file, infos, url) {
-              console.log(file, infos, url);
+              console.log(file, url);
               Playlist.isUrlAlreadyInPlaylist(playlist.name, url, function(itIs) {
-                console.log(file, infos, url, itIs);
+                console.log(file, itIs);
                 if (!itIs) {
                   addSongToPlaylist(file, infos, url, playlist.author_id, playlist.name, function(a) {
                     console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
