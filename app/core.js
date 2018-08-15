@@ -1210,7 +1210,7 @@ module.exports = function(io, lang, similarSongsOption) {
 
   new CronJob('* * * * *', function() {
     console.log('Start syncing import pl');
-    Playlist.getAllPlaylists(function(res) {
+    Playlist.getSyncedPlaylist(function(res) {
       if (res === undefined || res.length == 0)
         return;
 
