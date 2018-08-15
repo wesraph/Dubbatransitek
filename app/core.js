@@ -1208,17 +1208,20 @@ module.exports = function(io, lang, similarSongsOption) {
     });
   });
 
-  new CronJob('*/30 * * * *', function() {
+  new CronJob('*/1 * * * *', function() {
     Playlist.getAllPlaylists(function(res) {
       if (res === undefined || res.length == 0)
         return;
 
       res.forEach(function(playlist) {
         if (playlist.syncImportedPlaylist == true) {
+          console.log('Syncing imported playlist of', playlist.name);
           playlist.importedPl.forEach(function(urlImportedPl) {
-
+            console.log('Syncing', urlImportedPl);
             downloadSongs(urlImportedPl, function(file, infos, url) {
+              console.log(file, infos, url);
               Playlist.isUrlAlreadyInPlaylist(playlist.name, url, function(itIs) {
+                console.log(file, infos, url, itIs);
                 if (!itIs) {
                   addSongToPlaylist(file, infos, url, playlist.author_id, playlist.name, function(a) {
                     console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
