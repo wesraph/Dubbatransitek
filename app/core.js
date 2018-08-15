@@ -1216,7 +1216,6 @@ module.exports = function(io, lang, similarSongsOption) {
 
       console.log(res.length, 'playlists found');
       res.forEach(function(playlist) {
-        console.log(playlist);
         if (playlist.syncImportedPlaylist == true) {
           console.log('Syncing imported playlist of', playlist.name);
           playlist.importedPl.forEach(function(urlImportedPl) {
