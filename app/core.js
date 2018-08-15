@@ -1209,10 +1209,12 @@ module.exports = function(io, lang, similarSongsOption) {
   });
 
   new CronJob('*/1 * * * *', function() {
+    console.log('Start syncing import pl');
     Playlist.getAllPlaylists(function(res) {
       if (res === undefined || res.length == 0)
         return;
 
+      console.log(res.length, 'playlists found');
       res.forEach(function(playlist) {
         if (playlist.syncImportedPlaylist == true) {
           console.log('Syncing imported playlist of', playlist.name);
