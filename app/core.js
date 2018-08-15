@@ -1208,22 +1208,16 @@ module.exports = function(io, lang, similarSongsOption) {
     });
   });
 
-  new CronJob('* * * * *', function() {
-    console.log('Start syncing import pl');
+  new CronJob('*/30 * * * *', function() {
     Playlist.getSyncedPlaylist(function(res) {
       if (res === undefined || res.length == 0)
         return;
 
-      console.log(res.length, 'playlists found');
       res.forEach(function(playlist) {
         if (playlist.syncImportedPlaylist == true) {
-          console.log('Syncing imported playlist of', playlist.name);
           playlist.importedPl.forEach(function(urlImportedPl) {
-            console.log('Syncing', urlImportedPl);
             downloadSongs(urlImportedPl, function(file, infos, url) {
-              console.log(file, url);
               Playlist.isUrlAlreadyInPlaylist(playlist.name, url, function(itIs) {
-                console.log(file, itIs);
                 if (!itIs) {
                   addSongToPlaylist(file, infos, url, playlist.author_id, playlist.name, function(a) {
                     console.log('[ImportedURLSyncing] Song added to ' + playlist.name + ': ' + url);
