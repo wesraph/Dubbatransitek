@@ -322,6 +322,7 @@
           //wavesurfer2.load(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id.waveform);
           wavesurfer2.isReady = false;
           load2(songsList[nextTemp].music_id.file, songsList[nextTemp].music_id._id);
+          $('#nextMusic').text('<%= lang.pages.nextMusic %>: ' + songsList[nextTemp].music_id.title + ' - ' + songsList[nextTemp].music_id.artistName);
         });
         wavesurfer1.isReady = false;
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
@@ -398,6 +399,7 @@
         var id = (currentSong + nextSong) % songsList.length;
         wavesurfer1.empty();
         load1(songsList[id].music_id.file, songsList[id].music_id._id);
+        $('#nextMusic').text('<%= lang.pages.nextMusic %>: ' + songsList[id].music_id.title + ' - ' + songsList[id].music_id.artistName);
         //wavesurfer1.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         wavesurfer1.isReady = false;
 
@@ -458,6 +460,7 @@
         wavesurfer2.empty();
         //wavesurfer2.load(songsList[id].music_id.file, songsList[id].music_id.waveform);
         load2(songsList[id].music_id.file, songsList[id].music_id._id);
+        $('#nextMusic').text('<%= lang.pages.nextMusic %>: ' + songsList[id].music_id.title + ' - ' + songsList[id].music_id.artistName);
         wavesurfer2.isReady = false;
 
         if (currentSong == songsList.length - 1 && autoAddSimilarSong) {
