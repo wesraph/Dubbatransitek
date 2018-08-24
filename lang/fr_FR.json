@@ -90,7 +90,6 @@
     "muted": "Muet",
     "addSimilar": "Ajouter une musique similaire",
     "loading": "Chargement",
-    "playlistOption": "Option de la playlist",
     "syncImportedPlaylist": "Synchroniser les playlists importées",
     "on": "On",
     "off": "Off",
@@ -110,6 +109,7 @@
     "cover": "URL de la cover",
     "genre": "Genre",
     "appearOn": "Apparait dans",
-    "thumbnail": "Miniature"
+    "thumbnail": "Miniatures",
+    "nextMusic": "Prochaine musique"
   }
 }

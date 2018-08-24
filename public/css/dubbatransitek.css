@@ -82,3 +82,8 @@
 .marginright-15 {
   margin-right: 15px;
 }
+
+.no-margin {
+  margin-right: 0px;
+  margin-left: 0px;
+}

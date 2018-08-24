@@ -13,10 +13,11 @@
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css" integrity="sha256-WfuSLYdzGvlsFU6ImYYSE277WsjfyU30QeGuNIjeJEI=" crossorigin="anonymous" />
     </header>
 
-    <div class="musicSticky">
+    <div class="row musicSticky">
       <div class="row whiteBg">
         <h1 class="text-center"><%= name %></h1>
-        <h4 class="text-center" id="currentTitle"> </h4>
+        <h4 class="text-center" id="currentTitle">.</h4>
+        <h5 class="text-center" id="nextMusic">.</h5>
       </div>
       <!-- DISPLAY MUSICS -->
       <div class="row whiteBg">
@@ -60,7 +61,7 @@
           <h1><%= lang.pages.addMusic %></h1>
           <div class="form-group">
             <label><%= lang.pages.URLorQuery %></label>
-            <input type="url" class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLorQueryPlaceholder %>" required/>
+            <input class="form-control" name="url" id="url" placeholder="<%= lang.pages.URLorQueryPlaceholder %>" required/>
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary"><%= lang.pages.add %></button>
@@ -94,9 +95,8 @@
     </div>
 
     <div class="row">
-      <h1><%= lang.pages.playlistOption %></h1>
       <div class="col-md-6">
-        <h4><%= lang.pages.syncImportedPlaylist %></h4>
+        <h1><%= lang.pages.syncImportedPlaylist %></h1>
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default">
               <input type="radio" id="sIPOn" name="syncImportedPlaylist" value="on" autocomplete="off"> <%= lang.pages.on %>
@@ -108,7 +108,7 @@
       </div>
 
       <div class="col-md-6">
-        <h4><%= lang.pages.autoAddSimilarSong %></h4>
+        <h1><%= lang.pages.autoAddSimilarSong %></h1>
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default">
               <input type="radio" id="aASSOn"  name="autoAddSimilarSong" value="on" autocomplete="off"> <%= lang.pages.on %>
@@ -179,7 +179,7 @@
         var html = '';
 
         for (var i = 0; i < songsList.length; i++) {
-          html += '<div id="song' + i.toString() + '" class="list-group-item list-group-item-action cursorP' + (currentSong == i ? ' active ' : ' ') + 'row">';
+          html += '<div id="song' + i.toString() + '" class="list-group-item cursorP' + (currentSong == i ? ' active ' : ' ') + 'row no-margin">';
           html += '<div class="col-md-9" onClick="loadWave(' + i.toString() + ')">';
           html += '<div class="float-left">';
           html += '<i class="fa fa-arrows-v marginright-15 cursorR"></i>';
@@ -258,6 +258,7 @@
           load1(songsList[s].music_id.file, songsList[s].music_id._id);
           wavesurfer1.isReady = false;
         }
+        $('#nextMusic').text('<%= lang.pages.nextMusic %>: ' + songsList[s].music_id.title + ' - ' + songsList[s].music_id.artistName);
       }
 
       function deleteSong(id) {
